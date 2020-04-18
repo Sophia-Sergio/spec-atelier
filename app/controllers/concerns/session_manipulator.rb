@@ -17,6 +17,8 @@ module SessionManipulator
         user
       end
     end
+  rescue StandardError
+    render json: { error: 'No session found' }, status: :unauthorized
   end
 
   def end_session
