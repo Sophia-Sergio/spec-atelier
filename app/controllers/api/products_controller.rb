@@ -41,11 +41,11 @@ module Api
     end
 
     def images_params
-      params.require(:product).permit({ images: [] })
+      params.permit({ images: [] })
     end
 
     def documents_params
-      params.require(:product).permit({ documents: [] })
+      params.permit({ documents: [] })
     end
 
     def product_params

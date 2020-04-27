@@ -139,7 +139,7 @@ RSpec.describe Api::ProductsController, type: :controller do
         it 'creates a resource' do
           image1 = fixture_file_upload('spec/fixtures/images/logo1.png')
           image2 = fixture_file_upload('spec/fixtures/images/logo2.png')
-          patch :associate_images, params: { product_id: product.id, product: { images: [image1, image2] } }
+          patch :associate_images, params: { product_id: product.id, images: [image1, image2] }
           expect(response).to have_http_status(:created)
           expect(product.images.count).to be 2
         end
@@ -164,7 +164,7 @@ RSpec.describe Api::ProductsController, type: :controller do
       context 'with all params' do
         it 'attach images to product' do
           pdf = fixture_file_upload('spec/fixtures/documents/example.pdf')
-          patch :associate_documents, params: { product_id: product.id, product: { documents: [pdf] } }
+          patch :associate_documents, params: { product_id: product.id, documents: [pdf] }
           # expect(StorageWorker.perform_async(product, [image1, image2])).to change(StorageWorker.jobs.size).by(1)
           expect(response).to have_http_status(:created)
           expect(product.documents.count).to be 1
