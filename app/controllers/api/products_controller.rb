@@ -14,9 +14,10 @@ module Api
 
     def create
       product = Product.new(product_params.except(:system_id, :brand))
-      product.subitem_id = product_params[:system_id]
-      product.brand = Brand.find_or_create_by(name: product_params[:brand])
-      if product.save!
+      product.subitem_id = product_params[:system_id] if product_params[:system_id].present?
+      brand = Brand.find_or_create_by(name: product_params[:brand])
+      product.brand = brand if brand.valid?
+      if product.save
         render json: {}, status: :created
       else
         render json: { error: product.errors }, status: :unprocessable_entity
