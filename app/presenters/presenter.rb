@@ -10,17 +10,18 @@ class Presenter
     end
 
     def decorate_list(list, params = {})
-      params.present? ? pagination_response(list, params) : list.map {|resource| decorate(resource) }
+      @params = params
+      pagination? ? pagination_response(list) : list.map {|resource| decorate(resource) }
     end
 
     def pagination?
-      params[:limit].present?
+      @params[:limit].present?
     end
 
-    def pagination_response(list, params)
-      page = params[:page].presence&.to_i || 0
-      offset = params[:offset].presence&.to_i || 10
-      limit = params[:limit].presence&.to_i || 10
+    def pagination_response(list)
+      page = @params[:page].presence&.to_i || 0
+      offset = @params[:offset].presence&.to_i || @params[:limit].presence&.to_i || 10
+      limit = @params[:limit].presence&.to_i || 10
       paginated_list = list.offset(offset * page).limit(limit).map {|resource| decorate(resource) }
       {
         total:     list.count,
