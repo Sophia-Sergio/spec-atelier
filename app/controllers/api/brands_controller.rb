@@ -3,7 +3,7 @@ module Api
     before_action :valid_session
 
     def index
-      list = Brand.all.includes(:products)
+      list = Brand.all
       list = list.map {|brand| { id: brand.id, name: brand.name } }
       render json: { brands: list }, status: :ok
     end
