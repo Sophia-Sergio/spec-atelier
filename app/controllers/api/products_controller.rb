@@ -18,7 +18,7 @@ module Api
       brand = Brand.find_or_create_by(name: product_params[:brand])
       product.brand = brand if brand.valid?
       if product.save
-        render json: {}, status: :created
+        render json: { product: ::Products::ProductPresenter.decorate(product) }, status: :created
       else
         render json: { error: product.errors }, status: :unprocessable_entity
       end

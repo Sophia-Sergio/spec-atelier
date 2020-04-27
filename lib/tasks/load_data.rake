@@ -23,6 +23,12 @@ namespace :db do
       sh 'rm config/google_drive_config.json'
     end
 
+    task product_item_update: :environment do
+      Product.where.not(subitem: nil).each do |product|
+        product.update(item: product.subitem.item)
+      end
+    end
+
     tasks = Rake.application.tasks.select {|a| a if ['db:load:tables', 'db:load:images'].include?(a.to_s) }
     tasks.each {|task| task.enhance [:before_hook] }
 
