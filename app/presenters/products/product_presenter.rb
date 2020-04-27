@@ -19,7 +19,7 @@ module Products
 
     def system
       resource = product.subitem
-      { name: resource.name, id: resource.id }
+      { name: resource&.name, id: resource&.id }
     end
 
     def dwg_url

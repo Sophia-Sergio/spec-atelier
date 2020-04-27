@@ -7,6 +7,7 @@ RSpec.describe Api::ProductsController, type: :controller do
   let(:products)       { create_list(:product, 10) }
   let(:product)        { create(:product) }
   let(:brand)          { create(:brand) }
+  let(:item)           { create(:item) }
   let(:product_params) { {
                             system_id: product.subitem.id,
                             name: 'new name',
@@ -15,7 +16,8 @@ RSpec.describe Api::ProductsController, type: :controller do
                             project_type: '',
                             work_type: '',
                             room_type: [1,2],
-                            price: 1000
+                            price: 1000,
+                            item_id: item.id
                           }
                         }
 
@@ -104,7 +106,7 @@ RSpec.describe Api::ProductsController, type: :controller do
 
       context 'without all params, without existing brand' do
         it 'creates a resource' do
-          post :create, params: { product: product_params.except(:brand).merge(brand: 'new brand') }
+          post :create, params: { product: product_params.except(:brand, :system_id).merge(brand: 'simpson') }
           expect(response).to have_http_status(:created)
         end
       end
