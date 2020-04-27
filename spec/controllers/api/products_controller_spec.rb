@@ -8,15 +8,14 @@ RSpec.describe Api::ProductsController, type: :controller do
   let(:product)        { create(:product) }
   let(:brand)          { create(:brand) }
   let(:product_params) { {
-                            item_id: 1,
-                            subitem_id: 1,
-                            name: '',
-                            short_desc: '',
-                            long_desc: '',
-                            brand_id: brand.id,
+                            system_id: product.subitem.id,
+                            name: 'new name',
+                            long_desc: 'new long desc',
+                            brand: brand.name,
                             project_type: '',
                             work_type: '',
-                            room_type: [1,2]
+                            room_type: [1,2],
+                            price: 1000
                           }
                         }
 
@@ -103,9 +102,16 @@ RSpec.describe Api::ProductsController, type: :controller do
         end
       end
 
+      context 'without all params, without existing brand' do
+        it 'creates a resource' do
+          post :create, params: { product: product_params.except(:brand).merge(brand: 'new brand') }
+          expect(response).to have_http_status(:created)
+        end
+      end
+
       context 'without all params, without brand' do
         it 'creates a resource' do
-          post :create, params: { product: product_params.except(:brand_id) }
+          post :create, params: { product: product_params.except(:brand) }
           expect(response).to have_http_status(:unprocessable_entity)
         end
       end

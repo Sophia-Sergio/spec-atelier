@@ -8,4 +8,6 @@ class Product < ApplicationRecord
   has_many :images, as: :owner, class_name: 'Attached::Image', dependent: :destroy
   has_many :documents, as: :owner, class_name: 'Attached::Document', dependent: :destroy
 
+  validates :name, :brand, :item, :long_desc, :price, presence: true
+
 end
