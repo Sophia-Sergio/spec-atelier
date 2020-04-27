@@ -12,7 +12,12 @@ module Api
 
     def items
       items = section.items.as_json(only: %i[id name])
-      render json: { section: section.name,  items: items }, status: :ok
+      render json: { section: section.name, items: items }, status: :ok
+    end
+
+    def products
+      list = section.products
+      render json: { products: ::Products::ProductPresenter.decorate_list(list, params) }, status: :ok
     end
 
     private

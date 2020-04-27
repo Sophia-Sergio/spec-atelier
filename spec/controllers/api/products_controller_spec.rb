@@ -8,17 +8,51 @@ RSpec.describe Api::ProductsController, type: :controller do
   let(:product)        { create(:product) }
   let(:brand)          { create(:brand) }
   let(:product_params) { {
-                            item_id: 1,
-                            subitem_id: 1,
-                            name: '',
-                            short_desc: '',
-                            long_desc: '',
-                            brand_id: brand.id,
+                            system_id: product.subitem.id,
+                            name: 'new name',
+                            long_desc: 'new long desc',
+                            brand: brand.name,
                             project_type: '',
                             work_type: '',
-                            room_type: [1,2]
+                            room_type: [1,2],
+                            price: 1000
                           }
                         }
+
+  describe '#index' do
+    context 'without session' do
+      before { get :index, params: { user_id: no_logged_user.id, id: products.first.id } }
+      it_behaves_like 'an unauthorized api request'
+    end
+
+    context 'with valid session' do
+      before do
+        request.headers['Authorization'] = "Bearer #{session.token}"
+      end
+
+      it 'returns a paginated response' do
+        create_list(:product, 21)
+        get :index, params: { limit: 10 }
+
+        expect(response).to have_http_status(:ok)
+        expect(json['products']['list'].count).to eq(10)
+        expect(json['products']['total']).to eq(21)
+        expect(json['products']['next_page']).to eq(1)
+
+        get :index, params: { limit: 10, page: 1}
+
+        expect(response).to have_http_status(:ok)
+        expect(json['products']['list'].count).to eq(10)
+        expect(json['products']['next_page']).to eq(2)
+
+        get :index, params: { limit: 10, page: 2}
+
+        expect(response).to have_http_status(:ok)
+        expect(json['products']['list'].count).to eq(1)
+        expect(json['products']['next_page']).to eq(nil)
+      end
+    end
+  end
 
   describe '#show' do
     context 'without session' do
@@ -68,9 +102,16 @@ RSpec.describe Api::ProductsController, type: :controller do
         end
       end
 
+      context 'without all params, without existing brand' do
+        it 'creates a resource' do
+          post :create, params: { product: product_params.except(:brand).merge(brand: 'new brand') }
+          expect(response).to have_http_status(:created)
+        end
+      end
+
       context 'without all params, without brand' do
         it 'creates a resource' do
-          post :create, params: { product: product_params.except(:brand_id) }
+          post :create, params: { product: product_params.except(:brand) }
           expect(response).to have_http_status(:unprocessable_entity)
         end
       end

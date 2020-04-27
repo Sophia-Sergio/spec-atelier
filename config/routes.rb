@@ -23,17 +23,21 @@ Rails.application.routes.draw do
     end
     get 'items/:item_id/systems', to: 'items#subitems', as: :systems
 
-    resources :products, only: %i[show create] do
+    resources :products, only: %i[show create index] do
       post 'associate_images'
       post 'associate_documents'
     end
 
     resources :sections, only: %i[index] do
       get 'items'
+      get 'products'
     end
 
     %w[work_type project_type room_type].each {|category| get "lookup_tables/#{category}s" }
     get 'general/cities'
+
+    resources :brands, only: %i[index]
+    get 'brands/search'
   end
 
   post 'auth/google_login_service', to: 'api/sessions#google_auth'

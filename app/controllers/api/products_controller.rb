@@ -7,9 +7,16 @@ module Api
       render json: { product: ::Products::ProductPresenter.decorate(product) }, status: :ok
     end
 
+    def index
+      list = Product.all.joins(:section).order('sections.name')
+      render json: { products: ::Products::ProductPresenter.decorate_list(list, params) }, status: :ok
+    end
+
     def create
-      product = Product.new(product_params)
-      if product.save
+      product = Product.new(product_params.except(:system_id, :brand))
+      product.subitem_id = product_params[:system_id]
+      product.brand = Brand.find_or_create_by(name: product_params[:brand])
+      if product.save!
         render json: {}, status: :created
       else
         render json: { error: product.errors }, status: :unprocessable_entity
@@ -41,7 +48,7 @@ module Api
     end
 
     def product_params
-      permitted = %i[name brand_id subitem_id long_desc short_desc project_type work_type room_type]
+      permitted = %i[name item_id system_id brand long_desc short_desc price project_type work_type room_type]
       params.require(:product).permit(permitted)
     end
   end

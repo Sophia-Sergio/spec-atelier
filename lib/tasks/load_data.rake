@@ -19,8 +19,8 @@ namespace :db do
 
     task images: :environment do
       process_images
-      sh 'rm config/google_storage.json'
-      sh 'rm config/google_drive.json'
+      sh 'rm config/google_storage_config.json'
+      sh 'rm config/google_drive_config.json'
     end
 
     tasks = Rake.application.tasks.select {|a| a if ['db:load:tables', 'db:load:images'].include?(a.to_s) }
@@ -62,10 +62,10 @@ namespace :db do
 
     def storage_bucket
       @storage_bucket ||= begin
-        File.open('config/google_storage.json', 'w') {|f| f.write(ENV['GOOGLE_APPLICATION_CREDENTIALS']) }
+        File.open('config/google_storage_config.json', 'w') {|f| f.write(ENV['GOOGLE_APPLICATION_CREDENTIALS']) }
         storage = Google::Cloud::Storage.new(
           project_id:  "spec-atelier",
-          credentials: 'config/google_storage.json'
+          credentials: 'config/google_storage_config.json'
         )
         storage.bucket(ENV['GOOGLE_BUCKET_IMAGES'])
       end
@@ -73,8 +73,8 @@ namespace :db do
 
     def google_drive_session
       @google_drive_session ||= begin
-        File.open('config/google_drive.json', 'w') {|f| f.write(ENV['GOOGLE_DRIVE_CONFIG']) }
-        GoogleDrive::Session.from_config('config/google_drive.json')
+        File.open('config/google_drive_config.json', 'w') {|f| f.write(ENV['GOOGLE_DRIVE_CONFIG']) }
+        GoogleDrive::Session.from_config('config/google_drive_config.json')
       end
     end
 
