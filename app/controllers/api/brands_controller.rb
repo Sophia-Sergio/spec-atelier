@@ -4,12 +4,7 @@ module Api
 
     def index
       list = Brand.all.includes(:products)
-      list = list.map do |brand|
-        {
-          id:   brand.id,
-          name: brand.name
-        }
-      end
+      list = list.map {|brand| { id: brand.id, name: brand.name } }
       render json: { brands: list }, status: :ok
     end
 
