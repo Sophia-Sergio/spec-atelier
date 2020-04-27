@@ -20,6 +20,41 @@ RSpec.describe Api::ProductsController, type: :controller do
                           }
                         }
 
+  describe '#index' do
+    context 'without session' do
+      before { get :index, params: { user_id: no_logged_user.id, id: products.first.id } }
+      it_behaves_like 'an unauthorized api request'
+    end
+
+    context 'with valid session' do
+      before do
+        request.headers['Authorization'] = "Bearer #{session.token}"
+      end
+
+      it 'returns a paginated response' do
+        create_list(:product, 21)
+        get :index, params: { limit: 10 }
+
+        expect(response).to have_http_status(:ok)
+        expect(json['products']['list'].count).to eq(10)
+        expect(json['products']['total']).to eq(21)
+        expect(json['products']['next_page']).to eq(1)
+
+        get :index, params: { limit: 10, page: 1}
+
+        expect(response).to have_http_status(:ok)
+        expect(json['products']['list'].count).to eq(10)
+        expect(json['products']['next_page']).to eq(2)
+
+        get :index, params: { limit: 10, page: 2}
+
+        expect(response).to have_http_status(:ok)
+        expect(json['products']['list'].count).to eq(1)
+        expect(json['products']['next_page']).to eq(nil)
+      end
+    end
+  end
+
   describe '#show' do
     context 'without session' do
       before { get :show, params: { user_id: no_logged_user.id, id: products.first.id } }

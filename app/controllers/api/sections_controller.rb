@@ -15,6 +15,11 @@ module Api
       render json: { section: section.name,  items: items }, status: :ok
     end
 
+    def products
+      list = section.products
+      render json: { products: ::Products::ProductPresenter.decorate_list(list, params) }, status: :ok
+    end
+
     private
 
     def section
