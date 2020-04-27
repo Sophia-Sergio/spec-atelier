@@ -53,7 +53,6 @@ class GoogleStorage
         project_id:  "spec-atelier",
         credentials: 'config/google_storage_config.json'
       )
-      binding.pry
       sh 'rm config/google_storage_config.json'
       storage.bucket(ENV['GOOGLE_BUCKET_IMAGES'])
     end
