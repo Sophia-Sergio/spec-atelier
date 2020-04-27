@@ -48,12 +48,10 @@ class GoogleStorage
 
   def storage_bucket
     @storage_bucket ||= begin
-      File.open('config/google_storage_config.json', 'w') {|f| f.write(ENV['GOOGLE_APPLICATION_CREDENTIALS']) }
       storage = Google::Cloud::Storage.new(
         project_id:  "spec-atelier",
-        credentials: 'config/google_storage_config.json'
+        credentials: ENV['GOOGLE_APPLICATION_CREDENTIALS']
       )
-      sh 'rm config/google_storage_config.json'
       storage.bucket(ENV['GOOGLE_BUCKET_IMAGES'])
     end
   end
