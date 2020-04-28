@@ -26,7 +26,7 @@ module Api
 
     def associate_images
       GoogleStorage.new(product, images_params[:images]).perform
-      render json: {}, status: :created
+      render json: { message: 'Image attached'}, status: :created
     end
 
     def associate_documents
