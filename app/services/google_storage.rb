@@ -38,11 +38,12 @@ class GoogleStorage
   end
 
   def attach_to_product(file_uploaded, file_stored)
+    name_stored_file = file_stored.name.gsub('products/','')
     case file_stored.content_type.split('/').first
     when 'image'
-      Attached::Image.create!(owner: @owner, url: file_stored.public_url, name: file_uploaded.original_filename)
+      Attached::Image.create!(owner: @owner, url: file_stored.public_url, name: name_stored_file)
     else
-      Attached::Document.create!(owner: @owner, url: file_stored.public_url, name: file_uploaded.original_filename)
+      Attached::Document.create!(owner: @owner, url: file_stored.public_url, name: name_stored_file)
     end
   end
 
