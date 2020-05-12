@@ -33,8 +33,8 @@ Rails.application.routes.draw do
       get 'products'
     end
 
-    %w[work_type project_type room_type].each {|category| get "lookup_tables/#{category}s" }
     get 'general/cities'
+    get 'configs/project_data'
 
     resources :brands, only: %i[index]
     get 'brands/search'

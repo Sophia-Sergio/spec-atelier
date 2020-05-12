@@ -49,7 +49,7 @@ module Api
     end
 
     def product_params
-      permitted = %i[name item_id system_id brand long_desc short_desc price project_type work_type room_type]
+      permitted = %i[name item_id system_id brand long_desc short_desc price project_type work_type room_type product_id]
       params.require(:product).permit(permitted)
     end
   end
