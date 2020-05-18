@@ -1,23 +1,27 @@
 require 'google/cloud/storage'
 
-RSpec.describe Api::ProductsController, type: :controller do
+describe Api::ProductsController, type: :controller do
   let(:user)           { create(:user) }
   let(:no_logged_user) { create(:user) }
   let(:session)        { create(:session, user: user, token: session_token(user)) }
   let(:products)       { create_list(:product, 10) }
   let(:product)        { create(:product) }
-  let(:brand)          { create(:brand) }
-  let(:item)           { create(:item) }
+  let(:brand_a)        { create(:brand) }
+  let(:brand_b)        { create(:brand) }
+  let(:section_a)      { create(:section, name: 'Section A') }
+  let(:section_b)      { create(:section, name: 'Section B') }
+  let(:item_a)         { create(:item, section: section_a) }
+  let(:item_b)         { create(:item, section: section_b) }
   let(:product_params) { {
                             system_id: product.subitem.id,
                             name: 'new name',
                             long_desc: 'new long desc',
-                            brand: brand.name,
+                            brand: brand_a.name,
                             project_type: '',
                             work_type: '',
                             room_type: [1,2],
                             price: 1000,
-                            item_id: item.id
+                            item_id: item_a.id
                           }
                         }
 
@@ -53,6 +57,71 @@ RSpec.describe Api::ProductsController, type: :controller do
         expect(json['products']['list'].count).to eq(1)
         expect(json['products']['next_page']).to eq(nil)
       end
+
+      context 'filtered paginated response' do
+
+        before do
+          create(:product, name: 'aaab', brand: brand_a)
+          create(:product, name: 'baca aaa', project_type: ['1'], brand: brand_b)
+          create(:product, name: 'abbb', project_type: ['1'], room_type: ['1'], item: item_b)
+          create(:product, name: 'bbba', project_type: ['2'], room_type: ['1'], item: item_a)
+          create(:product, name: 'ccca aab', item: item_b)
+        end
+
+        it 'returns products by keyword' do
+          get :index, params: { limit: 10, page: 0, keyword: 'aaa'}
+          expect(json['products']['list'].count).to eq(2)
+        end
+
+        it 'returns products by project_type' do
+          get :index, params: { limit: 10, page: 0, project_type: [1,2]}
+          expect(json['products']['list'].count).to eq(3)
+        end
+
+        it 'returns products by room_type default order by section.name' do
+          get :index, params: { limit: 10, page: 0, room_type: [1]}
+          expect(json['products']['list'].count).to eq(2)
+          expect(json['products']['list'].first['name']).to eq('bbba')
+          expect(json['products']['list'].first['section']['name']).to eq(section_a.name)
+        end
+
+        it 'returns products by room_type ordered by new products (created_at desc)' do
+          get :index, params: { limit: 10, page: 0, sort: 'created_at'}
+          expect(json['products']['list'].count).to eq(5)
+          expect(json['products']['list'].first['name']).to eq('ccca aab')
+          expect(json['products']['list'].first['section']['name']).to eq(section_b.name)
+        end
+
+        it 'returns products by project_type and room_type' do
+          get :index, params: { limit: 10, page: 0,  project_type: [1], room_type: [1]}
+          expect(json['products']['list'].count).to eq(1)
+        end
+
+        it 'returns products by keyword, project_type and room_type' do
+          get :index, params: { limit: 10, page: 0, keyword: 'bbb', project_type: [1], room_type: [1]}
+          expect(json['products']['list'].count).to eq(0)
+        end
+
+        it 'returns products by keyword and room_type' do
+          get :index, params: { limit: 10, page: 0, keyword: 'aaa', project_type: [1] }
+          expect(json['products']['list'].count).to eq(1)
+        end
+
+        it 'returns products by brand' do
+          get :index, params: { limit: 10, page: 0, brand: [brand_a.id, brand_b.id] }
+          expect(json['products']['list'].count).to eq(2)
+        end
+
+        it 'returns products by section' do
+          get :index, params: { limit: 10, page: 0, section: section_b.id }
+          expect(json['products']['list'].count).to eq(2)
+        end
+
+        it 'returns products by item' do
+          get :index, params: { limit: 10, page: 0, item: item_a.id }
+          expect(json['products']['list'].count).to eq(1)
+        end
+      end
     end
   end
 
@@ -67,7 +136,7 @@ RSpec.describe Api::ProductsController, type: :controller do
         request.headers['Authorization'] = "Bearer #{session.token}"
       end
 
-      it 'returns a resource' do
+      it 'returns a resource with images' do
         image1 = create(:image, owner: product, order: 0)
         image2 = create(:image, owner: product, order: 1)
 
@@ -79,9 +148,34 @@ RSpec.describe Api::ProductsController, type: :controller do
         expect(json['product']['images'].second['urls']).to eq(image2.all_formats.as_json)
       end
 
-      it 'returns a another resource' do
+      it 'returns another resource with images' do
         get :show, params: { id: products.second.id }
         expect(json['product']['name']).to eq(products.second.name)
+      end
+
+      context 'returns a resource with documents' do
+        before do
+          @document1 = create(:document, name: 'document.dwg', owner: product, order: 0)
+          @document2 = create(:document, name: 'document2.pdf', owner: product, order: 2)
+          @document3 = create(:document, name: 'document1.pdf', owner: product, order: 1)
+          @document4 = create(:document, name: 'document0.pdf', owner: product, order: 3)
+          @document5 = create(:document, name: 'document.bim', owner: product, order: 4)
+        end
+
+        it 'returns a product with dwg' do
+
+          get :show, params: { id: product.id }
+
+          expect(json['product']['name']).to eq(product.name)
+          expect(json['product']['dwg']['name']).to eq(@document1.name)
+
+          expect(json['product']['name']).to eq(product.name)
+          expect(json['product']['bim']['name']).to eq(@document5.name)
+
+          expect(json['product']['name']).to eq(product.name)
+          expect(json['product']['pdfs'].first['name']).to eq(@document3.name)
+          expect(json['product']['pdfs'].second['name']).to eq(@document2.name)
+        end
       end
     end
   end
@@ -127,8 +221,8 @@ RSpec.describe Api::ProductsController, type: :controller do
     end
 
     context 'with valid session' do
-      let(:uploaded_file_1) { double("uploaded_file", public_url: "A", content_type: 'image/png') }
-      let(:uploaded_file_2) { double("uploaded_file", public_url: "B", content_type: 'image/png') }
+      let(:uploaded_file_1) { double('uploaded_file', public_url: 'A', content_type: 'image/png') }
+      let(:uploaded_file_2) { double('uploaded_file', public_url: 'B', content_type: 'image/png') }
 
       before do
         request.headers['Authorization'] = "Bearer #{session.token}"

@@ -13,8 +13,8 @@ module Api
     end
 
     def create
-      Project.create(project_params.merge(user: current_user))
-      render json: '', status: :created
+      project = Project.create(project_params.merge(user: current_user))
+      render json: { project: private_project_presenter.decorate(project) }, status: :created
     end
 
     def update
