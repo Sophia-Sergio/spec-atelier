@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_27_203911) do
+ActiveRecord::Schema.define(version: 2020_05_18_021432) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -70,21 +70,32 @@ ActiveRecord::Schema.define(version: 2020_04_27_203911) do
     t.index ["item_id"], name: "index_products_on_item_id"
   end
 
-  create_table "project_specs", force: :cascade do |t|
-    t.bigint "project_id", null: false
-    t.bigint "section_id", null: false
-    t.bigint "item_id", null: false
-    t.bigint "subitem_id", null: false
-    t.bigint "spec_text_id"
-    t.bigint "product_id"
+  create_table "project_spec_items", force: :cascade do |t|
+    t.string "spec_item_type"
+    t.integer "spec_item_id"
+    t.bigint "project_spec_id", null: false
+    t.bigint "user_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["item_id"], name: "index_project_specs_on_item_id"
-    t.index ["product_id"], name: "index_project_specs_on_product_id"
+    t.bigint "section_id", null: false
+    t.bigint "item_id", null: false
+    t.index ["item_id"], name: "index_project_spec_items_on_item_id"
+    t.index ["project_spec_id"], name: "index_project_spec_items_on_project_spec_id"
+    t.index ["section_id"], name: "index_project_spec_items_on_section_id"
+    t.index ["user_id"], name: "index_project_spec_items_on_user_id"
+  end
+
+  create_table "project_spec_texts", force: :cascade do |t|
+    t.string "text", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "project_specs", force: :cascade do |t|
+    t.bigint "project_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.index ["project_id"], name: "index_project_specs_on_project_id"
-    t.index ["section_id"], name: "index_project_specs_on_section_id"
-    t.index ["spec_text_id"], name: "index_project_specs_on_spec_text_id"
-    t.index ["subitem_id"], name: "index_project_specs_on_subitem_id"
   end
 
   create_table "projects", force: :cascade do |t|
@@ -174,12 +185,11 @@ ActiveRecord::Schema.define(version: 2020_04_27_203911) do
   add_foreign_key "items", "sections", on_delete: :cascade
   add_foreign_key "products", "brands", on_delete: :cascade
   add_foreign_key "products", "items"
-  add_foreign_key "project_specs", "items"
-  add_foreign_key "project_specs", "products"
+  add_foreign_key "project_spec_items", "items"
+  add_foreign_key "project_spec_items", "project_specs"
+  add_foreign_key "project_spec_items", "sections"
+  add_foreign_key "project_spec_items", "users"
   add_foreign_key "project_specs", "projects"
-  add_foreign_key "project_specs", "sections"
-  add_foreign_key "project_specs", "spec_texts"
-  add_foreign_key "project_specs", "subitems"
   add_foreign_key "projects", "users"
   add_foreign_key "sessions", "users"
   add_foreign_key "spec_texts", "projects"
