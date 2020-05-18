@@ -5,5 +5,7 @@ module Attached
     validates :name, uniqueness: { scope: %i[owner type] }
     validates :order, uniqueness: { scope: %i[owner type] }
 
+    scope :by_extension, ->(extension) { where("name LIKE ?", "%.#{extension}%")}
+
   end
 end
