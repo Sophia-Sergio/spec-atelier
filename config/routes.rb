@@ -16,6 +16,9 @@ Rails.application.routes.draw do
       get 'projects/search'
       get 'projects/ordered'
       resources :projects
+      resources :project_specs, only: %i[] do
+        post 'create_text'
+      end
     end
 
     resources :items, only: %i[] do
