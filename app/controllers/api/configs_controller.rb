@@ -6,7 +6,7 @@ module Api
       cities = CITIES.values.flatten
       data = {
         cities: cities,
-        project_types: project_types
+        project_types: project_types,
         work_types: work_types,
         room_types: room_types
       }
