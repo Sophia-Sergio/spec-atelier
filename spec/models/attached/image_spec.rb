@@ -17,10 +17,5 @@ describe Attached::Image, type: :model do
       create(:image, owner: product, name: 'same')
       expect(build(:image, owner: product, name: 'same')).to have(1).error_on(:name)
     end
-
-    it 'should not be allowed to create images with the same url' do
-      create(:image, owner: product, url: 'same')
-      expect(build(:image, owner: product2, url: 'same')).to have(1).error_on(:url)
-    end
   end
 end

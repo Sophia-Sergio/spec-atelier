@@ -1,5 +1,7 @@
 module Api
   class ProductsController < ApplicationController
+    include ProductsSearch
+
     before_action :valid_session
     before_action :product, only: %i[show]
 
@@ -8,8 +10,7 @@ module Api
     end
 
     def index
-      list = Product.all.joins(:section).order('sections.name')
-      render json: { products: ::Products::ProductPresenter.decorate_list(list, params) }, status: :ok
+      render json: { products: ::Products::ProductPresenter.decorate_list(products_filtered, params) }, status: :ok
     end
 
     def create

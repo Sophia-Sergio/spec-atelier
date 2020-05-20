@@ -61,6 +61,7 @@ describe Api::ProjectsController, type: :controller do
         expect(Project.last.name).to eq('fake project')
         expect(Project.last.user.id).to eq(user.id)
         expect(response).to have_http_status(:created)
+        expect(json['project']['name']).to eq('fake project')
       end
     end
   end

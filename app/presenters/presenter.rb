@@ -7,6 +7,7 @@ class Presenter
     def decorate(model)
       @resource = model
       define_obj_response
+      remove_not_will_print_instance_variables(define_obj_response)
     end
 
     def decorate_list(list, params = {})
@@ -54,6 +55,12 @@ class Presenter
       value = resource_or_presenter_inheritor_response(key)
       presenter_obj.instance_variable_set("@#{key}", value)
       reload_presenter_inheritor if @will_print.last == key
+    end
+
+    def remove_not_will_print_instance_variables(obj_response)
+      removed_keys = obj_response.instance_variables - @will_print.map{|a| "@#{a}".to_sym }
+      removed_keys.each {|key| obj_response.remove_instance_variable(key)}
+      obj_response
     end
   end
 
