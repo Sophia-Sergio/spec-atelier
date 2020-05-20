@@ -17,8 +17,8 @@ module Api
 
     LookupTable::CATEGORIES.each do |category|
       define_method category.pluralize.to_sym do
-        LookupTable.by_category(category).map do |project_type|
-          { id: project_type.code, name: project_type.translation_spa }
+        LookupTable.by_category(category).map do |type|
+          { id: type.code, name: type.translation_spa, value: type.value }
         end
       end
     end
