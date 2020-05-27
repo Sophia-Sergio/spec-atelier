@@ -13,8 +13,6 @@ Rails.application.routes.draw do
     get :password_reset, to: 'passwords#reset'
 
     resources :users, only: %i[update show] do
-      get 'projects/search'
-      get 'projects/ordered'
       resources :projects
       resources :project_specs, only: %i[] do
         post 'create_text'

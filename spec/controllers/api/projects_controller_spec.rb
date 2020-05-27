@@ -17,16 +17,61 @@ describe Api::ProjectsController, type: :controller do
       it_behaves_like 'an unauthorized api request'
     end
 
-    context 'with valid session' do
-      it 'returns list of projects that belongs to user with session initialized' do
+    context 'with valid session, paginated response' do
+      before do
         request.headers['Authorization'] = "Bearer #{session.token}"
-        get :index, params: { user_id: user.id }
+      end
+      it 'returns list of projects that belongs to user with session initialized' do
 
-        expect(json['projects'].count).to eq(3)
-        expect(json['projects'].first['name']).to eq(project3.name)
-        expect(json['projects'].second['name']).to eq(project2.name)
-        expect(json['projects'].third['name']).to eq(project1.name)
-        expect(json['projects'].first.keys).to match_array(%w[id name project_type work_type country city delivery_date status created_at updated_at])
+        get :index, params: { user_id: user.id, limit: 10 }
+
+        expect(json['projects']['list'].count).to eq(3)
+        expect(json['projects']['list'].first['name']).to eq(project3.name)
+        expect(json['projects']['list'].second['name']).to eq(project2.name)
+        expect(json['projects']['list'].third['name']).to eq(project1.name)
+        expect(json['projects']['list'].first.keys).to match_array(%w[id name project_type work_type country city delivery_date status created_at updated_at])
+      end
+      context 'by created_at asc' do
+        it 'return a list of projects ordered by parameter' do
+          get :index, params: { user_id: user.id, sort: 'created_at_asc', limit: 10 }
+          expect(json['projects']['list'].first['name']).to eq(project1.name)
+        end
+      end
+
+      context 'by created_at desc' do
+        it 'return a list of projects ordered by parameter' do
+          get :index, params: { user_id: user.id, sort: 'created_at_desc', limit: 10 }
+          expect(json['projects']['list'].first['name']).to eq(project3.name)
+        end
+      end
+
+      context 'by updated_at asc' do
+        it 'return a list of projects ordered by parameter' do
+          get :index, params: { user_id: user.id, sort: 'updated_at_asc', limit: 10 }
+          expect(json['projects']['list'].first['name']).to eq(project1.name)
+        end
+      end
+
+      context 'by updated_at desc' do
+        it 'return a list of projects ordered by parameter' do
+          project2.update(name: 'another_name')
+          get :index, params: { user_id: user.id, sort: 'updated_at_desc', limit: 10 }
+          expect(json['projects']['list'].first['name']).to eq(project2.name)
+        end
+      end
+
+      context 'by name asc' do
+        it 'return a list of projects ordered by parameter' do
+          get :index, params: { user_id: user.id, sort: 'name_asc', limit: 10 }
+          expect(json['projects']['list'].first['name']).to eq(project2.name)
+        end
+      end
+
+      context 'by keyword' do
+        it 'searchs for projects containing matching with searched keywords' do
+          get :index, params: {  user_id: user.id, keyword: 'c ab' }
+          expect(json['projects'].count).to eq(2)
+        end
       end
     end
   end
@@ -76,22 +121,6 @@ describe Api::ProjectsController, type: :controller do
     end
   end
 
-  describe '#search' do
-    context 'without session' do
-      before { get :search, params: { user_id: no_logged_user.id } }
-      it_behaves_like 'an unauthorized api request'
-    end
-
-    context 'with valid session' do
-      it 'searchs for projects containing matching with searched keywords' do
-        request.headers['Authorization'] = "Bearer #{session.token}"
-        get :search, params: {  user_id: user.id, search_keywords: 'c ab' }
-
-        expect(json['projects'].count).to eq(2)
-      end
-    end
-  end
-
   describe '#update' do
     context 'without session' do
       before { patch :update, params: { user_id: no_logged_user.id, id: project1.id } }
@@ -105,53 +134,6 @@ describe Api::ProjectsController, type: :controller do
 
         expect(project1.reload.name).to eq('new name')
         expect(project1.reload.new_building?).to eq(true)
-      end
-    end
-  end
-
-  describe '#ordered' do
-    context 'with valid session' do
-      before { request.headers['Authorization'] = "Bearer #{session.token}" }
-
-      context 'by created_at asc' do
-        it 'return a list of projects ordered by parameter' do
-          get :ordered, params: { user_id: user.id, ordered_by: 'created_at_asc' }
-
-          expect(json['projects'].first['name']).to eq(project1.name)
-        end
-      end
-
-      context 'by created_at desc' do
-        it 'return a list of projects ordered by parameter' do
-          get :ordered, params: { user_id: user.id, ordered_by: 'created_at_desc' }
-
-          expect(json['projects'].first['name']).to eq(project3.name)
-        end
-      end
-
-      context 'by updated_at asc' do
-        it 'return a list of projects ordered by parameter' do
-          get :ordered, params: { user_id: user.id, ordered_by: 'updated_at_asc' }
-
-          expect(json['projects'].first['name']).to eq(project1.name)
-        end
-      end
-
-      context 'by updated_at desc' do
-        it 'return a list of projects ordered by parameter' do
-          project2.update(name: 'another_name')
-          get :ordered, params: { user_id: user.id, ordered_by: 'updated_at_desc' }
-
-          expect(json['projects'].first['name']).to eq(project2.name)
-        end
-      end
-
-      context 'by name' do
-        it 'return a list of projects ordered by parameter' do
-          get :ordered, params: { user_id: user.id, ordered_by: 'name_asc' }
-
-          expect(json['projects'].first['name']).to eq(project2.name)
-        end
       end
     end
   end
