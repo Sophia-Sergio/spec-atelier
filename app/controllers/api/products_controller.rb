@@ -1,16 +1,16 @@
 module Api
   class ProductsController < ApplicationController
-    include ProductsSearch
+    include ListSearch
 
     before_action :valid_session
     before_action :product, only: %i[show]
 
     def show
-      render json: { product: ::Products::ProductPresenter.decorate(product) }, status: :ok
+      render json: { product: presenter.decorate(product) }, status: :ok
     end
 
     def index
-      render json: { products: ::Products::ProductPresenter.decorate_list(products_filtered, params) }, status: :ok
+      render json: { products: presenter.decorate_list(filtered_list, params) }, status: :ok
     end
 
     def create
@@ -19,7 +19,7 @@ module Api
       brand = Brand.find_or_create_by(name: product_params[:brand])
       product.brand = brand if brand.valid?
       if product.save
-        render json: { product: ::Products::ProductPresenter.decorate(product) }, status: :created
+        render json: { product: presenter.decorate(product) }, status: :created
       else
         render json: { error: product.errors }, status: :unprocessable_entity
       end
@@ -36,6 +36,10 @@ module Api
     end
 
     private
+
+    def presenter
+      ::Products::ProductPresenter
+    end
 
     def product
       @product ||= Product.find(params[:id] || params[:product_id])
