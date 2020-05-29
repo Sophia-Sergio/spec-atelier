@@ -6,7 +6,7 @@ module Api
       user = User.find_by(email: params[:email])
       if user.present?
         user.generate_password_token!
-        UserNotifierMailer.password_reset(user).deliver
+        UserMailer.password_reset(user).deliver
         render json: { status: 'ok' }, status: :ok
       else
         render json: { error: 'Email address not found. Please check and try again.' }, status: :not_found

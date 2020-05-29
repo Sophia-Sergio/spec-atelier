@@ -1,4 +1,4 @@
-class UserNotifierMailer < ApplicationMailer
+class UserMailer < ApplicationMailer
   default from: 'paul.eaton@specatelier.com'
 
   def send_signup_email(user)
