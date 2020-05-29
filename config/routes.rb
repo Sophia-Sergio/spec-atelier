@@ -37,8 +37,9 @@ Rails.application.routes.draw do
     get 'general/cities'
     get 'configs/project_data'
 
-    resources :brands, only: %i[index]
-    get 'brands/search'
+    resources :brands, only: %i[index show] do
+      post 'contact_form'
+    end
   end
 
   post 'auth/google_login_service', to: 'api/sessions#google_auth'
