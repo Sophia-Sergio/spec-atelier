@@ -256,7 +256,7 @@ describe Api::ProductsController, type: :controller do
       end
 
       context 'with all params' do
-        it 'attach images to product' do
+        it 'attach documents to product' do
           pdf = fixture_file_upload('spec/fixtures/documents/example.pdf')
           patch :associate_documents, params: { product_id: product.id, documents: [pdf] }
           # expect(StorageWorker.perform_async(product, [image1, image2])).to change(StorageWorker.jobs.size).by(1)
