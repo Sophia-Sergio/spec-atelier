@@ -10,15 +10,34 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_18_021432) do
+ActiveRecord::Schema.define(version: 2020_05_29_064706) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "hstore"
   enable_extension "plpgsql"
+
+  create_table "brand_contact_forms", force: :cascade do |t|
+    t.bigint "brand_id", null: false
+    t.bigint "user_id", null: false
+    t.string "user_phone"
+    t.string "message"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["brand_id"], name: "index_brand_contact_forms_on_brand_id"
+    t.index ["user_id"], name: "index_brand_contact_forms_on_user_id"
+  end
 
   create_table "brands", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "description"
+    t.string "address"
+    t.string "country"
+    t.hstore "phone", default: {}, null: false
+    t.string "web"
+    t.hstore "email", default: {}, null: false
+    t.hstore "social_media", default: {}, null: false
   end
 
   create_table "files", force: :cascade do |t|
@@ -182,6 +201,8 @@ ActiveRecord::Schema.define(version: 2020_05_18_021432) do
     t.index ["user_id"], name: "index_users_roles_on_user_id"
   end
 
+  add_foreign_key "brand_contact_forms", "brands"
+  add_foreign_key "brand_contact_forms", "users"
   add_foreign_key "items", "sections", on_delete: :cascade
   add_foreign_key "products", "brands", on_delete: :cascade
   add_foreign_key "products", "items"
