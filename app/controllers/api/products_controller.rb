@@ -1,6 +1,6 @@
 module Api
   class ProductsController < ApplicationController
-    include ListSearch
+    include Search::Handler
 
     before_action :valid_session
     before_action :product, only: %i[show]
