@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_29_064706) do
+ActiveRecord::Schema.define(version: 2020_06_01_050458) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "hstore"
@@ -38,6 +38,7 @@ ActiveRecord::Schema.define(version: 2020_05_29_064706) do
     t.string "web"
     t.hstore "email", default: {}, null: false
     t.hstore "social_media", default: {}, null: false
+    t.integer "user_phone_code"
   end
 
   create_table "files", force: :cascade do |t|
