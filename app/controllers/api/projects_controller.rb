@@ -14,13 +14,18 @@ module Api
     end
 
     def create
-      project = Project.create(project_params.merge(user: current_user))
-      render json: { project: presenter.decorate(project) }, status: :created
+      project = Project.new(project_params.merge(user: current_user))
+      project.country = 'Chile'
+      if project.save
+        render json: { project: presenter.decorate(project) }, status: :created
+      else
+        render json: { error: project.errors }, status: :unprocessable_entity
+      end
     end
 
     def update
       project.update(project_params)
-      render json: '', status: :ok
+      render json: { project: presenter.decorate(project) }, status: :ok
     end
 
     def destroy
