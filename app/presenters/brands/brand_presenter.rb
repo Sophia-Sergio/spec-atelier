@@ -1,6 +1,6 @@
 module Brands
   class BrandPresenter < Presenter
-    will_print :id, :name, :products_count, :description, :address, :country, :phone, :web, :email, :social_media :product_images
+    will_print :id, :name, :products_count, :description, :address, :country, :phone, :web, :email, :social_media, :product_images
 
     def products_count
       brand.products.count
