@@ -9,7 +9,7 @@ module Search
       end
     end
 
-    def products_search_params
+    def product_search_params
       %i[keyword brand project_type my_specifications room_type section item]
     end
   end
