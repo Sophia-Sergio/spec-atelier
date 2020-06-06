@@ -30,7 +30,7 @@ module Api
     end
 
     def contact_form_params
-      params.permit(:user_phone, :message)
+      params.require(:brand_contact_form).permit(:user_phone, :message)
     end
   end
 end
