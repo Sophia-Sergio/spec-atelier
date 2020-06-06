@@ -37,6 +37,10 @@ module Brands
       ]
     end
 
+    def phone
+      '+56-9 99944656'
+    end
+
     def product_images
       [
         { id: 1, url: "http://lorempixel.com/400/200" },
