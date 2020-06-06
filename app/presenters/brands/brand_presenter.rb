@@ -41,6 +41,10 @@ module Brands
       '+56-9 99944656'
     end
 
+    def contact_type
+      'Call Center'
+    end
+
     def product_images
       [
         { id: 1, url: "http://lorempixel.com/400/200" },
