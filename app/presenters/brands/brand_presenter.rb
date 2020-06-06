@@ -14,10 +14,6 @@ module Brands
       "http://lorempixel.com/200/200"
     end
 
-    def description
-      "lorem i"
-    end
-
     def email
       'brand@brand.com'
     end
