@@ -1,6 +1,6 @@
 module Brands
   class BrandPresenter < Presenter
-    will_print :id, :name, :products_count, :description, :address, :country, :phone, :web, :email, :social_media, :product_images
+    will_print :id, :name, :products_count, :description, :address, :country, :phone, :web, :email, :social_media, :product_images, :contact_type
 
     def products_count
       brand.products.count
@@ -38,7 +38,7 @@ module Brands
     end
 
     def phone
-      '+56-9 99944656'
+      '+56 9 9994 4656'
     end
 
     def contact_type
