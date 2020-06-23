@@ -23,7 +23,7 @@ module Brands
     end
 
     def web
-      'www.brand.com'
+      'https://www.brand.com'
     end
 
     def address
@@ -32,8 +32,8 @@ module Brands
 
     def social_media
       [
-        { name: 'facebook', url: 'www.facebook.com/brand_name'},
-        { name: 'twitter', url: 'www.twitter.com/brand_name'},
+        { name: 'facebook', url: 'https://www.facebook.com/brand_name'},
+        { name: 'twitter', url: 'https://www.twitter.com/brand_name'},
       ]
     end
 
