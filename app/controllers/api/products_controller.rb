@@ -10,6 +10,7 @@ module Api
     end
 
     def index
+      @list = current_user.products
       render json: { products: presenter.decorate_list(filtered_list, params) }, status: :ok
     end
 
