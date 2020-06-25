@@ -6,6 +6,7 @@ module Api
     before_action :projects, only: %i[index search]
 
     def index
+      @custom_list = current_user.projects
       render json: { projects: presenter.decorate_list(filtered_list, params) }, status: :ok
     end
 

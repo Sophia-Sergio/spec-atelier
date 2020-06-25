@@ -13,7 +13,7 @@ module Search
     private
 
     def list
-      @list ||= @custom_list || list_class.all
+      @list ||= @custom_list || list_class.all
     end
 
     def custom_list

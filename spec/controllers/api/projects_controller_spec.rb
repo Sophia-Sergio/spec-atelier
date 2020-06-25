@@ -5,11 +5,13 @@ describe Api::ProjectsController, type: :controller do
   end
 
   let(:user)           { create(:user) }
+  let(:user2)           { create(:user) }
   let(:no_logged_user) { create(:user) }
   let(:session)        { create(:session, user: user, token: session_token(user)) }
   let!(:project1)      { create(:project, name: 'zbc abd aci', user: user) }
   let!(:project2)      { create(:project, name: 'aca abc abi', user: user) }
   let!(:project3)      { create(:project, name: 'bca abd abi', user: user) }
+  let!(:project4)      { create(:project, name: 'bca abd abi', user: user2) }
 
   describe '#index' do
     context 'without session' do
