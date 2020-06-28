@@ -50,7 +50,7 @@ module Products
       pdf_documents = documents.with_pdf
       return [] unless pdf_documents.present?
 
-      pdf_documents.positioned.map {|a|  { name: a.name, url: a.url } }
+      pdf_documents.positioned.map {|a| { name: a.name, url: a.url } }
     end
 
     def images
