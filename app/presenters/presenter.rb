@@ -23,7 +23,7 @@ class Presenter
       page = @params[:page].presence&.to_i || 0
       offset = @params[:offset].presence&.to_i || @params[:limit].presence&.to_i || 10
       limit = @params[:limit].presence&.to_i || 10
-      paginated_list = list.offset(offset * page).limit(limit).map {|resource| decorate(resource) }
+      paginated_list = list.offset(limit * page).uniq.first(limit).map {|resource| decorate(resource) }
       {
         total:     list.count,
         list:      paginated_list,

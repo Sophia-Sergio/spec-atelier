@@ -3,10 +3,14 @@ module Search
   module Product
     def product_sort
       if params[:sort].eql? 'created_at'
-        list.order(created_at: :desc)
+        product_list.order(created_at: :desc)
       else
-        list.joins(:section).order('sections.name')
+        product_list.joins(:section).order('sections.name, products.name')
       end
+    end
+
+    def product_list
+      list.includes(:item, :subitem, :documents, :images)
     end
 
     def product_search_params

@@ -36,26 +36,49 @@ describe Api::ProductsController, type: :controller do
         request.headers['Authorization'] = "Bearer #{session.token}"
       end
 
-      it 'returns a paginated response' do
-        create_list(:product, 21)
-        get :index, params: { limit: 10 }
+      describe "general pagination" do
+        before do
+          create_list(:product, 10, item: item_b)
+          create_list(:product, 11, item: item_a)
+        end
 
-        expect(response).to have_http_status(:ok)
-        expect(json['products']['list'].count).to eq(10)
-        expect(json['products']['total']).to eq(21)
-        expect(json['products']['next_page']).to eq(1)
+        it 'returns a paginated response' do
+          get :index, params: { limit: 10 }
 
-        get :index, params: { limit: 10, page: 1}
+          expect(response).to have_http_status(:ok)
+          expect(json['products']['list'].count).to eq(10)
+          expect(json['products']['total']).to eq(21)
+          expect(json['products']['next_page']).to eq(1)
 
-        expect(response).to have_http_status(:ok)
-        expect(json['products']['list'].count).to eq(10)
-        expect(json['products']['next_page']).to eq(2)
+          get :index, params: { limit: 10, page: 1}
 
-        get :index, params: { limit: 10, page: 2}
+          expect(response).to have_http_status(:ok)
+          expect(json['products']['list'].count).to eq(10)
+          expect(json['products']['next_page']).to eq(2)
 
-        expect(response).to have_http_status(:ok)
-        expect(json['products']['list'].count).to eq(1)
-        expect(json['products']['next_page']).to eq(nil)
+          get :index, params: { limit: 10, page: 2}
+
+          expect(response).to have_http_status(:ok)
+          expect(json['products']['list'].count).to eq(1)
+          expect(json['products']['next_page']).to eq(nil)
+        end
+
+        it 'returns different products by page ordered by section name and product name' do
+
+          get :index, params: { limit: 3, page: 0}
+          ids_page_0 = json['products']['list'].map {|p| p['id'] }
+          get :index, params: { limit: 3, page: 1}
+          ids_page_1 = json['products']['list'].map {|p| p['id'] }
+          get :index, params: { limit: 3, page: 2}
+          ids_page_2 = json['products']['list'].map {|p| p['id'] }
+          get :index, params: { limit: 3, page: 3}
+          ids_page_3 = json['products']['list'].map {|p| p['id'] }
+
+          expect(ids_page_0).to eq([11, 12, 13])
+          expect(ids_page_1).to eq([14, 15, 16])
+          expect(ids_page_2).to eq([17, 18, 19])
+          expect(ids_page_3).to eq([20, 21, 1])
+        end
       end
 
       context 'filtered paginated response' do
