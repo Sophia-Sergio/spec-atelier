@@ -1,7 +1,7 @@
 module ProjectSpec
-  class SpecItem < ApplicationRecord
+  class Item < ApplicationRecord
     def self.table_name_prefix
-      'project_'
+      'project_spec_'
     end
 
     belongs_to :project_spec, class_name: 'ProjectSpec::Specification'
