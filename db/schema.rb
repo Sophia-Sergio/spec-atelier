@@ -10,47 +10,67 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_01_050458) do
+ActiveRecord::Schema.define(version: 2020_06_30_220148) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "hstore"
   enable_extension "plpgsql"
 
-  create_table "brand_contact_forms", force: :cascade do |t|
-    t.bigint "brand_id", null: false
-    t.bigint "user_id", null: false
-    t.string "user_phone"
-    t.string "message"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["brand_id"], name: "index_brand_contact_forms_on_brand_id"
-    t.index ["user_id"], name: "index_brand_contact_forms_on_user_id"
-  end
-
-  create_table "brands", force: :cascade do |t|
+  create_table "addresses", force: :cascade do |t|
     t.string "name"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.string "description"
-    t.string "address"
+    t.string "text"
     t.string "country"
-    t.hstore "phone", default: {}, null: false
-    t.string "web"
-    t.hstore "email", default: {}, null: false
-    t.hstore "social_media", default: {}, null: false
-    t.integer "user_phone_code"
-  end
-
-  create_table "files", force: :cascade do |t|
+    t.string "city"
     t.string "owner_type"
     t.bigint "owner_id"
     t.integer "order", default: 0
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["owner_type", "owner_id"], name: "index_addresses_on_owner_type_and_owner_id"
+  end
+
+  create_table "attached_files", force: :cascade do |t|
     t.string "url", null: false
     t.string "name", null: false
     t.string "type", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["owner_type", "owner_id"], name: "index_files_on_owner_type_and_owner_id"
+  end
+
+  create_table "attached_resource_files", force: :cascade do |t|
+    t.bigint "attached_file_id", null: false
+    t.string "owner_type"
+    t.bigint "owner_id"
+    t.string "kind"
+    t.integer "order", default: 0
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["attached_file_id"], name: "index_attached_resource_files_on_attached_file_id"
+    t.index ["owner_type", "owner_id"], name: "index_attached_resource_files_on_owner_type_and_owner_id"
+  end
+
+  create_table "brand_contact_forms", force: :cascade do |t|
+    t.bigint "company_id", null: false
+    t.bigint "user_id", null: false
+    t.string "user_phone"
+    t.string "message"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["company_id"], name: "index_brand_contact_forms_on_company_id"
+    t.index ["user_id"], name: "index_brand_contact_forms_on_user_id"
+  end
+
+  create_table "companies", force: :cascade do |t|
+    t.string "name"
+    t.string "description"
+    t.string "url"
+    t.string "phone"
+    t.string "email"
+    t.string "type"
+    t.string "contact_info"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.hstore "social_media", default: {}, null: false
   end
 
   create_table "items", force: :cascade do |t|
@@ -76,7 +96,9 @@ ActiveRecord::Schema.define(version: 2020_06_01_050458) do
     t.string "short_desc"
     t.string "long_desc"
     t.string "reference"
-    t.bigint "brand_id", null: false
+    t.bigint "company_id", null: false
+    t.bigint "item_id", null: false
+    t.bigint "subitem_id"
     t.integer "price"
     t.text "work_type", default: [], array: true
     t.text "room_type", default: [], array: true
@@ -84,10 +106,9 @@ ActiveRecord::Schema.define(version: 2020_06_01_050458) do
     t.text "tags", default: [], array: true
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "subitem_id"
-    t.bigint "item_id", default: 1, null: false
-    t.index ["brand_id"], name: "index_products_on_brand_id"
+    t.index ["company_id"], name: "index_products_on_company_id"
     t.index ["item_id"], name: "index_products_on_item_id"
+    t.index ["subitem_id"], name: "index_products_on_subitem_id"
   end
 
   create_table "project_spec_items", force: :cascade do |t|
@@ -125,6 +146,7 @@ ActiveRecord::Schema.define(version: 2020_06_01_050458) do
     t.integer "work_type", null: false
     t.string "country"
     t.string "city"
+    t.string "description"
     t.date "delivery_date"
     t.integer "status", default: 1, null: false
     t.integer "visibility", default: 0, null: false
@@ -202,11 +224,13 @@ ActiveRecord::Schema.define(version: 2020_06_01_050458) do
     t.index ["user_id"], name: "index_users_roles_on_user_id"
   end
 
-  add_foreign_key "brand_contact_forms", "brands"
+  add_foreign_key "attached_resource_files", "attached_files"
+  add_foreign_key "brand_contact_forms", "companies"
   add_foreign_key "brand_contact_forms", "users"
   add_foreign_key "items", "sections", on_delete: :cascade
-  add_foreign_key "products", "brands", on_delete: :cascade
-  add_foreign_key "products", "items"
+  add_foreign_key "products", "companies", on_delete: :cascade
+  add_foreign_key "products", "items", on_delete: :cascade
+  add_foreign_key "products", "subitems", on_delete: :cascade
   add_foreign_key "project_spec_items", "items"
   add_foreign_key "project_spec_items", "project_specs"
   add_foreign_key "project_spec_items", "sections"

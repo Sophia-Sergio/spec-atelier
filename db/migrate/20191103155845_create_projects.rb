@@ -7,6 +7,7 @@ class CreateProjects < ActiveRecord::Migration[6.0]
       t.integer :work_type, null: false
       t.string :country
       t.string :city
+      t.string :description
       t.date :delivery_date
       t.integer :status, default: 1, null: false
       t.integer :visibility, default: 0, null: false
