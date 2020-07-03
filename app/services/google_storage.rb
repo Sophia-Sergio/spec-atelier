@@ -7,9 +7,9 @@ class GoogleStorage
   end
 
   def perform
-    to_array_of_files.each do |file|
+    to_array_of_files.map do |file|
       file_stored = upload_file(file)
-      attach_to_owner(file, file_stored)
+      attach_to_owner(file_stored)
     end
   end
 
@@ -20,31 +20,33 @@ class GoogleStorage
   end
 
   def upload_file(file)
-    storage_bucket.upload_file(file.tempfile, "#{folder}/#{owner_name}-#{file.original_filename}")
+    storage_bucket.upload_file(file.tempfile, "images/#{brand_name}-#{file.original_filename}")
   end
 
-  def owner_name
+  def brand_name
     @owner.brand.name
   end
 
-  def folder
-    @owner.class.to_s.pluralize.underscore
-  end
-
-  def attach_to_owner(file_uploaded, file_stored)
+  def attach_to_owner(file_stored)
     case true
-    when @owner.is_a?(Product) then attach_to_product(file_uploaded, file_stored)
+    when @owner.is_a?(Product) then attach_to_product(file_stored)
     end
   end
 
-  def attach_to_product(file_uploaded, file_stored)
-    name_stored_file = file_stored.name.gsub('products/','')
+  def attach_to_product(file_stored)
+    name_stored_file = file_stored.name.gsub('images/','')
     case file_stored.content_type.split('/').first
     when 'image'
-      Attached::Image.create!(owner: @owner, url: file_stored.public_url, name: name_stored_file)
+      image = Attached::Image.create!(url: file_stored.public_url, name: name_stored_file)
+      create_resourse_file(image)
     else
-      Attached::Document.create!(owner: @owner, url: file_stored.public_url, name: name_stored_file)
+      document = Attached::Document.create!(url: file_stored.public_url, name: name_stored_file)
+      create_resourse_file(document)
     end
+  end
+
+  def create_resourse_file(image)
+    Attached::ResourceFile.create!(owner: @owner, attached: image)
   end
 
   def storage_bucket
