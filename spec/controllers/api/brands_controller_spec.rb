@@ -58,7 +58,7 @@ describe Api::BrandsController, type: :controller do
       it 'returns brand' do
         get :show, params: { id: brand }
 
-        KEYS = %w[id name products_count description address country phone web email social_media]
+        KEYS = %w[id name products_count description address country phone web email social_media contact_type product_images]
         expect(response).to have_http_status(:ok)
         expect(json['brand'].keys).to match_array(KEYS)
       end
@@ -76,7 +76,7 @@ describe Api::BrandsController, type: :controller do
       before { request.headers['Authorization'] = "Bearer #{session.token}" }
 
       it 'returns brand' do
-        post :contact_form, params: { brand_id: brand, message: 'message brand', user_phone: '+56 9 99944656' }
+        post :contact_form, params: { brand_id: brand, brand_contact_form: { message: 'message brand', user_phone: '+56 9 99944656' }}
 
         expect(response).to have_http_status(:created)
         expect(json['message']).to eq('Mensaje enviado')

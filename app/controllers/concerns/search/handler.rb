@@ -13,7 +13,7 @@ module Search
     private
 
     def list
-      @list ||= custom_list || list_class.all
+      @list ||= custom_list || class_name[:class].all
     end
 
     def custom_list
@@ -21,19 +21,19 @@ module Search
     end
 
     def sorted_list
-      send("#{class_name}_sort")
-    end
-
-    def list_class
-      @list_class ||= class_name.capitalize.constantize
+      send("#{class_name[:name]}_sort")
     end
 
     def filter_params
-      params.slice(*send("#{class_name}_search_params"))
+      params.slice(*send("#{class_name[:name]}_search_params"))
     end
 
     def class_name
-      params[:controller].sub('api/', '').singularize
+      name = params[:controller].sub('api/', '').singularize
+      case name
+      when 'brand' then { name: name, class: 'Company::Brand'.constantize }
+      else { name: name, class: name.capitalize.constantize }
+      end
     end
   end
 end
