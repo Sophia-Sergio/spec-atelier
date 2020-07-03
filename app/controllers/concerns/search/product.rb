@@ -10,7 +10,7 @@ module Search
     end
 
     def product_list
-      list.includes(:item, :subitem, :documents, :images, :brand)
+      list.includes(:item, :subitem, :brand, files: :attached)
     end
 
     def product_search_params

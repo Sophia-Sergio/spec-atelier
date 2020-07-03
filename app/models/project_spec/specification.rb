@@ -8,9 +8,9 @@ module ProjectSpec
 
 
     def create_text(text, item_id, section_id)
-      text = ProjectSpec::SpecText.create(text: text)
-      ProjectSpec::SpecItem.create!(
-        spec_item_type: 'ProjectSpec::SpecText',
+      text = ProjectSpec::Text.create(text: text)
+      ProjectSpec::Item.create!(
+        spec_item_type: 'ProjectSpec::Text',
         spec_item_id: text.id,
         user: user,
         item_id: 1,

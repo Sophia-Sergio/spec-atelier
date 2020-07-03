@@ -22,7 +22,7 @@ module Api
     private
 
     def brand
-      Brand.find(params[:id] || params[:brand_id])
+      Company::Brand.find(params[:id] || params[:brand_id])
     end
 
     def presenter

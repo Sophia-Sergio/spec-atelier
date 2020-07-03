@@ -3,7 +3,7 @@ module Brands
     will_print :id, :name, :products_count, :description, :address, :country, :phone, :web, :email, :social_media, :product_images, :contact_type
 
     def products_count
-      brand.products.count
+      subject.products.count
     end
 
     def description
@@ -11,7 +11,7 @@ module Brands
     end
 
     def image
-      "http://lorempixel.com/200/200"
+      subject.logo_url
     end
 
     def email

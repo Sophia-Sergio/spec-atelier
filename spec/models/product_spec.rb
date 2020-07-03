@@ -3,7 +3,8 @@ describe Product, type: :model do
 
   describe 'factory built record' do
     it 'atteches a file' do
-      create(:image, owner: product)
+      image = create(:image)
+      create(:resource_file, owner: product, attached: image)
       expect(product.images.count).to be(1)
     end
   end

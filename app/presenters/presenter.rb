@@ -65,6 +65,6 @@ class Presenter
   end
 
   def initialize(subject = nil)
-    define_singleton_method(subject.class.to_s.downcase) { subject } if subject
+    define_singleton_method(:subject) { subject } if subject
   end
 end
