@@ -12,8 +12,9 @@ describe Api::ProductsController, type: :controller do
   let(:section_b)      { create(:section, name: 'Section B') }
   let(:item_a)         { create(:item, section: section_a) }
   let(:item_b)         { create(:item, section: section_b) }
+  let(:subitem)        { create(:subitem) }
   let(:product_params) { {
-                            system_id: product.subitem.id,
+                            system_id: subitem.id,
                             name: 'new name',
                             long_desc: 'new long desc',
                             brand: brand_a.name,
@@ -160,13 +161,16 @@ describe Api::ProductsController, type: :controller do
       end
 
       it 'returns a resource with images' do
-        image1 = create(:image, owner: product, order: 0)
-        image2 = create(:image, owner: product, order: 1)
+        image1 = create(:image)
+        image2 = create(:image)
+        create(:resource_file, owner: product, attached: image1)
+        create(:resource_file, owner: product, attached: image2)
 
         get :show, params: { id: product.id }
 
         expect(json['product']['name']).to eq(product.name)
-        expect(json['product']['images'].first['order']).to eq(image1.order)
+        expect(json['product']['images'].first['order']).to eq(0)
+        expect(json['product']['images'].second['order']).to eq(1)
         expect(json['product']['images'].first['urls']).to eq(image1.all_formats.as_json)
         expect(json['product']['images'].second['urls']).to eq(image2.all_formats.as_json)
       end
@@ -178,11 +182,16 @@ describe Api::ProductsController, type: :controller do
 
       context 'returns a resource with documents' do
         before do
-          @document1 = create(:document, name: 'document.dwg', owner: product, order: 0)
-          @document2 = create(:document, name: 'document2.pdf', owner: product, order: 2)
-          @document3 = create(:document, name: 'document1.pdf', owner: product, order: 1)
-          @document4 = create(:document, name: 'document0.pdf', owner: product, order: 3)
-          @document5 = create(:document, name: 'document.bim', owner: product, order: 4)
+          @document1 = create(:document, name: 'document.dwg')
+          @document2 = create(:document, name: 'document2.pdf')
+          @document3 = create(:document, name: 'document1.pdf')
+          @document4 = create(:document, name: 'document0.pdf')
+          @document5 = create(:document, name: 'document.bim')
+          create(:resource_file, owner: product, attached: @document1, order: 0)
+          create(:resource_file, owner: product, attached: @document2, order: 2)
+          create(:resource_file, owner: product, attached: @document3, order: 1)
+          create(:resource_file, owner: product, attached: @document4, order: 3)
+          create(:resource_file, owner: product, attached: @document5, order: 4)
         end
 
         it 'returns a product with dwg' do
@@ -244,8 +253,8 @@ describe Api::ProductsController, type: :controller do
     end
 
     context 'with valid session' do
-      let(:uploaded_file_1) { double('uploaded_file', public_url: 'A', content_type: 'image/png') }
-      let(:uploaded_file_2) { double('uploaded_file', public_url: 'B', content_type: 'image/png') }
+      let(:uploaded_file_1) { double('uploaded_file', public_url: 'A', content_type: 'image/png', name: 'images/test_file_1.jpg') }
+      let(:uploaded_file_2) { double('uploaded_file', public_url: 'B', content_type: 'image/png', name: 'images/test_file_2.jpg') }
 
       before do
         request.headers['Authorization'] = "Bearer #{session.token}"
@@ -271,7 +280,7 @@ describe Api::ProductsController, type: :controller do
     end
 
     context 'with valid session' do
-      let(:uploaded_file_1) { double("uploaded_file", public_url: "A", content_type: 'application/pdf') }
+      let(:uploaded_file_1) { double("uploaded_file", public_url: "A", content_type: 'application/pdf', name: 'pdf_exmaple.pdf') }
 
       before do
         request.headers['Authorization'] = "Bearer #{session.token}"

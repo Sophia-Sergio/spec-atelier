@@ -15,7 +15,7 @@ describe Api::GeneralController, type: :controller do
         get :cities, params: { user_id: user.id }
 
         expect(response).to have_http_status(:ok)
-        expect(json['cities'].count).to eq(145)
+        expect(json['cities'].count).to eq(146)
       end
     end
   end
