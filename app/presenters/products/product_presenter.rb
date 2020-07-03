@@ -15,21 +15,21 @@ module Products
                :images
 
     def brand
-      resource = product.brand
+      resource = subject.brand
       { id: resource.id, name: resource.name }
     end
 
     def system
-      resource = product.subitem
+      resource = subject.subitem
       { id: resource&.id, name: resource&.name }
     end
 
     def section
-      { id: product.section.id, name: product.section.name }
+      { id: subject.section.id, name: subject.section.name }
     end
 
     def item
-      { id: product.item.id, name: product.item.name }
+      { id: subject.item.id, name: subject.item.name }
     end
 
     def dwg
@@ -50,20 +50,20 @@ module Products
       pdf_documents = documents.with_pdf
       return [] unless pdf_documents.present?
 
-      pdf_documents.positioned.map {|a| { name: a.name, url: a.url } }
+      pdf_documents.map {|a| { name: a.name, url: a.url } }
     end
 
     def images
-      product_images = product.images
+      product_images = subject.images
       return [] unless product_images.present?
 
-      product_images.positioned.map {|a| { urls: a.all_formats, order: a.order } }
+      product_images.map {|a| { urls: a.all_formats, order: a.resource_file.order } }
     end
 
     private
 
     def documents
-      @documents ||= product.documents
+      @documents ||= subject.documents
     end
   end
 end
