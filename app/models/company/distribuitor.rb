@@ -1,5 +1,4 @@
 module Company
-  class Distribuitor < Company::Company
+  class Distribuitor < Company::Common
   end
 end
-Distribuitor = Company::Distribuitor
