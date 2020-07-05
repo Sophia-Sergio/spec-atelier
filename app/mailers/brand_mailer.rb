@@ -5,7 +5,7 @@ class BrandMailer < ApplicationMailer
     @current_user = current_user
     @form = form
     @brand = @form.brand
-    brand_email = @brand.email['main']
+    @brand_email = @brand.email['main']
     mail(to: brand_email, subject: 'Brand contact_form')
   end
 
