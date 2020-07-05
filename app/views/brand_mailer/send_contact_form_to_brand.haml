@@ -1,5 +1,5 @@
-- LOGO = "./assests/logo.spec.png"
-- ICON_MESSAGE = "./assests/icon-message.png"
+- logo = "./assests/logo.spec.png"
+- icon_message = "./assests/icon-message.png"
 
 !!! 5
 %html
@@ -9,9 +9,9 @@
   %body
     .container
       .header
-        %img.logo{:src => $LOGO, :data => "logo"}
+        %img.logo{:src => logo, :data => "logo"}
       %section.message-container
-        %img.message-icon{:src => $ICON_MESSAGE, :data => 'icon message'}
+        %img.message-icon{:src => icon_message, :data => 'icon message'}
         .title Tienes un mensaje de un cliente
         .subtitle Responde lo más pronto posible, estos son los datos del cliente
         .client-message-container
