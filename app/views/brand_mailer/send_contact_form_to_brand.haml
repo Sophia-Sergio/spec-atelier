@@ -1,35 +1,34 @@
 
 - if request.path_info == './assests/main'
-    %link{:rel => :stylesheet, :type => :"text/css", :href => "./assests/main"}
+ %link{:rel => :stylesheet, :type => :"text/css", :href => "./assests/main"}
 - if request.path_info == '/send_contact_form_to_brand'
-    %link{:rel => :stylesheet, :type => :"text/css", :href => "./send_contact_form_to_brand"}
+ %link{:rel => :stylesheet, :type => :"text/css", :href => "./send_contact_form_to_brand"}
 
 =LOGO "./assests/logo.spec.png"
 =ICON_MESSAGE "./assests/icon-message.png"
 
 !!! 5
 %html
-  %body
-    .container
-      .header
-        %img.logo{:src => LOGO, :data => 'logo'} 
-      %section.message-container
-        %img.message-icon{:src => ICON_MESSAGE, :data => 'iccon message'}
-      .title Tienes un mensaje de un cliente
-      .subtitle Responde lo más pronto posible, estos son los datos del cliente
-      .client-message-container
-        %img.client-message-label Este es el mensaje del cliente:
-        .client-message-content
-          .client-message-text
-    .footer
-    .contact-items
-      .contact-item
-        %img.contact-icon
-        .contact-text contacto@specatelier.com
-      .contact-item
-        %img.contact-icon
-        .contact-text +56 9 8765 4321
-      .contact-item
-        .contact-text Siguenos en
-        %img.contact-icon
-      .contact-item
+ %body
+ .container
+  .header
+   %img.logo{:src => LOGO, :data => 'logo'} 
+  %section.message-container
+	 %img.message-icon{:src => ICON_MESSAGE, :data => 'iccon message'}
+	.title Tienes un mensaje de un cliente
+	.subtitle Responde lo más pronto posible, estos son los datos del cliente
+  .client-message-container
+   %img.client-message-label Este es el mensaje del cliente:
+   .client-message-content
+    .client-message-text
+  .footer
+   .contact-items
+    .contact-item
+     %img.contact-icon
+     .contact-text contacto@specatelier.com
+    .contact-item
+     %img.contact-icon
+     .contact-text +56 9 8765 4321
+    .contact-item
+     .contact-text Siguenos en
+     %img.contact-icon
