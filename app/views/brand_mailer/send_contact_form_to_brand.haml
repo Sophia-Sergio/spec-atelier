@@ -1,6 +1,6 @@
 
 - if request.path_info == './assests/main' 
-  %link{:rel => 'stylesheet', :type => 'text/css', :href => './assests/main' }
+  %link{:rel => "stylesheet", :type => "text/css", :href => "./assests/main" }
 - if request.path_info == './send_contact_form_to_brand' 
   %link{:rel => "stylesheet", :type => "text/css", :href => "./send_contact_form_to_brand" }
 
@@ -12,7 +12,7 @@
   %body
     .container
       .header
-        %img.logo{:src => LOGO, :data => 'logo'}
+        %img.logo{:src => LOGO, :data => "logo"}
       %section.message-container
         %img.message-icon{:src => ICON_MESSAGE, :data => 'icon message'}
         .title Tienes un mensaje de un cliente
