@@ -1,6 +1,8 @@
 
-- if request.path_info == './assests/main' %link{:rel => 'stylesheet', :type => 'text/css', :href => './assests/main' }
-- if request.path_info == './send_contact_form_to_brand' %link{:rel => "stylesheet", :type => "text/css", :href => "./send_contact_form_to_brand" }
+- if request.path_info == './assests/main' 
+  %link{:rel => 'stylesheet', :type => 'text/css', :href => './assests/main' }
+- if request.path_info == './send_contact_form_to_brand' 
+  %link{:rel => "stylesheet", :type => "text/css", :href => "./send_contact_form_to_brand" }
 
 =LOGO "./assests/logo.spec.png"
 =ICON_MESSAGE "./assests/icon-message.png"
