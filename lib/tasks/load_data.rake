@@ -17,10 +17,11 @@ namespace :db do
       load_data
     end
 
-    task images: :environment do
-      reset_images
+    task images_and_documents: :environment do
+      reset_images_and_files
       process_product_images
       process_brand_images
+      process_product_documents
       sh 'rm config/google_storage_config.json'
       sh 'rm config/google_drive_config.json'
     end
@@ -31,10 +32,25 @@ namespace :db do
       end
     end
 
-    tasks = Rake.application.tasks.select {|a| a if ['db:load:tables', 'db:load:images'].include?(a.to_s) }
+    tasks = Rake.application.tasks.select do |task|
+      task if ['db:load:tables', 'db:load:images_and_documents'].include?(task.to_s)
+    end
     tasks.each {|task| task.enhance [:before_hook] }
 
     private
+
+    def process_product_documents
+      print "Seeding product documents..."
+      select_sheet('product') do |product_params|
+        next if product_params[:files].blank?
+
+        documents = product_params[:files].split(',').map {|a| a.gsub('/','_').strip }
+        product = Product.find(product_params[:id])
+        documents.each {|document| attach_document(document, product) }
+      rescue StandardError => e
+        puts e
+      end
+    end
 
     def process_product_images
       print "Seeding product images..."
@@ -124,6 +140,16 @@ namespace :db do
       end
     end
 
+    def attach_document(document_name, owner)
+      stored_file = storage_bucket.file("documents/#{document_name}")
+      if stored_file.present?
+        document = Attached::Document.create!(name: File.basename(stored_file.name), url: stored_file.public_url )
+        Attached::ResourceFile.create!(owner: owner, attached: document, kind: 'product_document')
+      else
+        puts "document #{document_name} not found"
+      end
+    end
+
     def create_resourse_file(image, owner, kind, index)
       Attached::ResourceFile.create!(owner: owner, attached: image, order: index, kind: kind)
     end
@@ -165,7 +191,7 @@ namespace :db do
       Company::Common.connection
     end
 
-    def reset_images
+    def reset_images_and_files
       Attached::ResourceFile.delete_all
       Attached::File.delete_all
       ActiveRecord::Base.connection.reset_pk_sequence!('attached_files')
@@ -173,113 +199,112 @@ namespace :db do
     end
 
 
-  def class_name(name)
-    case name
-    when 'brand'
-      Company::Brand
-    else
-      name.camelize.constantize
-    end
-  end
-
-  def empty_row?(index, row)
-    index.zero? || row.cells.first.nil? || row.cells.first&.value.nil?
-  end
-
-  def formatted_params(row)
-    values = row.cells.map {|a| a&.value }.map {|item| array_param(item) }
-    @keys.zip(values).to_h
-  end
-
-  def array_param(param)
-    case true
-    when array_only?(param) then removed_parenthesis_array(param).map(&:to_i)
-    when array_with_hashes?(param)
-      array = removed_parenthesis_array(param).map {|string| hash_converter(string) }
-      recursive_array_shift(array)
-    when hash_only?(param) then hash_converter(param)
-    else param
-    end
-  end
-
-  def recursive_array_shift(array)
-    @array ||= []
-    if array.count == 0
-      new_array = @array
-      @array = []
-      return new_array
-    else
-      data = array.shift(2)
-      @array << data[0].merge(data[1])
-      recursive_array_shift(array)
-    end
-  end
-
-  def hash_converter(string)
-    value = removed_parenthesis_array(string)
-    Hash[
-      value.collect do |i|
-        [
-          i.split(':').first.to_sym,
-          convert_to_integer_or_string(i.split(':').second + (i.split(':').third || ''))
-        ]
+    def class_name(name)
+      case name
+      when 'brand'
+        Company::Brand
+      else
+        name.camelize.constantize
       end
-    ]
-  end
-
-  def convert_to_integer_or_string(string)
-    is_number?(string) ? string.to_i : string
-  end
-
-  def is_number? string
-    true if Float(string) rescue false
-  end
-
-  def array_only? param
-    param.try(:include?, '[') && !param.try(:include?, '{')
-  end
-
-  def array_with_hashes? param
-    param.try(:include?, '[') && param.try(:include?, '{')
-  end
-
-  def hash_only? param
-    !param.try(:include?, '[') && param.try(:include?, '{')
-  end
-
-  def removed_parenthesis_array(param)
-    param.gsub(/["#{Regexp.escape('[]{} ')}"]/, '').split(',')
-  end
-
-  def storage_bucket
-    @storage_bucket ||= begin
-      File.open('config/google_storage_config.json', 'w') {|f| f.write(ENV['GOOGLE_APPLICATION_CREDENTIALS']) }
-      storage = Google::Cloud::Storage.new(
-        project_id:  'spec-atelier',
-        credentials: 'config/google_storage_config.json'
-      )
-      storage.bucket(ENV['GOOGLE_BUCKET_IMAGES'])
     end
-  end
 
-  def google_drive_session
-    @google_drive_session ||= begin
-      File.open('config/google_drive_config.json', 'w') {|f| f.write(ENV['GOOGLE_DRIVE_CONFIG']) }
-      GoogleDrive::Session.from_config('config/google_drive_config.json')
+    def empty_row?(index, row)
+      index.zero? || row.cells.first.nil? || row.cells.first&.value.nil?
     end
-  end
 
-  def download_excel_from_google_drive
-    file = google_drive_session.file_by_title('bd.xlsx')
-    file.download_to_file("lib/data/bd.xlsx")
-    load_excel('bd.xlsx')
-  end
+    def formatted_params(row)
+      values = row.cells.map {|a| a&.value }.map {|item| array_param(item) }
+      @keys.zip(values).to_h
+    end
 
-  def reset(table_name)
-    database_connection
-    class_name(table_name).delete_all
-    ActiveRecord::Base.connection.reset_pk_sequence!(table_name.pluralize)
-  end
+    def array_param(param)
+      case true
+      when array_only?(param) then removed_parenthesis_array(param).map(&:to_i)
+      when array_with_hashes?(param)
+        array = removed_parenthesis_array(param).map {|string| hash_converter(string) }
+        recursive_array_shift(array)
+      when hash_only?(param) then hash_converter(param)
+      else param
+      end
+    end
 
+    def recursive_array_shift(array)
+      @array ||= []
+      if array.count == 0
+        new_array = @array
+        @array = []
+        return new_array
+      else
+        data = array.shift(2)
+        @array << data[0].merge(data[1])
+        recursive_array_shift(array)
+      end
+    end
+
+    def hash_converter(string)
+      value = removed_parenthesis_array(string)
+      Hash[
+        value.collect do |i|
+          [
+            i.split(':').first.to_sym,
+            convert_to_integer_or_string(i.split(':').second + (i.split(':').third || ''))
+          ]
+        end
+      ]
+    end
+
+    def convert_to_integer_or_string(string)
+      is_number?(string) ? string.to_i : string
+    end
+
+    def is_number? string
+      true if Float(string) rescue false
+    end
+
+    def array_only? param
+      param.try(:include?, '[') && !param.try(:include?, '{')
+    end
+
+    def array_with_hashes? param
+      param.try(:include?, '[') && param.try(:include?, '{')
+    end
+
+    def hash_only? param
+      !param.try(:include?, '[') && param.try(:include?, '{')
+    end
+
+    def removed_parenthesis_array(param)
+      param.gsub(/["#{Regexp.escape('[]{} ')}"]/, '').split(',')
+    end
+
+    def storage_bucket
+      @storage_bucket ||= begin
+        File.open('config/google_storage_config.json', 'w') {|f| f.write(ENV['GOOGLE_APPLICATION_CREDENTIALS']) }
+        storage = Google::Cloud::Storage.new(
+          project_id:  'spec-atelier',
+          credentials: 'config/google_storage_config.json'
+        )
+        storage.bucket(ENV['GOOGLE_BUCKET_IMAGES'])
+      end
+    end
+
+    def google_drive_session
+      @google_drive_session ||= begin
+        File.open('config/google_drive_config.json', 'w') {|f| f.write(ENV['GOOGLE_DRIVE_CONFIG']) }
+        GoogleDrive::Session.from_config('config/google_drive_config.json')
+      end
+    end
+
+    def download_excel_from_google_drive
+      file = google_drive_session.file_by_title('bd.xlsx')
+      file.download_to_file("lib/data/bd.xlsx")
+      load_excel('bd.xlsx')
+    end
+
+    def reset(table_name)
+      database_connection
+      class_name(table_name).delete_all
+      ActiveRecord::Base.connection.reset_pk_sequence!(table_name.pluralize)
+    end
   end
 end
