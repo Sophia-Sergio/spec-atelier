@@ -1,32 +1,51 @@
-- logo = "assests/logo-spec.png"
-- icon_message = "assests/icon-message.png"
 
-!!! 5
-%html
-  %head
-    %link{:rel => "stylesheet", :type => "text/css", :href => "/assests/main.css" }
-    %link{:rel => "stylesheet", :type => "text/css", :href => "send_contact_form_to_brand.css" }
-  %body
-    .container
-      .header
-        %img.logo{:src => logo, :data => "logo"}
-      %section{:class => "message-container"}
-        %img.message-icon{:src => icon_message, :data => 'icon message'}
-        .title Tienes un mensaje de un cliente
-        .subtitle Responde lo más pronto posible, estos son los datos del cliente
-        .client-message-container
-          .client-message-label Este es el mensaje del cliente:
-          .client-message-content
-            .client-message-text
-    .footer
-      .contact-items
-        .contact-item
-          %img.contact-icon
-          .contact-text contacto@specatelier.com
-        .contact-item
-          %img.contact-icon
-          .contact-text +56 9 8765 4321
-        .contact-item
-          .contact-text Siguenos en
-          %img.contact-icon
-= yield 
+
+-# - logo = "/app/views/assests/logo-spec.png"
+-# - icon_message = "assests/icon-message.png"
+
+-# .container
+-#   .header
+-#     %img.logo{:src => logo, :data => "logo"}
+-#   %section{:class => "message-container"}
+-#     %img.message-icon{:src => icon_message, :data => 'icon message'}
+-#     .title Tienes un mensaje de un cliente
+-#     .subtitle Responde lo más pronto posible, estos son los datos del cliente
+-#     .client-message-container
+-#       .client-message-label Este es el mensaje del cliente:
+-#       .client-message-content
+-#         .client-message-text
+-# .footer
+-#   .contact-items
+-#     .contact-item
+-#       %img.contact-icon
+-#       .contact-text contacto@specatelier.com
+-#     .contact-item
+-#       %img.contact-icon
+-#       .contact-text +56 9 8765 4321
+-#     .contact-item
+-#       .contact-text Siguenos en
+      -# %img.contact-icon
+ 
+
+%table{:border => "1" :cellpadding => "0" :cellspacing => "0" :width => "100%"}
+  %tr
+    %td{:width => "260" :valign => "top"} 
+      %table{:border => "1" :cellpadding => "0" :cellspacing => "0" :width => "100%"}
+        %tr
+          %td
+            %img{:src => "" :alt => "" :width => "100%" :height => "140" :style =>"display: block;"}
+        %tr
+          %td{:style => "padding: 25px 0 0 0;"}
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. In tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in posuere mauris neque at erat.
+    
+    %td{:style => "font-size: 0; line-height: 0;" :width => "20"}
+      &nbsp;
+    
+    %td{:width => "260" :valign => "top"}
+      %table{:border => "1" :cellpadding => "0" :cellspacing => "0" :width => "100%"}
+        %tr
+          %td
+            %img{:src => "" :alt => "" :width => "100%" :height => "140" :style => "display: block;"}
+        %tr
+          %td{:style => "padding: 25px 0 0 0;"}
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. In tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in posuere mauris neque at erat.
