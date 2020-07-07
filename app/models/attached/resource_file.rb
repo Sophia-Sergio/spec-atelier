@@ -5,7 +5,7 @@ module Attached
     end
 
     belongs_to :owner, polymorphic: true, optional: true
-    validates :order, uniqueness: { scope: %i[owner kind] }, presence: true
+    validates :order, uniqueness: { scope: %i[owner kind] }, presence: true, if: -> { kind != 'product_document' }
     belongs_to :attached, class_name: 'Attached::File', foreign_key: :attached_file_id, dependent: :destroy
 
     scope :images, -> { joins(:attached).where(attached_files: { type: 'Attached::Image' }).positioned }
