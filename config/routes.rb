@@ -14,12 +14,15 @@ Rails.application.routes.draw do
 
     resources :users, only: %i[update show] do
       resources :projects
-      resources :project_specs, only: %i[] do
+      resources :project_specs, only: %i[show] do
         post 'create_text'
+        post 'create_product'
+        get 'specification'
+        resources :project_specs_blocks, only: %i[create show]
       end
     end
 
-    resources :items, only: %i[] do
+    resources :items, only: %i[index] do
       get 'products'
     end
     get 'items/:item_id/systems', to: 'items#subitems', as: :systems
@@ -27,6 +30,7 @@ Rails.application.routes.draw do
     resources :products, only: %i[show create index] do
       post 'associate_images'
       post 'associate_documents'
+      post 'contact_form'
     end
 
     resources :sections, only: %i[index] do
