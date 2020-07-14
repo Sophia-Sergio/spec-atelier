@@ -57,7 +57,7 @@ module Products
       product_images = subject.images
       return [] unless product_images.present?
 
-      product_images.map {|a| { urls: a.all_formats, order: a.resource_file.order } }
+      product_images.map {|a| { id: a.id, urls: a.all_formats, order: a.resource_file.order } }
     end
 
     private
