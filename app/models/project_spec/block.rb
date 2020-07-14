@@ -9,8 +9,7 @@ module ProjectSpec
     belongs_to :section, optional: true
     belongs_to :item, optional: true
 
-    validates :section_id, :item_id, presence: true, if: -> { spec_item.class == Product }
-    validates :section_id, presence: true, if: -> { spec_item.class == Item }
+    validates :section_id, presence: true, if: -> { spec_item.class == Item || spec_item.class == Product}
 
     before_create :set_item, if: -> { spec_item.class == Product }
     before_create :set_order, if: -> { spec_item.class != ProjectSpec::Text }
