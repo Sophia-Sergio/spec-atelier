@@ -298,4 +298,22 @@ describe Api::ProductsController, type: :controller do
       end
     end
   end
+
+  describe '#form_contact' do
+    context 'without session' do
+      before { post :contact_form, params:  { product_id: product } }
+      it_behaves_like 'an unauthorized api request'
+    end
+
+    context 'with valid session' do
+      before { request.headers['Authorization'] = "Bearer #{session.token}" }
+
+      it 'returns brand' do
+        post :contact_form, params: { product_id: product, product_contact_form: { message: 'message brand', user_phone: '+56 9 99944656' }}
+
+        expect(response).to have_http_status(:created)
+        expect(json['message']).to eq('Mensaje enviado')
+      end
+    end
+  end
 end
