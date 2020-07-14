@@ -14,6 +14,11 @@ module Api
       render json: { systems: list }
     end
 
+    def index
+      list = Item.all.order(:name).map {|item| { id: item.id, name: item.name} }
+      render json: { items: list }
+    end
+
     private
 
     def item
