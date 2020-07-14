@@ -6,9 +6,9 @@ module Api
       cities = CITIES.values.flatten
       data = {
         cities: cities,
-        project_types: project_types.sort(&name),
-        work_types: work_types,
-        room_types: room_types
+        project_types: project_types.sort_by {|a| a[:name] },
+        work_types: work_types.sort_by {|a| a[:name] },
+        room_types: room_types.sort_by {|a| a[:name] }
       }
       render json: data, status: :ok
     end

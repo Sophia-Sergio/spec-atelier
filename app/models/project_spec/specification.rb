@@ -4,20 +4,24 @@ module ProjectSpec
 
     belongs_to :project
     has_one :user, through: :project
-    has_many :specification_items, class_name: 'ProjectSpec::Item', foreign_key: :project_spec_id
+    has_many :blocks, class_name: 'ProjectSpec::Block', foreign_key: :project_spec_id
 
+    after_create :create_default_first_section # this is for the first mvp, when more section be available, this should be removed
 
-    def create_text(text, item_id, section_id)
-      text = ProjectSpec::Text.create(text: text)
-      ProjectSpec::Item.create!(
-        spec_item_type: 'ProjectSpec::Text',
-        spec_item_id: text.id,
-        user: user,
-        item_id: 1,
-        section_id: section_id,
-        project_spec: self
-      )
+    def create_text(params)
+      text = ProjectSpec::Text.create!(text: params[:text], project_spec_block_id: params[:block])
+      blocks.create!(spec_item: text)
       text
+    end
+
+    def create_product(params)
+      product = Product.find(params[:product])
+      blocks.create!(spec_item: product, section_id: params[:section], item_id: params[:item])
+      product
+    end
+
+    def create_default_first_section
+      blocks.create!(spec_item: Section.find_by(name: 'Terminación'))
     end
   end
 end

@@ -10,10 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_30_220148) do
+ActiveRecord::Schema.define(version: 2020_07_13_015250) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "hstore"
+  enable_extension "pgcrypto"
   enable_extension "plpgsql"
 
   create_table "addresses", force: :cascade do |t|
@@ -49,17 +50,6 @@ ActiveRecord::Schema.define(version: 2020_06_30_220148) do
     t.index ["owner_type", "owner_id"], name: "index_attached_resource_files_on_owner_type_and_owner_id"
   end
 
-  create_table "brand_contact_forms", force: :cascade do |t|
-    t.bigint "company_id", null: false
-    t.bigint "user_id", null: false
-    t.string "user_phone"
-    t.string "message"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["company_id"], name: "index_brand_contact_forms_on_company_id"
-    t.index ["user_id"], name: "index_brand_contact_forms_on_user_id"
-  end
-
   create_table "companies", force: :cascade do |t|
     t.string "name"
     t.string "description"
@@ -71,6 +61,19 @@ ActiveRecord::Schema.define(version: 2020_06_30_220148) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.hstore "social_media", default: {}, null: false
+  end
+
+  create_table "contact_forms", force: :cascade do |t|
+    t.string "owner_type"
+    t.bigint "owner_id"
+    t.bigint "user_id", null: false
+    t.string "user_phone"
+    t.string "message"
+    t.string "type"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["owner_type", "owner_id"], name: "index_contact_forms_on_owner_type_and_owner_id"
+    t.index ["user_id"], name: "index_contact_forms_on_user_id"
   end
 
   create_table "items", force: :cascade do |t|
@@ -89,6 +92,15 @@ ActiveRecord::Schema.define(version: 2020_06_30_220148) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["category"], name: "index_lookup_tables_on_category"
+  end
+
+  create_table "product_contact_forms", force: :cascade do |t|
+    t.bigint "product_id", null: false
+    t.string "text"
+    t.string "phone"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["product_id"], name: "index_product_contact_forms_on_product_id"
   end
 
   create_table "products", force: :cascade do |t|
@@ -111,25 +123,27 @@ ActiveRecord::Schema.define(version: 2020_06_30_220148) do
     t.index ["subitem_id"], name: "index_products_on_subitem_id"
   end
 
-  create_table "project_spec_items", force: :cascade do |t|
+  create_table "project_spec_blocks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "spec_item_type"
-    t.integer "spec_item_id"
+    t.bigint "spec_item_id"
     t.bigint "project_spec_id", null: false
-    t.bigint "user_id", null: false
+    t.integer "order", default: 0, null: false
+    t.bigint "section_id"
+    t.bigint "item_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.bigint "section_id", null: false
-    t.bigint "item_id", null: false
-    t.index ["item_id"], name: "index_project_spec_items_on_item_id"
-    t.index ["project_spec_id"], name: "index_project_spec_items_on_project_spec_id"
-    t.index ["section_id"], name: "index_project_spec_items_on_section_id"
-    t.index ["user_id"], name: "index_project_spec_items_on_user_id"
+    t.index ["item_id"], name: "index_project_spec_blocks_on_item_id"
+    t.index ["project_spec_id"], name: "index_project_spec_blocks_on_project_spec_id"
+    t.index ["section_id"], name: "index_project_spec_blocks_on_section_id"
+    t.index ["spec_item_type", "spec_item_id"], name: "index_project_spec_blocks_on_spec_item_type_and_spec_item_id"
   end
 
   create_table "project_spec_texts", force: :cascade do |t|
     t.string "text", null: false
+    t.uuid "project_spec_block_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["project_spec_block_id"], name: "index_project_spec_texts_on_project_spec_block_id"
   end
 
   create_table "project_specs", force: :cascade do |t|
@@ -184,15 +198,6 @@ ActiveRecord::Schema.define(version: 2020_06_30_220148) do
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
-  create_table "spec_texts", force: :cascade do |t|
-    t.bigint "project_id", null: false
-    t.string "title"
-    t.string "description"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["project_id"], name: "index_spec_texts_on_project_id"
-  end
-
   create_table "subitems", force: :cascade do |t|
     t.string "name"
     t.bigint "item_id", null: false
@@ -225,19 +230,18 @@ ActiveRecord::Schema.define(version: 2020_06_30_220148) do
   end
 
   add_foreign_key "attached_resource_files", "attached_files"
-  add_foreign_key "brand_contact_forms", "companies"
-  add_foreign_key "brand_contact_forms", "users"
+  add_foreign_key "contact_forms", "users"
   add_foreign_key "items", "sections", on_delete: :cascade
+  add_foreign_key "product_contact_forms", "products"
   add_foreign_key "products", "companies", on_delete: :cascade
   add_foreign_key "products", "items", on_delete: :cascade
   add_foreign_key "products", "subitems", on_delete: :cascade
-  add_foreign_key "project_spec_items", "items"
-  add_foreign_key "project_spec_items", "project_specs"
-  add_foreign_key "project_spec_items", "sections"
-  add_foreign_key "project_spec_items", "users"
+  add_foreign_key "project_spec_blocks", "items"
+  add_foreign_key "project_spec_blocks", "project_specs"
+  add_foreign_key "project_spec_blocks", "sections"
+  add_foreign_key "project_spec_texts", "project_spec_blocks"
   add_foreign_key "project_specs", "projects"
   add_foreign_key "projects", "users"
   add_foreign_key "sessions", "users"
-  add_foreign_key "spec_texts", "projects"
   add_foreign_key "subitems", "items", on_delete: :cascade
 end

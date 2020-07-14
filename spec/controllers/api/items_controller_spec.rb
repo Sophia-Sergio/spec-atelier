@@ -27,4 +27,20 @@ describe Api::ItemsController, type: :controller do
       end
     end
   end
+
+  describe '#index' do
+    context 'without session' do
+      before { get :index, params: { user_id: no_logged_user.id, item_id: item2} }
+      it_behaves_like 'an unauthorized api request'
+    end
+
+    it 'returns list of products that belongs to item' do
+      request.headers['Authorization'] = "Bearer #{session.token}"
+      create_list(:item, 2)
+      get :index
+
+      expect(response).to have_http_status(:ok)
+      expect(json['items'].count).to eq(2)
+    end
+  end
 end

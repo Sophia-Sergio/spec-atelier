@@ -5,7 +5,7 @@ describe Api::ProjectsController, type: :controller do
   end
 
   let(:user)           { create(:user) }
-  let(:user2)           { create(:user) }
+  let(:user2)          { create(:user) }
   let(:no_logged_user) { create(:user) }
   let(:session)        { create(:session, user: user, token: session_token(user)) }
   let!(:project1)      { create(:project, name: 'zbc abd aci', user: user) }
@@ -101,7 +101,8 @@ describe Api::ProjectsController, type: :controller do
     end
 
     context 'with valid session' do
-      it 'creates a project' do
+      before { create(:section, name: 'Terminación') }
+      it 'creates a project with specification' do
         request.headers['Authorization'] = "Bearer #{session.token}"
         post :create, params: { user_id: user.id, project: { name: 'fake project', project_type: 'real_state', work_type: 'new_building'  } }
 
@@ -109,6 +110,8 @@ describe Api::ProjectsController, type: :controller do
         expect(Project.last.user.id).to eq(user.id)
         expect(response).to have_http_status(:created)
         expect(json['project']['name']).to eq('fake project')
+        expect(Project.last.specification.present?).to eq(true)
+        expect(Project.last.specification.blocks.first.spec_item.name).to eq('Terminación')
       end
     end
   end

@@ -3,7 +3,7 @@ describe Api::UsersController, type: :controller do
   let(:user2) { create(:user) }
   let!(:session) { create(:session, user: current_user, token: session_token(current_user)) }
 
-  USER_EXPECTED_KEYS ||= %w[id email jwt first_name last_name birthday office profile_image]
+  USER_EXPECTED_KEYS ||= %w[id email jwt first_name last_name birthday office profile_image projects_count]
 
   describe '#update' do
     describe 'when  user logged in' do
@@ -66,6 +66,7 @@ describe Api::UsersController, type: :controller do
 
       describe 'when user exists' do
         it 'shows the resource' do
+          create_list(:project, 3, user: user2)
           current_user.add_role :superadmin
           get :show, params: { id: user2 }
 
@@ -73,6 +74,7 @@ describe Api::UsersController, type: :controller do
           expect(json['user'].keys).to match_array(USER_EXPECTED_KEYS)
           expect(json['user']['first_name']).to eq(user2.first_name)
           expect(json['user']['last_name']).to eq(user2.last_name)
+          expect(json['user']['projects_count']).to eq(3)
         end
       end
 

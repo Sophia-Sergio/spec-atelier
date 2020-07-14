@@ -1,0 +1,2 @@
+class ProductContactForm < ApplicationRecord
+end
