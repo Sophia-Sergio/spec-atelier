@@ -3,6 +3,7 @@ class Project < ApplicationRecord
   include PgSearch::Model
 
   belongs_to :user
+  has_one :specification, class_name: 'ProjectSpec::Specification'
   default_scope { where(soft_deleted: false) }
   enum status: { active: 1, closed: 0 }
   enum visibility: { public_available: 0, creator_only: 1 }
@@ -13,4 +14,10 @@ class Project < ApplicationRecord
 
   scope :by_project_type, ->(types)    { where(project_type: types) }
   scope :by_work_type,    ->(types)    { where(work_type: types) }
+
+  after_create :create_specification
+
+  def create_specification
+    ProjectSpec::Specification.create(project: self)
+  end
 end
