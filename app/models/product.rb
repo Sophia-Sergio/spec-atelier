@@ -8,6 +8,7 @@ class Product < ApplicationRecord
   has_one :section, through: :item
   has_many :files, as: :owner, class_name: 'Attached::ResourceFile'
   validates :name, :brand, :item, :long_desc, presence: true
+  has_many :contact_forms, as: :owner, class_name: 'ContactForm::ContactForm'
 
   pg_search_scope :by_keyword,
     against: %i[name short_desc long_desc reference],
@@ -33,5 +34,4 @@ class Product < ApplicationRecord
     documents = files.documents&.pluck(:attached_file_id)
     Attached::Document.where(id: documents).joins(:resource_file).order('attached_resource_files.order')
   end
-
 end
