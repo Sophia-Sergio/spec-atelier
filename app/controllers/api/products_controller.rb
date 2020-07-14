@@ -25,6 +25,13 @@ module Api
       end
     end
 
+    def contact_form
+      contact_form = product.contact_forms.create(contact_form_params.merge(user_id: current_user.id))
+      ProductMailer.send_contact_form_to_brand(current_user, contact_form).deliver
+      ProductMailer.send_contact_form_to_brand(current_user, contact_form).deliver
+      render json: { form: contact_form, message: 'Mensaje enviado' }, status: :created
+    end
+
     def associate_images
       GoogleStorage.new(product, images_params[:images]).perform
       render json: { message: 'Image attached'}, status: :created
@@ -56,6 +63,10 @@ module Api
     def product_params
       permitted = %i[name item_id system_id brand long_desc short_desc price project_type work_type room_type product_id]
       params.require(:product).permit(permitted)
+    end
+
+    def contact_form_params
+      params.require(:product_contact_form).permit(:user_phone, :message)
     end
   end
 end
