@@ -82,15 +82,15 @@
         %img{:src => "https://firebasestorage.googleapis.com/v0/b/spec-atelier/o/spec_images%2Fwelcome-img.jpg?alt=media", :style => "margin:0; padding:0; border:none; display:block; max-width: 136px; max-height: 122px;"}/
       %td{:align => "left"}
         %p{:style => "font-size: 10px; letter-spacing: 0.83px;"}
-          = "#{@product.name} / #{@product.short_des}"
+          = "#{@product.try(:name)} / #{@product.try(:short_des)}"
         / PRODUCT METRICS  HERE
         / <p style="font-size: 11px; letter-spacing: 0.92px;"></p>
         %p{:style => "font-size: 10px; letter-spacing: 0.83px; color: #757575; min-height: 42px;"}
           = @product.description
         %p{:style => "font-size: 10px; letter-spacing: 0.83px; margin: 0;"}
-          = "Sistema  constructivo: #{@product.system.name}"
+          = "Sistema  constructivo: #{@product.try(:system).try(:name)}"
         %p{:style => "font-size: 10px; letter-spacing: 0.83px;"}
-          = "Referencia #{@product.brand.name}"
+          = "Referencia #{@product.try(:brand).try(:name)}"
 
   / SPACE
   %table{:border => "0", :cellpadding => "0", :width => "100%"}
@@ -113,7 +113,6 @@
     %tr
       %td{:height => "80"}
 
-         
   / FOOTER
   %table{:align => "center", :bgcolor => "#08262c", :border => "0", :cellpadding => "20", :height => "72", :width => "100%"}
     %tr
