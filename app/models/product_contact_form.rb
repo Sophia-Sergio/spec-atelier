@@ -1,2 +1,0 @@
-class ProductContactForm < ApplicationRecord
-end
