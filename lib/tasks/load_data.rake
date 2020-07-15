@@ -96,6 +96,7 @@ namespace :db do
         sheet_name = sheet.sheet_name
         reset(sheet_name)
         iterate_sheet_rows(sheet_name, sheet)
+        reset_pk_sequence(sheet_name)
       end
     end
 
@@ -304,6 +305,10 @@ namespace :db do
     def reset(table_name)
       database_connection
       class_name(table_name).delete_all
+      reset_pk_sequence(table_name)
+    end
+
+    def reset_pk_sequence(table_name)
       ActiveRecord::Base.connection.reset_pk_sequence!(table_name.pluralize)
     end
   end

@@ -1,4 +1,4 @@
-module ContactForm
+module Form
   class ContactForm < ApplicationRecord
     self.table_name = :contact_forms
 

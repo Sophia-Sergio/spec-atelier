@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_13_015250) do
+ActiveRecord::Schema.define(version: 2020_06_30_220148) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "hstore"
@@ -92,15 +92,6 @@ ActiveRecord::Schema.define(version: 2020_07_13_015250) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["category"], name: "index_lookup_tables_on_category"
-  end
-
-  create_table "product_contact_forms", force: :cascade do |t|
-    t.bigint "product_id", null: false
-    t.string "text"
-    t.string "phone"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["product_id"], name: "index_product_contact_forms_on_product_id"
   end
 
   create_table "products", force: :cascade do |t|
@@ -232,7 +223,6 @@ ActiveRecord::Schema.define(version: 2020_07_13_015250) do
   add_foreign_key "attached_resource_files", "attached_files"
   add_foreign_key "contact_forms", "users"
   add_foreign_key "items", "sections", on_delete: :cascade
-  add_foreign_key "product_contact_forms", "products"
   add_foreign_key "products", "companies", on_delete: :cascade
   add_foreign_key "products", "items", on_delete: :cascade
   add_foreign_key "products", "subitems", on_delete: :cascade
