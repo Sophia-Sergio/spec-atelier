@@ -3,6 +3,15 @@ def console_message(message, status)
   puts status ? "success: #{message}" : "error: #{message}"
 end
 
+ContactForm::ContactForm.delete_all
+puts 'contact forms deleted'
+
+ProjectSpec::Block.delete_all
+puts 'blocks deleted'
+
+ProjectSpec::Specification.delete_all
+puts 'specifications deleted'
+
 Project.delete_all
 puts 'projects deleted'
 
