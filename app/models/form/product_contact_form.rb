@@ -1,4 +1,4 @@
-module ContactForm
+module Form
   class ProductContactForm < ApplicationRecord
 
   end

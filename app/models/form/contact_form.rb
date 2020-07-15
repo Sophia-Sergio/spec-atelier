@@ -1,5 +1,5 @@
-module ContactForm
-  class ContactForm < ApplicationRecord
+module Form
+  class ContactForm < Form::ContactForm
     self.table_name = :contact_forms
 
     belongs_to :owner, polymorphic: true
