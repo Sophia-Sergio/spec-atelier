@@ -1,5 +1,5 @@
 module Form
-  class ProductContactForm < ApplicationRecord
+  class ProductContactForm < Form::ContactForm
 
   end
 
