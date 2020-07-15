@@ -4,7 +4,7 @@ class BrandMailer < ApplicationMailer
   def send_contact_form_to_brand(current_user, form)
     @current_user = current_user
     @form = form
-    @brand = @form.brand
+    @brand = @form.owner
     @brand_email = @brand.email['main'] || 'jonathan.araya.m@gmail.com'
     # mail(to: @brand_email, subject: 'Brand contact_form')
     mail(to: 'jonathan.araya.m@gmail.com', subject: 'Brand contact_form')
