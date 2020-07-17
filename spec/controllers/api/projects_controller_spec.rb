@@ -31,7 +31,7 @@ describe Api::ProjectsController, type: :controller do
         expect(json['projects']['list'].first['name']).to eq(project3.name)
         expect(json['projects']['list'].second['name']).to eq(project2.name)
         expect(json['projects']['list'].third['name']).to eq(project1.name)
-        expect(json['projects']['list'].first.keys).to match_array(%w[id name project_type work_type country city delivery_date status created_at updated_at])
+        expect(json['projects']['list'].first.keys).to match_array(%w[id name project_type work_type country city delivery_date status project_spec_id created_at updated_at])
       end
       context 'by created_at asc' do
         it 'return a list of projects ordered by parameter' do
