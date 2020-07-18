@@ -46,7 +46,7 @@ module ProjectSpec
     end
 
     def item_names
-      spec_blocks.includes(:spec_item).where(spec_item_type: 'Item').map {|b| b.spec_item.name}
+      spec_blocks.includes(:spec_item).where(spec_item_type: 'Item').map {|b| b.spec_item.name }
     end
   end
 end
