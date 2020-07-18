@@ -255,7 +255,7 @@ namespace :db do
     end
 
     def convert_to_integer_or_string(string)
-      is_number?(string) ? string.to_i : string
+      is_number?(string) ? string.to_i : string.gsub('https//', 'https://')
     end
 
     def is_number? string
