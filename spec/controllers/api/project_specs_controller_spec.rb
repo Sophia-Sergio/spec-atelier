@@ -67,22 +67,32 @@ describe Api::ProjectSpecsController, type: :controller do
         expect(project_spec.blocks.find_by(order: 1).spec_item).to eq(Item.find_by(name: product1.item.name))
       end
     end
+  end
 
-    describe '#show' do
+  describe '#show' do
+    def create_product_block(product, project_spec )
+      create(:spec_block, section: product.section, item: product.item, project_spec: project_spec, spec_item: product )
+    end
+
+    before do
+      create(:section, name: 'Terminación')
+
+      @block_product1 = create_product_block(product1, project_spec)
+      @block_product2 = create_product_block(product2, project_spec)
+      @text = create(:spec_text, block_item: @block_product1 )
+      @block_text = create(:spec_block, project_spec: project_spec, spec_item: @text )
+      @block_product3 = create_product_block(product3, project_spec)
+    end
+
+    context 'without session' do
+      before { get :show, params: { id: project_spec, user_id: no_logged_user.id } }
+      it_behaves_like 'an unauthorized api request'
+    end
+
+    context 'with valid session' do
       before do
         request.headers['Authorization'] = "Bearer #{session.token}"
-
-        @block_product1 = create_product_block(product1, project_spec)
-        @block_product2 = create_product_block(product2, project_spec)
-        @text = create(:spec_text, block_item: @block_product1 )
-        @block_text = create(:spec_block, project_spec: project_spec, spec_item: @text )
-        @block_product3 = create_product_block(product3, project_spec)
-
         get :show, params: { id: project_spec, user_id: user}
-      end
-
-      def create_product_block(product, project_spec )
-        create(:spec_block, section: product.section, item: product.item, project_spec: project_spec, spec_item: product )
       end
 
       context 'project spec' do
