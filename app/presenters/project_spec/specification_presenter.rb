@@ -1,6 +1,6 @@
 module ProjectSpec
   class SpecificationPresenter < Presenter
-    will_print :id, :section, :item, :type, :order, :element
+    will_print :id, :section, :item, :type, :order, :element, :text
 
     def section
       subject.section.id
@@ -14,19 +14,18 @@ module ProjectSpec
       spec_item.class.to_s
     end
 
+    def text
+      ProjectSpec::TextPresenter.decorate(subject.text) if subject&.text&.present?
+    end
+
     def element
       decorator = case type
         when 'Product' then "Products::#{spec_item.class}Presenter".constantize.decorate(spec_item)
         else "ProjectSpec::#{spec_item.class}Presenter".constantize.decorate(spec_item)
       end
-      decorator.as_json.merge(text)
     end
 
     private
-
-    def text
-      subject.text.present? ? { text: ProjectSpec::TextPresenter.decorate(subject.text) } : {}
-    end
 
     def spec_item
       @spec_item ||= subject.spec_item

@@ -13,6 +13,7 @@ module ProjectSpec
 
     before_create :set_item, if: -> { spec_item.class == Product }
     before_create :set_order, if: -> { spec_item.class != ProjectSpec::Text }
+    after_create :reorder_blocks, if: -> { spec_item.class == Product }
 
     default_scope { where.not(spec_item_type: 'ProjectSpec::Text') }
 
@@ -20,11 +21,17 @@ module ProjectSpec
       self.order = next_order
     end
 
+    def reorder_blocks
+      high_order_blocks.each_with_index do |block, index|
+        block.update(order: order + index + 1)
+      end
+    end
+
     def set_item
       item = spec_item.item
       return if item_names.include?(item.name)
 
-      project_spec.blocks.create!(spec_item: item, section: item.section)
+      spec_blocks.create!(spec_item: item, section: item.section)
     end
 
     def text
@@ -37,12 +44,24 @@ module ProjectSpec
       project_spec.blocks
     end
 
+    def high_order_blocks
+      spec_blocks.where('project_spec_blocks.order >= ? and id <> ?', order, id)
+    end
+
     def current_max_order
       spec_blocks&.pluck(:order)&.max
     end
 
+    def current_max_order_by_item
+      spec_blocks&.where(item: spec_item.item)&.pluck(:order)&.max
+    end
+
     def next_order
-      current_max_order.present? ? current_max_order + 1 : 0
+      if spec_item.class == Product
+        current_max_order_by_item.present? ? current_max_order_by_item + 1 : current_max_order + 1
+      else
+        current_max_order.present? ? current_max_order + 1 : 0
+      end
     end
 
     def item_names

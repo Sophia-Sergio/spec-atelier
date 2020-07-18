@@ -4,10 +4,12 @@ describe Api::ProjectSpecsController, type: :controller do
   let(:session)        { create(:session, user: user, token: session_token(user)) }
   let(:section)        { create(:section) }
   let(:item)           { create(:item, section: section) }
+  let(:item2)           { create(:item, section: section) }
   let(:project_spec)   { create(:project_spec_specification) }
   let(:spec_block)     { create(:spec_block, project_spec: project_spec) }
   let(:product1)        { create(:product, item: item, section: section) }
-  let(:product2)        { create(:product, item: item, section: section) }
+  let(:product2)        { create(:product, item: item2, section: section) }
+  let(:product3)        { create(:product, item: item, section: section) }
 
   describe '#create_text' do
     before { create(:section, name: 'Terminación') }
@@ -70,20 +72,45 @@ describe Api::ProjectSpecsController, type: :controller do
       before do
         request.headers['Authorization'] = "Bearer #{session.token}"
 
-        create(:spec_block,section: product1.section, item: product1.item, project_spec: project_spec, spec_item: product1 )
-        block_product1 = create(:spec_block, section: product2.section, item: product2.item, project_spec: project_spec, spec_item: product2 )
-        text = create(:spec_text, block_item: block_product1 )
-        block_text = create(:spec_block, project_spec: project_spec, spec_item: text )
+        @block_product1 = create_product_block(product1, project_spec)
+        @block_product2 = create_product_block(product2, project_spec)
+        @text = create(:spec_text, block_item: @block_product1 )
+        @block_text = create(:spec_block, project_spec: project_spec, spec_item: @text )
+        @block_product3 = create_product_block(product3, project_spec)
 
         get :show, params: { id: project_spec, user_id: user}
+      end
+
+      def create_product_block(product, project_spec )
+        create(:spec_block, section: product.section, item: product.item, project_spec: project_spec, spec_item: product )
       end
 
       context 'project spec' do
         it 'has spec_item ordered correctly' do
           expect(json['blocks'].first['order']).to eq(0)
+          expect(json['blocks'].first['type']).to eq('Section')
+
           expect(json['blocks'].second['order']).to eq(1)
+          expect(json['blocks'].second['type']).to eq('Item')
+          expect(json['blocks'].second['element']['id']).to eq(@block_product1.item.id)
+
           expect(json['blocks'].third['order']).to eq(2)
+          expect(json['blocks'].third['type']).to eq('Product')
+          expect(json['blocks'].third['element']['id']).to eq(@block_product1.spec_item.id)
+          expect(json['blocks'].third['text']['id']).to eq(@text.id)
+
           expect(json['blocks'].fourth['order']).to eq(3)
+          expect(json['blocks'].fourth['type']).to eq('Product')
+          expect(json['blocks'].fourth['element']['id']).to eq(@block_product3.spec_item.id)
+          expect(json['blocks'].fourth['text']).to eq(nil)
+
+          expect(json['blocks'].fifth['order']).to eq(4)
+          expect(json['blocks'].fifth['type']).to eq('Item')
+          expect(json['blocks'].fifth['element']['id']).to eq(@block_product2.item.id)
+
+          expect(json['blocks'][5]['order']).to eq(5)
+          expect(json['blocks'][5]['type']).to eq('Product')
+          expect(json['blocks'][5]['element']['id']).to eq(@block_product2.spec_item.id)
         end
       end
     end
