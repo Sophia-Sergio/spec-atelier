@@ -13,6 +13,7 @@ class BrandMailer < ApplicationMailer
   def send_contact_form_to_user(current_user, form)
     @current_user = current_user
     @brand = form.owner
+    @form = form
     mail(to: @current_user.email, subject: 'Your mail was sent contact_form')
   end
 end
