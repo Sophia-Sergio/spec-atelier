@@ -14,6 +14,11 @@ module ProjectSpec
       text
     end
 
+    def remove_text(text_id)
+      text = ProjectSpec::Text.find(text_id).delete
+      blocks.unscoped.find_by(spec_item: text).delete
+    end
+
     def create_product(params)
       product = Product.find(params[:product])
       blocks.create!(spec_item: product, section_id: params[:section], item_id: params[:item])

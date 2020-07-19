@@ -17,6 +17,11 @@ module Api
       render json: { blocks: blocks }
     end
 
+    def remove_text
+      project_spec_text = project_specification.remove_text(params[:text])
+      render json: { blocks: blocks }
+    end
+
     def create_product
       product = project_specification.create_product(project_spec_block_params)
       render json: { blocks: blocks }

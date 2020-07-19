@@ -43,6 +43,33 @@ describe Api::ProjectSpecsController, type: :controller do
     end
   end
 
+  describe '#remove_text' do
+    before { create(:section, name: 'Terminación') }
+
+    context 'without session' do
+      before { delete :remove_text, params: { user_id: no_logged_user.id, project_spec_id: project_spec } }
+      it_behaves_like 'an unauthorized api request'
+    end
+
+    context 'with valid session' do
+      before do
+        request.headers['Authorization'] = "Bearer #{session.token}"
+        @block_product1 = create_product_block(product1, project_spec)
+        @block_product2 = create_product_block(product2, project_spec)
+        @text = create(:spec_text, block_item: @block_product1 )
+        create(:spec_block, spec_item: @text, project_spec: project_spec)
+      end
+
+      it 'removes a specification text' do
+        expect(project_spec.blocks.unscoped.find_by(spec_item: @text).spec_item).to eq(@text)
+
+        delete :remove_text, params: { user_id: no_logged_user.id, project_spec_id: project_spec, text: @text }
+
+        expect(project_spec.blocks.unscoped.find_by(spec_item: @text)).to eq(nil)
+      end
+    end
+  end
+
   describe '#create_product' do
     before { create(:section, name: 'Terminación') }
 
