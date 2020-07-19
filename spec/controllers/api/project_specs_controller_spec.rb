@@ -81,6 +81,7 @@ describe Api::ProjectSpecsController, type: :controller do
     context 'with valid session' do
       before do
         request.headers['Authorization'] = "Bearer #{session.token}"
+        @block_product1 = create_product_block(product1, project_spec)
 
         @text = create(:spec_text, block_item: @block_product1 )
       end
