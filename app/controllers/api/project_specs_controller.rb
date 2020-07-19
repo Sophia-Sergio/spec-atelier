@@ -43,6 +43,11 @@ module Api
       render json: { blocks: blocks, message: 'Imagen añadida' }
     end
 
+    def remove_product_image
+      project_specification.blocks.find(params[:block]).update(product_image_id: nil)
+      render json: { blocks: blocks, message: 'Imagen removida' }
+    end
+
     def show
       render json: { blocks: blocks }
     end
