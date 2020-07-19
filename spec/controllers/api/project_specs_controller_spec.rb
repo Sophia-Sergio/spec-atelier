@@ -70,7 +70,6 @@ describe Api::ProjectSpecsController, type: :controller do
     end
   end
 
-
   describe '#edit_text' do
     before { create(:section, name: 'Terminación') }
 
