@@ -17,6 +17,7 @@ Rails.application.routes.draw do
       resources :project_specs, only: %i[show] do
         post 'create_text'
         post 'create_product'
+        delete 'remove_product'
         get 'specification'
         resources :project_specs_blocks, only: %i[create show]
       end
