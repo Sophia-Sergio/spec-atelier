@@ -20,6 +20,13 @@ module ProjectSpec
       product
     end
 
+    def remove_product(block_id)
+      block = blocks.find(block_id)
+      item = block.item
+      blocks.find_by(spec_item: item).delete if blocks.where(spec_item_type: 'Product', item: block.item).count == 1
+      blocks.find(block_id).delete
+    end
+
     def create_default_first_section
       blocks.create!(spec_item: Section.find_by(name: 'Terminación'))
     end

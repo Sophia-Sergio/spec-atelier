@@ -14,21 +14,20 @@ module Api
 
     def create_text
       project_spec_text = project_specification.create_text(project_spec_block_params)
-      render json: { text: {
-                             id: project_spec_text.id,
-                             text: project_spec_text.text,
-                             block_related: project_spec_text.block_item.as_json
-                           }
-      }
+      render json: { blocks: blocks }
     end
 
     def create_product
       product = project_specification.create_product(project_spec_block_params)
-      render json: { product: product }
+      render json: { blocks: blocks }
+    end
+
+    def remove_product
+      product = project_specification.remove_product(params[:block])
+      render json: { blocks: blocks, message: 'Producto removido' }
     end
 
     def show
-      blocks = ProjectSpec::SpecificationPresenter.decorate_list(project_specification.blocks.order(:order))
       render json: { blocks: blocks }
     end
 
@@ -36,6 +35,10 @@ module Api
 
     def project_specification
       ProjectSpec::Specification.find(params[:id] || params[:project_spec_id])
+    end
+
+    def blocks
+      ProjectSpec::SpecificationPresenter.decorate_list(project_specification.blocks.order(:order))
     end
 
     def project_spec_param

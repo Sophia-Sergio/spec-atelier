@@ -11,6 +11,14 @@ describe Api::ProjectSpecsController, type: :controller do
   let(:product2)        { create(:product, item: item2, section: section) }
   let(:product3)        { create(:product, item: item, section: section) }
 
+  def create_product_block(product, project_spec )
+    create(:spec_block, section: product.section, item: product.item, project_spec: project_spec, spec_item: product )
+  end
+
+  def products_ids(blocks)
+    blocks.map {|block| block['element']['id'] if block['type'] == 'Product'}.compact
+  end
+
   describe '#create_text' do
     before { create(:section, name: 'Terminación') }
 
@@ -30,7 +38,7 @@ describe Api::ProjectSpecsController, type: :controller do
           block: spec_block.id,
         }
 
-        expect(json['text']['text']).to eq('fake text')
+        expect(json['blocks'].second['text']['text']).to eq('fake text')
       end
     end
   end
@@ -56,7 +64,7 @@ describe Api::ProjectSpecsController, type: :controller do
       end
 
       it 'creates a specification product' do
-        expect(json['product']['id']).to eq(product1.id)
+        expect(json['blocks'].third['element']['id']).to eq(product1.id)
       end
 
       it 'creates a section "Terminación" by default with order 0' do
@@ -69,11 +77,60 @@ describe Api::ProjectSpecsController, type: :controller do
     end
   end
 
-  describe '#show' do
-    def create_product_block(product, project_spec )
-      create(:spec_block, section: product.section, item: product.item, project_spec: project_spec, spec_item: product )
+  describe '#remove_product' do
+    before { create(:section, name: 'Terminación') }
+
+    context 'without session' do
+      before { delete :remove_product, params: { project_spec_id: project_spec, block: '1', user_id: no_logged_user.id } }
+      it_behaves_like 'an unauthorized api request'
     end
 
+    context 'with valid session' do
+      before { request.headers['Authorization'] = "Bearer #{session.token}" }
+
+      describe 'remove product when item has 2 products' do
+        before do
+          @block_product1 = create_product_block(product1, project_spec)
+          @block_product2 = create_product_block(product3, project_spec)
+
+          delete :remove_product, params: { project_spec_id: project_spec, user_id: user, block: @block_product1.id }
+        end
+
+        it 'returns the listwithout the removed product' do
+          expect(products_ids(json['blocks']).include? product1.id).to eq(false)
+          expect(project_spec.blocks.find_by(spec_item: product1)).to be(nil)
+        end
+
+        it 'reorders the specification items' do
+          expect(project_spec.blocks.find_by(spec_item: product3).id).to eq(@block_product2.id)
+          expect(project_spec.blocks.find_by(spec_item: product3).order).to be(3)
+        end
+
+      end
+
+      describe 'remove product and item when item has only one product' do
+        before do
+          @block_product1 = create_product_block(product1, project_spec)
+          @block_product2 = create_product_block(product2, project_spec)
+          @block_product3 = create_product_block(product3, project_spec)
+          request.headers['Authorization'] = "Bearer #{session.token}"
+
+          delete :remove_product, params: { project_spec_id: project_spec, user_id: user, block: @block_product2.id }
+        end
+
+        it 'returns the list without product removed' do
+          expect(products_ids(json['blocks']).include? product2.id).to eq(false)
+          expect(project_spec.blocks.find_by(spec_item: product2)).to be(nil)
+        end
+
+        it 'removes the item that it belongs' do
+          expect(project_spec.blocks.find_by(spec_item: product2.item)).to be(nil)
+        end
+      end
+    end
+  end
+
+  describe '#show' do
     before do
       create(:section, name: 'Terminación')
 
