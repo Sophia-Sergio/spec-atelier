@@ -22,6 +22,11 @@ module Api
       render json: { blocks: blocks }
     end
 
+    def edit_text
+      ProjectSpec::Text.find(params[:text]).update(text: params[:updated_text])
+      render json: { blocks: blocks }
+    end
+
     def create_product
       product = project_specification.create_product(project_spec_block_params)
       render json: { blocks: blocks }

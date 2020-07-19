@@ -70,6 +70,30 @@ describe Api::ProjectSpecsController, type: :controller do
     end
   end
 
+
+  describe '#edit_text' do
+    before { create(:section, name: 'Terminación') }
+
+    context 'without session' do
+      before { patch :edit_text, params: { user_id: no_logged_user.id, project_spec_id: project_spec } }
+      it_behaves_like 'an unauthorized api request'
+    end
+
+    context 'with valid session' do
+      before do
+        request.headers['Authorization'] = "Bearer #{session.token}"
+
+        @text = create(:spec_text, block_item: @block_product1 )
+      end
+
+      it 'removes a specification text' do
+        patch :edit_text, params: { user_id: no_logged_user.id, project_spec_id: project_spec, text: @text, updated_text: 'new text' }
+
+        expect(@text.reload.text).to eq('new text')
+      end
+    end
+  end
+
   describe '#create_product' do
     before { create(:section, name: 'Terminación') }
 
