@@ -14,6 +14,7 @@ module ProjectSpec
     before_create :set_item, if: -> { spec_item.class == Product }
     before_create :set_order, if: -> { spec_item.class != ProjectSpec::Text }
     after_create :reorder_blocks, if: -> { spec_item.class == Product }
+    after_destroy :reorder_blocks, if: -> { spec_item.class == Product }
 
     default_scope { where.not(spec_item_type: 'ProjectSpec::Text') }
 
