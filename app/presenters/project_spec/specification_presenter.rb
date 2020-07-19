@@ -1,6 +1,6 @@
 module ProjectSpec
   class SpecificationPresenter < Presenter
-    will_print :id, :section, :item, :type, :order, :element, :text
+    will_print :id, :section, :item, :type, :order, :element, :text, :product_block_image
 
     def section
       subject.section.id
@@ -26,7 +26,7 @@ module ProjectSpec
     end
 
     def product_block_image
-
+      subject.product_image
     end
 
     private
