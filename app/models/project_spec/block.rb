@@ -14,6 +14,7 @@ module ProjectSpec
     before_create :set_item, if: -> { spec_item.class == Product }
     before_create :set_order, if: -> { spec_item.class != ProjectSpec::Text }
     after_create :reorder_blocks, if: -> { spec_item.class == Product }
+    after_destroy :reorder_blocks, if: -> { spec_item.class == Product }
 
     default_scope { where.not(spec_item_type: 'ProjectSpec::Text') }
 
@@ -36,6 +37,14 @@ module ProjectSpec
 
     def text
       ProjectSpec::Text.find_by(block_item: self)
+    end
+
+    def product_image
+      Attached::Image.find(product_image_id) if product_image_id.present?
+    end
+
+    def product_item_block
+      spec_blocks.find_by(spec_item_type: 'Item', spec_item_id: item_id) if spec_item.class == Product
     end
 
     private

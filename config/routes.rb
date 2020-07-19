@@ -16,8 +16,14 @@ Rails.application.routes.draw do
       resources :projects
       resources :project_specs, only: %i[show] do
         post 'create_text'
+        delete 'remove_text'
         post 'create_product'
+        delete 'remove_product'
         get 'specification'
+        patch 'edit_text'
+        patch 'add_product_image'
+        patch 'remove_product_image'
+        patch 'reorder_blocks'
         resources :project_specs_blocks, only: %i[create show]
       end
     end

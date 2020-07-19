@@ -1,6 +1,6 @@
 module ProjectSpec
   class SpecificationPresenter < Presenter
-    will_print :id, :section, :item, :type, :order, :element, :text
+    will_print :id, :section, :item, :type, :order, :element, :text, :product_block_image
 
     def section
       subject.section.id
@@ -23,6 +23,10 @@ module ProjectSpec
         when 'Product' then "Products::#{spec_item.class}Presenter".constantize.decorate(spec_item)
         else "ProjectSpec::#{spec_item.class}Presenter".constantize.decorate(spec_item)
       end
+    end
+
+    def product_block_image
+      subject&.product_image&.medium_format if subject&.product_image.present?
     end
 
     private

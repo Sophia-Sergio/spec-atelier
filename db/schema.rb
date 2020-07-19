@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_30_220148) do
+ActiveRecord::Schema.define(version: 2020_07_19_042137) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "hstore"
@@ -123,6 +123,7 @@ ActiveRecord::Schema.define(version: 2020_06_30_220148) do
     t.bigint "item_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "product_image_id"
     t.index ["item_id"], name: "index_project_spec_blocks_on_item_id"
     t.index ["project_spec_id"], name: "index_project_spec_blocks_on_project_spec_id"
     t.index ["section_id"], name: "index_project_spec_blocks_on_section_id"
