@@ -43,6 +43,10 @@ module ProjectSpec
       Attached::Image.find(product_image_id) if product_image_id.present?
     end
 
+    def product_item_block
+      spec_blocks.find_by(spec_item_type: 'Item', spec_item_id: item_id) if spec_item.class == Product
+    end
+
     private
 
     def spec_blocks

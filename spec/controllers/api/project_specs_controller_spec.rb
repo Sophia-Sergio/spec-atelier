@@ -283,4 +283,44 @@ describe Api::ProjectSpecsController, type: :controller do
       end
     end
   end
+
+  describe '#reorder_blocks' do
+    before { create(:section, name: 'Terminación') }
+
+    context 'without session' do
+      before { patch :reorder_blocks, params: { user_id: no_logged_user.id, project_spec_id: project_spec } }
+      it_behaves_like 'an unauthorized api request'
+    end
+
+    context 'with valid session' do
+      before do
+        block_product1 = create_product_block(product1, project_spec)
+        block_product2 = create_product_block(product2, project_spec)
+        block_product3 = create_product_block(product3, project_spec)
+
+        block_section  = project_spec.blocks.first
+        block_item1    = block_product1.product_item_block
+        block_item2    = block_product2.product_item_block
+
+        @ordered_block_ids = [block_section.id, block_item1.id, block_product3.id, block_product1.id, block_product2.id, block_item2.id].freeze
+
+        @blocks         = [
+          { block: block_section.id, type: block_section.spec_item_type, product_item: block_section.item },
+          { block: block_item1.id, type: block_item1.spec_item_type, product_item: block_item1.item },
+          { block: block_product3.id, type: block_product3.spec_item_type, product_item: block_product3.item.id },
+          { block: block_product1.id, type: block_product1.spec_item_type, product_item: block_product1.item.id },
+          { block: block_product2.id, type: block_product2.spec_item_type, product_item: block_product1.item.id },
+          { block: block_item2.id, type: block_item2.spec_item_type, product_item: block_item2.item },
+        ]
+
+        request.headers['Authorization'] = "Bearer #{session.token}"
+
+        patch :reorder_blocks, params: { project_spec_id: project_spec, user_id: user, blocks: @blocks }
+      end
+
+      it 'creates a specification product' do
+        expect(json['blocks'].map{|block| block['id'] }).to eq(@ordered_block_ids)
+      end
+    end
+  end
 end

@@ -35,5 +35,21 @@ module ProjectSpec
     def create_default_first_section
       blocks.create!(spec_item: Section.find_by(name: 'Terminación'))
     end
+
+    def reorder_blocks(block_params)
+      block_params.each_with_index do |block_param, index|
+        block = blocks.find(block_param[:block])
+        update_order(block, block_param, index)
+      end
+    end
+
+    private
+
+    def update_order(block, block_param, index)
+      case block_param[:type]
+      when 'Product' then block.update(order: index, item_id: block_param[:product_item])
+      else  block.update(order: index)
+      end
+    end
   end
 end

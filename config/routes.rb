@@ -23,6 +23,7 @@ Rails.application.routes.draw do
         patch 'edit_text'
         patch 'add_product_image'
         patch 'remove_product_image'
+        patch 'reorder_blocks'
         resources :project_specs_blocks, only: %i[create show]
       end
     end

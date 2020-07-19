@@ -48,6 +48,11 @@ module Api
       render json: { blocks: blocks, message: 'Imagen removida' }
     end
 
+    def reorder_blocks
+      project_specification.reorder_blocks(params[:blocks])
+      render json: { blocks: blocks, message: 'Orden Actualizado' }
+    end
+
     def show
       render json: { blocks: blocks }
     end
