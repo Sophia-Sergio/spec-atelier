@@ -39,6 +39,10 @@ module ProjectSpec
       ProjectSpec::Text.find_by(block_item: self)
     end
 
+    def product_image
+      Attached::Image.find(product_image_id) if product_image_id.present?
+    end
+
     private
 
     def spec_blocks

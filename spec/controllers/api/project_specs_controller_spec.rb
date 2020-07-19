@@ -232,4 +232,29 @@ describe Api::ProjectSpecsController, type: :controller do
       end
     end
   end
+
+  describe '#add_product_image' do
+    before { create(:section, name: 'Terminación') }
+
+    context 'without session' do
+      before { patch :add_product_image, params: { user_id: no_logged_user.id, project_spec_id: project_spec } }
+      it_behaves_like 'an unauthorized api request'
+    end
+
+    context 'with valid session' do
+      before do
+        @image = create(:image)
+        @block_product1 = create_product_block(product1, project_spec)
+
+        request.headers['Authorization'] = "Bearer #{session.token}"
+
+        patch :add_product_image, params: { project_spec_id: project_spec, user_id: user, block: @block_product1, image: @image }
+      end
+
+      it 'creates a specification product' do
+        expect(@block_product1.product_image&.id).to eq(nil)
+        expect(@block_product1.reload.product_image&.id).to eq(@image.id)
+      end
+    end
+  end
 end

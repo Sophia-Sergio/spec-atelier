@@ -21,6 +21,7 @@ Rails.application.routes.draw do
         delete 'remove_product'
         get 'specification'
         patch 'edit_text'
+        patch 'add_product_image'
         resources :project_specs_blocks, only: %i[create show]
       end
     end

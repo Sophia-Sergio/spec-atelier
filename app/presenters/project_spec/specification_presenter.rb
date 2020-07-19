@@ -25,6 +25,10 @@ module ProjectSpec
       end
     end
 
+    def product_block_image
+
+    end
+
     private
 
     def spec_item

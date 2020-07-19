@@ -37,6 +37,12 @@ module Api
       render json: { blocks: blocks, message: 'Producto removido' }
     end
 
+    def add_product_image
+      image = Attached::Image.find(params[:image])
+      project_specification.blocks.find(params[:block]).update(product_image_id: image.id)
+      render json: { blocks: blocks, message: 'Imagen añadida' }
+    end
+
     def show
       render json: { blocks: blocks }
     end
