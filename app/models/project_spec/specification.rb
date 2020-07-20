@@ -28,7 +28,7 @@ module ProjectSpec
     def remove_product(block_id)
       block = blocks.find(block_id)
       item = block.item
-      blocks.find_by(spec_item: item).delete if blocks.where(spec_item_type: 'Product', item: block.item).count == 1
+      blocks.find_by(spec_item: item)&.delete if blocks.where(spec_item_type: 'Product', item: block.item).count == 1
       blocks.find(block_id).delete
     end
 
