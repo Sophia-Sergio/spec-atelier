@@ -26,7 +26,7 @@ module ProjectSpec
     end
 
     def product_block_image
-      subject&.product_image&.medium_format if subject&.product_image.present?
+      subject&.product_image&.id if subject&.product_image.present?
     end
 
     private
