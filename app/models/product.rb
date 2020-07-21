@@ -31,8 +31,6 @@ class Product < ApplicationRecord
                    .joins(:resource_file)
                    .select('DISTINCT(attached_files.id), attached_files.*, attached_resource_files.order')
                    .order(:order)
-                  #
-
   end
 
   def documents
