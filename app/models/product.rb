@@ -29,17 +29,17 @@ class Product < ApplicationRecord
     images = files.images&.pluck(:attached_file_id)
     Attached::Image.where(id: images)
                    .joins(:resource_file)
-                   .select('attached_resource_files.order')
-                   .distinct
-                   .order('attached_resource_files.order')
+                   .select('DISTINCT(attached_files.id), attached_files.*, attached_resource_files.order')
+                   .order(:order)
+                  #
+
   end
 
   def documents
     documents = files.documents&.pluck(:attached_file_id)
     Attached::Document.where(id: documents)
                       .joins(:resource_file)
-                      .select('attached_resource_files.order')
-                      .distinct
-                      .order('attached_resource_files.order')
+                      .select('DISTINCT(attached_files.id), attached_files.*, attached_resource_files.order')
+                      .order(:order)
   end
 end
