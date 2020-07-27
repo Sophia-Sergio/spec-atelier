@@ -47,12 +47,12 @@
     %tr
       %td{:align => "right"}
         %img{:border => "0", :height => "18", :src => world_icon, :style => "margin: 0 4px 0 0; padding:0; border:none; display: inline-block;", :width => "18"}/
-         
-        = link_to("Website", @brand.url.gsub("http://", ''))
+      - if @brand.url.present?
+        = link_to, 'Website', @brand.url, :style => "color:#19bea8; text-decoration: none; font-size: 12px; letter-spacing: 1px;", :target => "_blank"
       %td{:align => "center"}
         %img{:border => "0", :height => "18", :src => pin_icon, :style => "margin:0 4px 0 0; padding:0; border:none; display: inline-block;", :width => "12"}/
          
-        %a{:href => @brand.formatted_addresses, :style => "color:#19bea8; text-decoration: none; font-size: 12px; letter-spacing: 1px;", :target => "_blank"} Dirección
+        %a{:href => @brand.formatted_addresses, } Dirección
       %td{:align => "left"}
         %img{:border => "0", :height => "18", :src => smartphone_icon, :style => "margin:0 4px 0 0; padding:0; border:none; display: inline-block;", :width => "12"}/
          
