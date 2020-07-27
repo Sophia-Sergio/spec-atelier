@@ -43,12 +43,12 @@
       %td{:height => "20"}
          
   / CONTACT BUTTONS
-  %table{:align => "center", :border => "0", :cellpadding => "0", :height => "30", :width => "60%"}
+  %table{:align => "center", :border => "0", :cellpadding => "0", :height => "30", :width => "60%", :bgcolor => "#ffffff"}
     %tr
       %td{:align => "right"}
         %img{:border => "0", :height => "18", :src => world_icon, :style => "margin: 0 4px 0 0; padding:0; border:none; display: inline-block;", :width => "18"}/
          
-        %a{:href => @brand.url, :style => "color:#19bea8; text-decoration: none; font-size: 12px; letter-spacing: 1px;", :target => "_blank"} Website
+        %a{:href => @brand.url, :style => "color: #19bea8; text-decoration: none; font-size: 12px; letter-spacing: 1px;", :target => "_blank"} Website
       %td{:align => "center"}
         %img{:border => "0", :height => "18", :src => pin_icon, :style => "margin:0 4px 0 0; padding:0; border:none; display: inline-block;", :width => "12"}/
          
@@ -56,13 +56,8 @@
       %td{:align => "left"}
         %img{:border => "0", :height => "18", :src => smartphone_icon, :style => "margin:0 4px 0 0; padding:0; border:none; display: inline-block;", :width => "12"}/
          
-        %a{:href => @brand.phone, :style => "color:#19bea8; text-decoration: none; font-size: 12px; letter-spacing: 1px;", :target => "_blank"}
-          Teléfono:
-
-         
-
-
-
+        %a{:href => "tel:#{@brand.phone}", :style => "color:#19bea8; text-decoration: none; font-size: 12px; letter-spacing: 1px;", :target => "_blank"}
+          Teléfono
 
   / SPACE
   %table{:border => "0", :cellpadding => "0", :width => "100%"}
