@@ -7,7 +7,7 @@
 - send_icon = 'https://firebasestorage.googleapis.com/v0/b/spec-atelier/o/spec_images%2Fsend.jpg?alt=media'
 - smartphone_icon = 'https://firebasestorage.googleapis.com/v0/b/spec-atelier/o/spec_images%2Fsmartphone.jpg?alt=media'
 - world_icon = 'https://firebasestorage.googleapis.com/v0/b/spec-atelier/o/spec_images%2Fworld.jpg?alt=media'
- 
+
 %body{:style => "margin:0; padding:0; color: #ffffff !important; font-family: Lato;"}>
   / LOGO
   %table{:align => "center", :border => "0", :cellpadding => "0", :height => "80", :width => "80%", :bgcolor => "#ffffff", :style => "background-color: #ffffff;"}
@@ -20,7 +20,7 @@
       %td{:height => "60"}
          
   / CONTENT
-  %table{:align => "center", :border => "0", :cellpadding => "0", :width => "100%", :bgcolor => "#ffffff"}
+  %table{:align => "center", :border => "0", :cellpadding => "0", :width => "100%"}
     %tr
       %td{:align => "center"}
         %img{:border => "0", :height => "54", :src => send_icon, :style => "margin:0; padding:0; border:none; display:block;", :width => "62"}/
@@ -29,7 +29,7 @@
         %p{:style => "font-size: 20px; font-weight: bold; letter-spacing: 1.25px;"}
           = "Hola #{@current_user.first_name},"
         %p{:style => "font-size: 14px; letter-spacing: 1px; margin: 2px;"}
-          Tu mensaje fue enviado a
+          TTu mensaje fue enviado a
           = succeed "," do
             %strong= @brand.name
         %p{:style => "font-size: 14px; letter-spacing: 1px; margin: 2px;"}
@@ -43,12 +43,12 @@
       %td{:height => "20"}
          
   / CONTACT BUTTONS
-  %table{:align => "center", :border => "0", :cellpadding => "0", :height => "30", :width => "60%", :bgcolor => "#ffffff"}
+  %table{:align => "center", :border => "0", :cellpadding => "0", :height => "30", :width => "60%"}
     %tr
       %td{:align => "right"}
         %img{:border => "0", :height => "18", :src => world_icon, :style => "margin: 0 4px 0 0; padding:0; border:none; display: inline-block;", :width => "18"}/
          
-        %a{:href => @brand.url, :style => "color: #19bea8; text-decoration: none; font-size: 12px; letter-spacing: 1px;", :target => "_blank"} Website
+        = link_to Website, @brand.url, :style => "color:#19bea8; text-decoration: none; font-size: 12px; letter-spacing: 1px;", :target => "_blank"
       %td{:align => "center"}
         %img{:border => "0", :height => "18", :src => pin_icon, :style => "margin:0 4px 0 0; padding:0; border:none; display: inline-block;", :width => "12"}/
          
@@ -56,8 +56,42 @@
       %td{:align => "left"}
         %img{:border => "0", :height => "18", :src => smartphone_icon, :style => "margin:0 4px 0 0; padding:0; border:none; display: inline-block;", :width => "12"}/
          
-        %a{:href => "tel:#{@brand.phone}", :style => "color:#19bea8; text-decoration: none; font-size: 12px; letter-spacing: 1px;", :target => "_blank"}
-          Teléfono
+        %a{:href => @brand.phone, :style => "color:#19bea8; text-decoration: none; font-size: 12px; letter-spacing: 1px;", :target => "_blank"}
+          Teléfono:
+
+  / SPACE
+  %table{:border => "0", :cellpadding => "0", :width => "100%"}
+    %tr
+      %td{:height => "64"}
+         
+  / SPACE
+  %table{:border => "0", :cellpadding => "0", :width => "100%"}
+    %tr
+      %td{:height => "80"}
+
+  %table{:align => "center", :border => "0", :cellpadding => "0", :width => "80%"}
+    %tr
+      %td
+        %p{:style => "font-size: 14px; letter-spacing: 1px;"} Este es el producto por el que est&#xE1; interesado:
+
+
+  / PRODUCT
+  -# %table{:align => "center", :border => "0", :cellpadding => "16", :style => "border: solid 1px #e0e0e0; border-radius: 8px;>       ", :width => "80%"}
+  -#   %tr
+  -#     %td{:align => "center", :style => "width: 28%"}
+  -#       / TODO: CAMBIAR A ESTA VARIABLE: product.images[0]?.urls?.medium
+  -#       %img{:src => "https://firebasestorage.googleapis.com/v0/b/spec-atelier/o/spec_images%2Fwelcome-img.jpg?alt=media", :style => "margin:0; padding:0; border:none; display:block; max-width: 136px; max-height: 122px;"}/
+  -#     %td{:align => "left"}
+  -#       %p{:style => "font-size: 10px; letter-spacing: 0.83px;"}
+  -#         = "#{@product.try(:name)} / #{@product.try(:short_des)}"
+  -#       / PRODUCT METRICS  HERE
+  -#       / <p style="font-size: 11px; letter-spacing: 0.92px;"></p>
+  -#       %p{:style => "font-size: 10px; letter-spacing: 0.83px; color: #757575; min-height: 42px;"}
+  -#         = @product.description
+  -#       %p{:style => "font-size: 10px; letter-spacing: 0.83px; margin: 0;"}
+  -#         = "Sistema  constructivo: #{@product.try(:system).try(:name)}"
+  -#       %p{:style => "font-size: 10px; letter-spacing: 0.83px;"}
+  -#         = "Referencia #{@product.try(:brand).try(:name)}"
 
   / SPACE
   %table{:border => "0", :cellpadding => "0", :width => "100%"}
@@ -65,16 +99,16 @@
       %td{:height => "80"}
 
   / MESSAGE
-  %table{:align => "center", :border => "0", :cellpadding => "10%", :cellspacing => "0", :width => "80%", :bgcolor => "#ffffff"}
+  %table{:align => "center", :border => "0", :cellpadding => "10%", :cellspacing => "0", :width => "80%"}
     %tr{:style => "background-color: #f6f6f6;"}
-      %td{:style => "padding: 8px 10%"}
-        %p{:style => "font-size: 14px; letter-spacing: 1px; margin: 20px 0 6px 0;"}
+      %td{:style => "padding: 0 10%;"}
+        %p{:style => "font-size: 14px; letter-spacing: 1px;"}
           Este fue tu mensaje:
     %tr{:style => "background-color: #f6f6f6;"}
-      %td{:style => "padding: 0 10%"}
-        %p{:style => "font-size: 14px; letter-spacing: 1px; min-height: 60px; background-color: #ffffff; padding: 16px; color: #d6d6d6; border-radius: 4px; border: solid 1px #d6d6d6; margin: 0 0 20px 0;"}
+      %td{:style => "padding: 0 10% 12px 10%;"}
+        %p{:style => "font-size: 14px; letter-spacing: 1px; height: 80px; background-color: #ffffff; padding: 16px; color: #d6d6d6; border-radius: 4px; border: solid 1px #d6d6d6;"}
           = @form.message
-  
+
   / SPACE
   %table{:border => "0", :cellpadding => "0", :width => "100%"}
     %tr
