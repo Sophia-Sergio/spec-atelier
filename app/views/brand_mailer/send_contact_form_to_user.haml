@@ -65,14 +65,14 @@
       %td{:height => "80"}
 
   / MESSAGE
-  %table{:align => "center", :border => "0", :cellpadding => "10%", :cellspacing => "0", :width => "80%"}
+  %table{:align => "center", :border => "0", :cellpadding => "10%", :cellspacing => "0", :width => "80%", :bgcolor => "#ffffff"}
     %tr{:style => "background-color: #f6f6f6;"}
-      %td{:style => "padding: 0 10%;"}
-        %p{:style => "font-size: 14px; letter-spacing: 1px;"}
+      %td{:style => "padding: 8px 10%"}
+        %p{:style => "font-size: 14px; letter-spacing: 1px; margin: 20px 0 6px 0;"}
           Este fue tu mensaje:
     %tr{:style => "background-color: #f6f6f6;"}
-      %td{:style => "padding: 0 10% 12px 10%;"}
-        %p{:style => "font-size: 14px; letter-spacing: 1px; height: 80px; background-color: #ffffff; padding: 16px; color: #d6d6d6; border-radius: 4px; border: solid 1px #d6d6d6;"}
+      %td{:style => "padding: 0 10%"}
+        %p{:style => "font-size: 14px; letter-spacing: 1px; min-height: 60px; background-color: #ffffff; padding: 16px; color: #d6d6d6; border-radius: 4px; border: solid 1px #d6d6d6; margin: 0 0 20px 0;"}
           = @form.message
   
   / SPACE
