@@ -26,7 +26,7 @@
         %p{:style => "font-size: 20px; font-weight: bold; letter-spacing: 1.25px;"}
           = "Hola #{@current_user.first_name},"
         %p{:style => "font-size: 14px; letter-spacing: 1px; margin: 2px;"}
-          TTu mensaje fue enviado a
+          Tu mensaje fue enviado a
           = succeed "," do
             %strong= @brand.name
         %p{:style => "font-size: 14px; letter-spacing: 1px; margin: 2px;"}
@@ -54,7 +54,7 @@
         %img{:border => "0", :height => "18", :src => smartphone_icon, :style => "margin:0 4px 0 0; padding:0; border:none; display: inline-block;", :width => "12"}/
          
         %a{:href => @brand.phone, :style => "color:#19bea8; text-decoration: none; font-size: 12px; letter-spacing: 1px;", :target => "_blank"}
-          Teléfono:
+          = "Teléfono: #{@brand.phone}"
 
   / SPACE
   %table{:border => "0", :cellpadding => "0", :width => "100%"}

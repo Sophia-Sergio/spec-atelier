@@ -8,7 +8,7 @@
 - smartphone_icon = 'https://firebasestorage.googleapis.com/v0/b/spec-atelier/o/spec_images%2Fsmartphone.jpg?alt=media'
 - world_icon = 'https://firebasestorage.googleapis.com/v0/b/spec-atelier/o/spec_images%2Fworld.jpg?alt=media'
 
-%body{:style => "margin:0; padding:0; background-color: #ffffff !important; font-family: Lato;"}>
+%body{:style => "margin:0; padding:0; font-family: Lato, Arial, Helvetica, sans-serif; background-color: #ffffff !important; color: #212121 !important;"}>
   / LOGO
   %table{:align => "center", :border => "0", :cellpadding => "0", :height => "80", :width => "80%", :bgcolor => "#ffffff", :style => "background-color: #ffffff; color: #212121 !important;"}
     %tr
@@ -48,11 +48,11 @@
       %td{:align => "right"}
         %img{:border => "0", :height => "18", :src => world_icon, :style => "margin: 0 4px 0 0; padding:0; border:none; display: inline-block;", :width => "18"}/
       - if @brand.url.present?
-        = link_to 'Website', @brand.url, :style => "color: #19bea8; text-decoration: none; font-size: 12px; letter-spacing: 1px;", :target => "_blank"
+        = link_to 'Website', @brand.url, :style => "color: #19bea8; text-decoration: none; font-size: 12px; letter-spacing: 1px;", :target => "_blank" Website
       %td{:align => "center"}
         %img{:border => "0", :height => "18", :src => pin_icon, :style => "margin:0 4px 0 0; padding:0; border:none; display: inline-block;", :width => "12"}/
          
-        %a{:href => @brand.formatted_addresses, } Dirección
+        %a{:href => @brand.formatted_addresses, :style => "color: #19bea8; text-decoration: none; font-size: 12px; letter-spacing: 1px;", :target => "_blank"} Dirección
       %td{:align => "left"}
         %img{:border => "0", :height => "18", :src => smartphone_icon, :style => "margin:0 4px 0 0; padding:0; border:none; display: inline-block;", :width => "12"}/
          
