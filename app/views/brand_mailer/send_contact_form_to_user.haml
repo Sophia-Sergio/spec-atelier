@@ -29,9 +29,10 @@
         %p{:style => "font-size: 20px; font-weight: bold; letter-spacing: 1.25px;"}
           = "Hola #{@current_user.first_name},"
         %p{:style => "font-size: 14px; letter-spacing: 1px; margin: 2px;"}
-          TTu mensaje fue enviado a
+          Tu mensaje fue enviado a
           = succeed "," do
             %strong= @brand.name
+          pronto 
         %p{:style => "font-size: 14px; letter-spacing: 1px; margin: 2px;"}
           recibirás una respuesta.
         %p{:style => "font-size: 14px; letter-spacing: 1px; margin: 2px;"}
