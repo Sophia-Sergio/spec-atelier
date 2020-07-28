@@ -8,9 +8,9 @@
 - smartphone_icon = 'https://firebasestorage.googleapis.com/v0/b/spec-atelier/o/spec_images%2Fsmartphone.jpg?alt=media'
 - world_icon = 'https://firebasestorage.googleapis.com/v0/b/spec-atelier/o/spec_images%2Fworld.jpg?alt=media'
 
-%body{:style => "margin:0; padding:0; color: #ffffff !important; font-family: Lato;"}>
+%body{:style => "margin:0; padding:0; background-color: #ffffff !important; font-family: Lato;"}>
   / LOGO
-  %table{:align => "center", :border => "0", :cellpadding => "0", :height => "80", :width => "80%", :bgcolor => "#ffffff", :style => "background-color: #ffffff;"}
+  %table{:align => "center", :border => "0", :cellpadding => "0", :height => "80", :width => "80%", :bgcolor => "#ffffff", :style => "background-color: #ffffff; color: #212121 !important;"}
     %tr
       %td{:align => "left", :valign => "bottom", :bgcolor => "#ffffff"}
         %img{:border => "0", :height => "32", :src => logo, :style => "margin:0; padding:0; border:none; display:block;", :width => "160"}/
@@ -20,7 +20,7 @@
       %td{:height => "60"}
          
   / CONTENT
-  %table{:align => "center", :border => "0", :cellpadding => "0", :width => "100%"}
+  %table{:align => "center", :border => "0", :cellpadding => "0", :width => "100%", :bgcolor => "#ffffff"}
     %tr
       %td{:align => "center"}
         %img{:border => "0", :height => "54", :src => send_icon, :style => "margin:0; padding:0; border:none; display:block;", :width => "62"}/
@@ -56,7 +56,7 @@
       %td{:align => "left"}
         %img{:border => "0", :height => "18", :src => smartphone_icon, :style => "margin:0 4px 0 0; padding:0; border:none; display: inline-block;", :width => "12"}/
          
-        %a{:href => @brand.phone, :style => "color:#19bea8; text-decoration: none; font-size: 12px; letter-spacing: 1px;", :target => "_blank"}
+        %a{:href => @brand.phone, :style => "color: #19bea8; text-decoration: none; font-size: 12px; letter-spacing: 1px;", :target => "_blank"}
           Teléfono:
 
   / SPACE
