@@ -6,7 +6,7 @@ class ProductMailer < ApplicationMailer
     @form = form
     @product = @form.owner
     @brand = @product.brand
-    @brand_email = @brand.email['main']
+    @brand_email = @brand.email
     mail(to: @brand_email, subject: 'Product contact_form')
   end
 
