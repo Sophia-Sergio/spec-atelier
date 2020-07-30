@@ -55,16 +55,11 @@
          
         %a{:href => @brand.phone, :style => "color: #19bea8; text-decoration: none; font-size: 12px; letter-spacing: 1px;", :target => "_blank"}
           = "Teléfono: #{@brand.phone}"
-
-  / SPACE
-  %table{:border => "0", :cellpadding => "0", :width => "100%"}
-    %tr
-      %td{:height => "64"}
          
   / SPACE
   %table{:border => "0", :cellpadding => "0", :width => "100%"}
     %tr
-      %td{:height => "80"}
+      %td{:height => "64"}
 
   %table{:align => "center", :border => "0", :cellpadding => "0", :width => "80%"}
     %tr
@@ -77,16 +72,16 @@
     %tr
       %td{:align => "center", :style => "width: 28%"}
         / TODO: CAMBIAR A ESTA VARIABLE: product.images[0]?.urls?.medium
-        %img{:src => "https://firebasestorage.googleapis.com/v0/b/spec-atelier/o/spec_images%2Fwelcome-img.jpg?alt=media", :style => "margin:0; padding:0; border:none; display:block; max-width: 136px; max-height: 122px;"}/
+        %img{:src => @product.try(:image), :style => "margin:0; padding:0; border:none; display:block; max-width: 136px; max-height: 122px;"}/
       %td{:align => "left"}
         %p{:style => "font-size: 10px; letter-spacing: 0.83px;"}
-          = "#{@product.try(:name)} / #{@product.try(:short_des)}"
+          = "#{@product.try(:name)} / #{@product.try(:short_desc)}"
         / PRODUCT METRICS  HERE
         / <p style="font-size: 11px; letter-spacing: 0.92px;"></p>
         %p{:style => "font-size: 10px; letter-spacing: 0.83px; color: #757575; min-height: 42px;"}
           = "#{@product.try(:description)}"
         %p{:style => "font-size: 10px; letter-spacing: 0.83px; margin: 0;"}
-          = "Sistema  constructivo: #{@product.try(:system).try(:name)}"
+          = "Sistema  constructivo: #{@product.try(:system_name))}"
         %p{:style => "font-size: 10px; letter-spacing: 0.83px;"}
           = "Referencia #{@product.try(:brand).try(:name)}"
 

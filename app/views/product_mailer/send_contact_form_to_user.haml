@@ -26,7 +26,7 @@
         %p{:style => "font-size: 20px; font-weight: bold; letter-spacing: 1.25px;"}
           = "Hola #{@current_user.first_name},"
         %p{:style => "font-size: 14px; letter-spacing: 1px; margin: 2px;"}
-          TTu mensaje fue enviado a
+          Tu mensaje fue enviado a
           = succeed "," do
             %strong= @brand.name
         %p{:style => "font-size: 14px; letter-spacing: 1px; margin: 2px;"}
@@ -61,10 +61,6 @@
     %tr
       %td{:height => "64"}
          
-  / SPACE
-  %table{:border => "0", :cellpadding => "0", :width => "100%"}
-    %tr
-      %td{:height => "80"}
 
   %table{:align => "center", :border => "0", :cellpadding => "0", :width => "80%"}
     %tr
@@ -73,22 +69,22 @@
 
 
   / PRODUCT
-  -# %table{:align => "center", :border => "0", :cellpadding => "16", :style => "border: solid 1px #e0e0e0; border-radius: 8px;>       ", :width => "80%"}
-  -#   %tr
-  -#     %td{:align => "center", :style => "width: 28%"}
-  -#       / TODO: CAMBIAR A ESTA VARIABLE: product.images[0]?.urls?.medium
-  -#       %img{:src => "https://firebasestorage.googleapis.com/v0/b/spec-atelier/o/spec_images%2Fwelcome-img.jpg?alt=media", :style => "margin:0; padding:0; border:none; display:block; max-width: 136px; max-height: 122px;"}/
-  -#     %td{:align => "left"}
-  -#       %p{:style => "font-size: 10px; letter-spacing: 0.83px;"}
-  -#         = "#{@product.try(:name)} / #{@product.try(:short_des)}"
-  -#       / PRODUCT METRICS  HERE
-  -#       / <p style="font-size: 11px; letter-spacing: 0.92px;"></p>
-  -#       %p{:style => "font-size: 10px; letter-spacing: 0.83px; color: #757575; min-height: 42px;"}
-  -#         = @product.description
-  -#       %p{:style => "font-size: 10px; letter-spacing: 0.83px; margin: 0;"}
-  -#         = "Sistema  constructivo: #{@product.try(:system).try(:name)}"
-  -#       %p{:style => "font-size: 10px; letter-spacing: 0.83px;"}
-  -#         = "Referencia #{@product.try(:brand).try(:name)}"
+  %table{:align => "center", :border => "0", :cellpadding => "16", :style => "border: solid 1px #e0e0e0; border-radius: 8px;>       ", :width => "80%"}
+    %tr
+      %td{:align => "center", :style => "width: 28%"}
+        / TODO: CAMBIAR A ESTA VARIABLE: product.images[0]?.urls?.medium
+        %img{:src => @product.try(:image), :style => "margin:0; padding:0; border:none; display:block; max-width: 136px; max-height: 122px;"}/
+      %td{:align => "left"}
+        %p{:style => "font-size: 10px; letter-spacing: 0.83px;"}
+          = "#{@product.try(:name)} / #{@product.try(:short_desc)}"
+        / PRODUCT METRICS  HERE
+        / <p style="font-size: 11px; letter-spacing: 0.92px;"></p>
+        %p{:style => "font-size: 10px; letter-spacing: 0.83px; color: #757575; min-height: 42px;"}
+          = "#{@product.try(:description)}"
+        %p{:style => "font-size: 10px; letter-spacing: 0.83px; margin: 0;"}
+          = "Sistema  constructivo: #{@product.try(:system_name))}"
+        %p{:style => "font-size: 10px; letter-spacing: 0.83px;"}
+          = "Referencia #{@product.try(:brand).try(:name)}"
 
   / SPACE
   %table{:border => "0", :cellpadding => "0", :width => "100%"}
