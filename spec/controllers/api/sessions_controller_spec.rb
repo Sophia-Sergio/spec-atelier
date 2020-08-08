@@ -40,6 +40,7 @@ describe Api::SessionsController, type: :controller do
       expect(json.keys).to match_array(%w[logged_in user])
       expect(json['user'].keys).to match_array(USER_EXPECTED_KEYS)
       expect(User.last.first_name).to eq('name')
+      expect(ActionMailer::Base.deliveries.count).to eq(1)
     end
   end
 
