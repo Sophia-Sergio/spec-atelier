@@ -115,7 +115,7 @@ describe Api::ProjectSpecsController, type: :controller do
       end
 
       it 'creates a specification product' do
-        expect(json['blocks'].third['element']['id']).to eq(product1.id)
+        expect(json['blocks'].third['element']['id']).to eq(product1.spec_products.first.id)
       end
 
       it 'creates a section "Terminación" by default with order 0' do
