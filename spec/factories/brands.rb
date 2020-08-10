@@ -6,5 +6,6 @@ FactoryBot.define do
     social_media { { facebook: 'https://www.facebook.com/brand', instagram: 'https://www.instagram.com/brand' } }
     url { 'https://www.brand.com' }
     description { Faker::Lorem.paragraph }
+    contact_info { 'Oficina Central' }
   end
 end

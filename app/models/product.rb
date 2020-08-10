@@ -21,6 +21,8 @@ class Product < ApplicationRecord
   scope :by_project_type, ->(types)    { where("project_type && ?", "{#{ types.is_a?(Array) ? types.join(',') : types }}") }
   scope :by_room_type,    ->(types)    { where("room_type && ?", "{#{ types.is_a?(Array) ? types.join(',') : types }}") }
 
+  enum created_reason: %i[brand_creation added_to_spec]
+
   before_validation(on: :create) do
     self.item = subitem.item if subitem.present?
   end
@@ -39,5 +41,13 @@ class Product < ApplicationRecord
                       .joins(:resource_file)
                       .select('DISTINCT(attached_files.id), attached_files.*, attached_resource_files.order')
                       .order(:order)
+  end
+
+  def original_product
+    self.class.find(original_product_id) if self.added_to_spec?
+  end
+
+  def spec_products
+    self.class.where(original_product_id: self.id)
   end
 end
