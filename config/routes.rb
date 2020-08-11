@@ -33,7 +33,7 @@ Rails.application.routes.draw do
     end
     get 'items/:item_id/systems', to: 'items#subitems', as: :systems
 
-    resources :products, only: %i[show create index] do
+    resources :products, only: %i[show create index update] do
       post 'associate_images'
       post 'associate_documents'
       post 'contact_form'

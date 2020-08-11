@@ -5,6 +5,8 @@ module Api
     before_action :valid_session
     before_action :product, only: %i[show]
 
+    load_and_authorize_resource only: %i[update]
+
     def show
       render json: { product: presenter.decorate(product) }, status: :ok
     end
@@ -14,15 +16,29 @@ module Api
     end
 
     def create
-      product = Product.new(product_params.except(:system_id, :brand))
+      product = Product.new(product_params.except(:system_id, :brand).merge(user_id: current_user.id))
       product.subitem_id = product_params[:system_id] if product_params[:system_id].present?
-      brand = Company::Brand.find_or_create_by(name: product_params[:brand])
+      # Todo separare brand in client and brand, add validation only for client
+      brand = Company::Brand.find_or_create_by(
+        name: product_params[:brand],
+        url: 'default',
+        contact_info: 'default',
+        email: 'default',
+        description: 'default'
+      )
       product.brand = brand if brand.valid?
       if product.save
         render json: { product: presenter.decorate(product) }, status: :created
       else
         render json: { error: product.errors }, status: :unprocessable_entity
       end
+    end
+
+    def update
+      product.update(subitem_id: product_params[:system_id]) if product_params[:system_id].present?
+      product.update(product_params.except(:system_id, :brand))
+
+      render json: { product: presenter.decorate(product) }, status: :ok
     end
 
     def contact_form

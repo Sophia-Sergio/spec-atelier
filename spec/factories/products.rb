@@ -5,5 +5,6 @@ FactoryBot.define do
     brand { create(:brand) }
     long_desc { 'long desc' }
     price { 1000 }
+    user { create(:user) }
   end
 end

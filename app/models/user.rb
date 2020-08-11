@@ -6,6 +6,7 @@ class User < ApplicationRecord
   validates :email, presence: true, uniqueness: true
   has_one :session, dependent: :destroy
   has_many :projects, dependent: :destroy
+  has_many :products
 
   def generate_password_token!
     update(reset_password_token: SecureRandom.hex(10), reset_password_sent_at: Time.zone.now)
