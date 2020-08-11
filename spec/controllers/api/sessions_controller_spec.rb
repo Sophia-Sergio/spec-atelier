@@ -33,7 +33,10 @@ describe Api::SessionsController, type: :controller do
   end
 
   describe '#google_auth' do
-    before { post :google_auth, params: { user: { first_name: 'name', last_name: 'last_name', google_token: 'token', email: 'not_existing_mail@test.com' } }}
+    before do
+      ActionMailer::Base.deliveries.clear
+      post :google_auth, params: { user: { first_name: 'name', last_name: 'last_name', google_token: 'token', email: 'not_existing_mail@test.com' } }
+    end
 
     it 'returns created status' do
       expect(response).to have_http_status(:created)
