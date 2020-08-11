@@ -5,7 +5,7 @@ module Company
     has_many :products, foreign_key: 'company_id', dependent: :destroy
     has_many :addresses, as: :owner, dependent: :destroy
     validates :name, :url, :contact_info, :type, :description, :email, presence: true
-    has_many :files, as: :owner, class_name: 'Attached::ResourceFile'if
+    has_many :files, as: :owner, class_name: 'Attached::ResourceFile'
 
     pg_search_scope :by_keyword,
       against: %i[name],
