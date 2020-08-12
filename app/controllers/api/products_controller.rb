@@ -19,13 +19,7 @@ module Api
       product = Product.new(product_params.except(:system_id, :brand).merge(user_id: current_user.id))
       product.subitem_id = product_params[:system_id] if product_params[:system_id].present?
       # Todo separare brand in client and brand, add validation only for client
-      brand = Company::Brand.find_or_create_by(
-        name: product_params[:brand],
-        url: 'default',
-        contact_info: 'default',
-        email: 'default',
-        description: 'default'
-      )
+      brand = Company::Brand.find_or_create_by(name: product_params[:brand])
       product.brand = brand if brand.valid?
       if product.save
         render json: { product: presenter.decorate(product) }, status: :created

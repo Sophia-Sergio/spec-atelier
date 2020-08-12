@@ -5,7 +5,8 @@ class CreateProducts < ActiveRecord::Migration[6.0]
       t.string :short_desc
       t.string :long_desc
       t.string :reference
-      t.references :company, null: false, foreign_key: { on_delete: :cascade }
+      t.integer :brand_id, foreign_key: { on_delete: :cascade }
+      t.integer :client_id, foreign_key: { on_delete: :cascade }
       t.references :item, null: false, foreign_key: { on_delete: :cascade }
       t.references :subitem, foreign_key: { on_delete: :cascade }
       t.integer :price

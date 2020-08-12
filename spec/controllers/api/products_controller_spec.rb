@@ -267,13 +267,6 @@ describe Api::ProductsController, type: :controller do
           expect(response).to have_http_status(:created)
         end
       end
-
-      context 'without all params, without brand' do
-        it 'creates a resource' do
-          post :create, params: { product: product_params.except(:brand) }
-          expect(response).to have_http_status(:unprocessable_entity)
-        end
-      end
     end
   end
 
