@@ -5,8 +5,8 @@ class BrandMailer < ApplicationMailer
     @current_user = current_user
     @form = form
     @brand = @form.owner
-    @brand_email = @brand.email|| 'jonathan.araya.m@gmail.com'
-    # mail(to: @brand_email, subject: 'Brand contact_form')
+    @brand_email = @brand.email
+    mail(to: @brand_email, subject: 'Brand contact_form')
     mail(to: 'jonathan.araya.m@gmail.com', subject: 'Brand contact_form')
   end
 
@@ -15,5 +15,6 @@ class BrandMailer < ApplicationMailer
     @brand = form.owner
     @form = form
     mail(to: @current_user.email, subject: 'Your mail was sent contact_form')
+    mail(to: 'jonathan.araya.m@gmail.com', subject: 'Your mail was sent contact_form')
   end
 end
