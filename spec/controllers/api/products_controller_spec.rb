@@ -192,6 +192,13 @@ describe Api::ProductsController, type: :controller do
           create(:resource_file, owner: product, attached: @document3, order: 1)
           create(:resource_file, owner: product, attached: @document4, order: 3)
           create(:resource_file, owner: product, attached: @document5, order: 4)
+          create(:lookup_table, category: 'project_type', code: 1, translation_spa: 'a')
+          create(:lookup_table, category: 'project_type', code: 2, translation_spa: 'b')
+          create(:lookup_table, category: 'room_type', code: 1, translation_spa: 'a')
+          create(:lookup_table, category: 'room_type', code: 2, translation_spa: 'b')
+          create(:lookup_table, category: 'work_type', code: 1, translation_spa: 'a')
+          create(:lookup_table, category: 'work_type', code: 2, translation_spa: 'b')
+          product.update!(project_type: ['1', '2'], room_type: ['1', '2'], work_type: ['1', '2'])
         end
 
         it 'returns a product with dwg' do
@@ -207,6 +214,15 @@ describe Api::ProductsController, type: :controller do
           expect(json['product']['name']).to eq(product.name)
           expect(json['product']['pdfs'].first['name']).to eq(@document3.name)
           expect(json['product']['pdfs'].second['name']).to eq(@document2.name)
+
+          expect(json['product']['project_type'].first['name']).to eq('a')
+          expect(json['product']['project_type'].second['name']).to eq('b')
+
+          expect(json['product']['room_type'].first['name']).to eq('a')
+          expect(json['product']['room_type'].second['name']).to eq('b')
+
+          expect(json['product']['work_type'].first['name']).to eq('a')
+          expect(json['product']['work_type'].second['name']).to eq('b')
         end
       end
     end
