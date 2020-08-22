@@ -12,4 +12,9 @@ class UserMailer < ApplicationMailer
     mail(to: user.email, subject: 'Reset password')
     mail(to: 'jonathan.araya.m@gmail.com', subject: 'Reset password')
   end
+
+  def password_reset_success(user)
+    @user = user
+    mail(to: user.email, subject: 'New Password')
+    mail(to: 'jonathan.araya.m@gmail.com', subject: 'New password')
 end
