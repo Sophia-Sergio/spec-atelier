@@ -17,4 +17,5 @@ class UserMailer < ApplicationMailer
     @user = user
     mail(to: user.email, subject: 'New Password')
     mail(to: 'jonathan.araya.m@gmail.com', subject: 'New password')
+  end
 end
