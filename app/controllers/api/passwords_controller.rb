@@ -20,6 +20,7 @@ module Api
 
       user = User.find_by(reset_password_token: params[:token].to_s)
       if user.present? && user.password_token_valid?
+        UserMailer.password_reset_success(user).deliver
         return render json: { status: 'password updated' }, status: :ok if user.reset_password!(params[:password])
 
         render json: { error: user.errors.full_messages }, status: :unprocessable_entity
