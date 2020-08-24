@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_08_204104) do
+ActiveRecord::Schema.define(version: 2020_08_10_031210) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "hstore"
@@ -54,13 +54,13 @@ ActiveRecord::Schema.define(version: 2020_08_08_204104) do
     t.string "name"
     t.string "description"
     t.string "url"
-    t.string "phone"
-    t.string "email"
+    t.hstore "phone"
+    t.hstore "email"
     t.string "type"
     t.string "contact_info"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.hstore "social_media", default: {}, null: false
+    t.hstore "social_media", default: {}
   end
 
   create_table "contact_forms", force: :cascade do |t|
@@ -99,7 +99,8 @@ ActiveRecord::Schema.define(version: 2020_08_08_204104) do
     t.string "short_desc"
     t.string "long_desc"
     t.string "reference"
-    t.bigint "company_id", null: false
+    t.integer "brand_id"
+    t.integer "client_id"
     t.bigint "item_id", null: false
     t.bigint "subitem_id"
     t.integer "price"
@@ -111,7 +112,7 @@ ActiveRecord::Schema.define(version: 2020_08_08_204104) do
     t.datetime "updated_at", precision: 6, null: false
     t.integer "created_reason"
     t.integer "original_product_id"
-    t.index ["company_id"], name: "index_products_on_company_id"
+    t.integer "user_id"
     t.index ["item_id"], name: "index_products_on_item_id"
     t.index ["subitem_id"], name: "index_products_on_subitem_id"
   end
@@ -226,7 +227,6 @@ ActiveRecord::Schema.define(version: 2020_08_08_204104) do
   add_foreign_key "attached_resource_files", "attached_files"
   add_foreign_key "contact_forms", "users"
   add_foreign_key "items", "sections", on_delete: :cascade
-  add_foreign_key "products", "companies", on_delete: :cascade
   add_foreign_key "products", "items", on_delete: :cascade
   add_foreign_key "products", "subitems", on_delete: :cascade
   add_foreign_key "project_spec_blocks", "items"

@@ -28,7 +28,7 @@ module Api
     end
 
     def create_product
-      product = project_specification.create_product(project_spec_block_params)
+      product = project_specification.create_product(project_spec_block_params, current_user)
       render json: { blocks: blocks }
     end
 

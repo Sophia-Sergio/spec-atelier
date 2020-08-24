@@ -5,7 +5,7 @@ describe Product, type: :model do
     it 'atteches a file' do
       image = create(:image)
       create(:resource_file, owner: product, attached: image)
-      expect(product.images.count).to be(1)
+      expect(product.images.length).to be(1)
     end
   end
 end

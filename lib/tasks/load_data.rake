@@ -20,7 +20,7 @@ namespace :db do
     task images_and_documents: :environment do
       reset_images_and_files
       process_product_images
-      process_brand_images
+      process_client_images
       process_product_documents
       sh 'rm config/google_storage_config.json'
       sh 'rm config/google_drive_config.json'
@@ -45,7 +45,7 @@ namespace :db do
         next if product_params[:files].blank?
 
         documents = product_params[:files].split(',').map {|a| a.gsub('/','_').strip }
-        product = Product.find(product_params[:id])
+        product = Product.find(product_params[:id].to_i)
         documents.each {|document| attach_document(document, product) }
       rescue StandardError => e
         puts e
@@ -58,19 +58,19 @@ namespace :db do
         next if product_params[:images].blank?
 
         images = product_params[:images].split(',').map {|a| a.gsub('/','_').strip }
-        product = Product.find(product_params[:id])
+        product = Product.find(product_params[:id].to_i)
         images.each_with_index {|image, index| attach_image(image, product, '', index) }
       rescue StandardError => e
         puts e
       end
     end
 
-    def process_brand_images
+    def process_client_images
       print "Seeding brand images..."
-      select_sheet('brand') do |brand_params|
-        brand = Company::Brand.find(brand_params[:id])
-        brand_logo(brand, brand_params)
-        brand_show_images(brand, brand_params)
+      select_sheet('client') do |client_params|
+        brand = Company::Client.find(client_params[:id])
+        client_logo(brand, client_params)
+        client_show_images(brand, client_params)
       rescue StandardError => e
         puts e
       end
@@ -111,19 +111,19 @@ namespace :db do
       puts ' done'
     end
 
-    def brand_logo(brand, brand_params)
-      return if brand_params[:logo].blank?
+    def client_logo(brand, client_params)
+      return if client_params[:logo].blank?
 
-      attach_image(brand_params[:logo], brand, 'logo')
+      attach_image(client_params[:logo], brand, 'logo')
     end
 
-    def brand_show_images(brand, brand_params)
-      return if brand_params[:products_images].blank? || !brand_params[:products_images].first.is_a?(Hash)
+    def client_show_images(brand, client_params)
+      return if client_params[:products_images].blank? || !client_params[:products_images].first.is_a?(Hash)
 
-      brand_params[:products_images].each_with_index do |data,  index|
+      client_params[:products_images].each_with_index do |data,  index|
         product = Product.find(data[:product_id])
         image = Attached::ResourceFile.find_by(owner: product, order: data[:orden])&.image
-        create_resourse_file(image, brand, 'brand_show', index) if image.present?
+        create_resourse_file(image, brand, 'client_show', index) if image.present?
       end
     end
 
@@ -166,7 +166,7 @@ namespace :db do
     def create_resource(sheet_name, params)
       class_name = class_name(sheet_name)
       case sheet_name
-      when 'brand' then create_brand(class_name, params)
+      when 'client' then create_client(class_name, params)
       when 'product' then create_product(class_name, params)
       else default_create(class_name, params)
       end
@@ -177,7 +177,7 @@ namespace :db do
       class_name.create!(params.except(:images, :files).merge(tags: tags))
     end
 
-    def create_brand(class_name, params)
+    def create_client(class_name, params)
       class_name.create!(params.except(:distribuitors, :logo, :products_images))
     end
 
@@ -202,8 +202,8 @@ namespace :db do
 
     def class_name(name)
       case name
-      when 'brand'
-        Company::Brand
+      when 'client'
+        Company::Client
       else
         name.camelize.constantize
       end

@@ -8,6 +8,7 @@ describe Api::BrandsController, type: :controller do
     create(:brand, name: 'brand')
     create(:brand, name: 'abc')
     create(:brand, name: 'bcd')
+    create(:client, name: 'client')
     create_list(:product, 3, brand: brand )
   end
 
@@ -24,7 +25,7 @@ describe Api::BrandsController, type: :controller do
         get :index, params: { limit: 10 }
 
         expect(response).to have_http_status(:ok)
-        expect(json['brands']['list'].count).to eq(4)
+        expect(json['brands']['list'].count).to eq(8)
       end
 
       it 'returns list of brands that by query search' do

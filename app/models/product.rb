@@ -2,13 +2,18 @@ class Product < ApplicationRecord
   include MetaLookupTable
   include PgSearch::Model
 
-  belongs_to :brand, foreign_key: 'company_id', class_name: 'Company::Brand'
+  belongs_to :client, foreign_key: 'client_id', class_name: 'Company::Client', optional: true
+  belongs_to :brand, foreign_key: 'brand_id', class_name: 'Company::Brand', optional: true
   belongs_to :subitem, optional: true
   belongs_to :item
+  belongs_to :user
   has_one :section, through: :item
   has_many :files, as: :owner, class_name: 'Attached::ResourceFile'
-  validates :name, :brand, :item, :long_desc, presence: true
   has_many :contact_forms, as: :owner, class_name: 'Form::ContactForm'
+
+  validates :name, :item, :long_desc, presence: true
+  validates :client_id, presence: true, unless: :brand_id
+  validates :brand_id, presence: true, unless: :client_id
 
   pg_search_scope :by_keyword,
     against: %i[name short_desc long_desc reference],

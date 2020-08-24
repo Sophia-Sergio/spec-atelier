@@ -212,6 +212,37 @@ describe Api::ProductsController, type: :controller do
     end
   end
 
+  describe '#update' do
+    context 'without session' do
+      before { put :update, params: { user_id: no_logged_user.id, id: products.first.id } }
+      it_behaves_like 'an unauthorized api request'
+    end
+
+    context 'with valid session' do
+      before do
+        request.headers['Authorization'] = "Bearer #{session.token}"
+      end
+
+      context 'when current_user did not create the product' do
+        it 'returns not authorized' do
+          put :update, params: { id: products.first.id }
+
+          expect(response).to have_http_status(:forbidden)
+          expect(json['error']).to eq("You are not authorized")
+        end
+      end
+
+      context 'when current_user did create the product' do
+        it 'returns not authorized' do
+          product = create(:product, user: user)
+
+          put :update, params: { id: product.id, product: product_params }
+          expect(json['product']['name']).to eq(product.reload.name)
+        end
+      end
+    end
+  end
+
   describe '#create' do
     context 'without session' do
       before { post :create, params: { user_id: no_logged_user.id, id: products.first.id } }
@@ -234,13 +265,6 @@ describe Api::ProductsController, type: :controller do
         it 'creates a resource' do
           post :create, params: { product: product_params.except(:brand, :system_id).merge(brand: 'simpson') }
           expect(response).to have_http_status(:created)
-        end
-      end
-
-      context 'without all params, without brand' do
-        it 'creates a resource' do
-          post :create, params: { product: product_params.except(:brand) }
-          expect(response).to have_http_status(:unprocessable_entity)
         end
       end
     end
@@ -267,7 +291,7 @@ describe Api::ProductsController, type: :controller do
           image2 = fixture_file_upload('spec/fixtures/images/logo2.png')
           patch :associate_images, params: { product_id: product.id, images: [image1, image2] }
           expect(response).to have_http_status(:created)
-          expect(product.images.count).to be 2
+          expect(product.images.length).to be 2
         end
       end
     end
@@ -293,7 +317,7 @@ describe Api::ProductsController, type: :controller do
           patch :associate_documents, params: { product_id: product.id, documents: [pdf] }
           # expect(StorageWorker.perform_async(product, [image1, image2])).to change(StorageWorker.jobs.size).by(1)
           expect(response).to have_http_status(:created)
-          expect(product.documents.count).to be 1
+          expect(product.documents.length).to be 1
         end
       end
     end
