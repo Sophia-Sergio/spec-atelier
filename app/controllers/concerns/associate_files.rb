@@ -35,6 +35,4 @@ module AssociateFiles
   def create_resourse_file(owner, image)
     Attached::ResourceFile.create!(owner: owner, attached: image)
   end
-
-
 end

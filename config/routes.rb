@@ -35,7 +35,9 @@ Rails.application.routes.draw do
 
     resources :products, only: %i[show create index update] do
       post 'associate_images'
+      delete 'remove_images'
       post 'associate_documents'
+      delete 'remove_documents'
       post 'contact_form'
     end
 

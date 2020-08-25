@@ -313,6 +313,34 @@ describe Api::ProductsController, type: :controller do
     end
   end
 
+  describe '#remove_images' do
+    context 'without session' do
+      before { delete :remove_images, params: { user_id: no_logged_user.id, product_id: product.id } }
+      it_behaves_like 'an unauthorized api request'
+    end
+
+    context 'with valid session' do
+
+
+      before { request.headers['Authorization'] = "Bearer #{session.token}" }
+
+      context 'with all params' do
+        it 'creates a resource' do
+          image1 = create(:image)
+          image2 = create(:image)
+          create(:resource_file, :image, owner: product, attached: image1)
+          create(:resource_file, :image, owner: product, attached: image2)
+
+          expect(product.images.length).to be 2
+
+          delete :remove_images, params: { product_id: product.id, images: [image1.id, image2.id] }
+          expect(response).to have_http_status(:created)
+          expect(product.images.length).to be 0
+        end
+      end
+    end
+  end
+
   describe '#associate_documents' do
     context 'without session' do
       before { patch :associate_documents, params: { user_id: no_logged_user.id, product_id: product.id } }
@@ -334,6 +362,34 @@ describe Api::ProductsController, type: :controller do
           # expect(StorageWorker.perform_async(product, [image1, image2])).to change(StorageWorker.jobs.size).by(1)
           expect(response).to have_http_status(:created)
           expect(product.documents.length).to be 1
+        end
+      end
+    end
+  end
+
+  describe '#remove_documents' do
+    context 'without session' do
+      before { delete :remove_documents, params: { user_id: no_logged_user.id, product_id: product.id } }
+      it_behaves_like 'an unauthorized api request'
+    end
+
+    context 'with valid session' do
+
+
+      before { request.headers['Authorization'] = "Bearer #{session.token}" }
+
+      context 'with all params' do
+        it 'creates a resource' do
+          document1 = create(:document)
+          document2 = create(:document)
+          create(:resource_file, :document, owner: product, attached: document1)
+          create(:resource_file, :document, owner: product, attached: document2)
+
+          expect(product.documents.length).to be 2
+
+          delete :remove_documents, params: { product_id: product.id, documents: [document1.id, document2.id] }
+          expect(response).to have_http_status(:created)
+          expect(product.documents.length).to be 0
         end
       end
     end
