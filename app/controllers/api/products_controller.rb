@@ -54,7 +54,13 @@ module Api
     end
 
     def remove_images
+      product.files.where(attached_file_id: images_params[:images]).delete_all
+      render json: { message: 'Images deleted'}, status: :created
+    end
 
+    def remove_documents
+      product.files.where(attached_file_id: documents_params[:documents]).delete_all
+      render json: { message: 'Documents deleted'}, status: :created
     end
 
     private
