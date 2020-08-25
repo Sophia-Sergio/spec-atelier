@@ -15,6 +15,7 @@ namespace :db do
 
     task tables: :environment do
       load_data
+      product_item_update
     end
 
     task images_and_documents: :environment do
@@ -26,12 +27,6 @@ namespace :db do
       sh 'rm config/google_drive_config.json'
     end
 
-    task product_item_update: :environment do
-      Product.where.not(subitem: nil).each do |product|
-        product.update(item: product.subitem.item)
-      end
-    end
-
     tasks = Rake.application.tasks.select do |task|
       task if ['db:load:tables', 'db:load:images_and_documents'].include?(task.to_s)
     end
@@ -39,13 +34,19 @@ namespace :db do
 
     private
 
+    def product_item_update
+      Product.where.not(subitem: nil).each do |product|
+        product.update(item: product.subitem.item)
+      end
+    end
+
     def process_product_documents
       print "Seeding product documents..."
       select_sheet('product') do |product_params|
         next if product_params[:files].blank?
 
         documents = product_params[:files].split(',').map {|a| a.gsub('/','_').strip }
-        product = Product.find(product_params[:id].to_i)
+        product = Product.find(product_params[:id])
         documents.each {|document| attach_document(document, product) }
       rescue StandardError => e
         puts e
@@ -58,7 +59,7 @@ namespace :db do
         next if product_params[:images].blank?
 
         images = product_params[:images].split(',').map {|a| a.gsub('/','_').strip }
-        product = Product.find(product_params[:id].to_i)
+        product = Product.find(product_params[:id])
         images.each_with_index {|image, index| attach_image(image, product, '', index) }
       rescue StandardError => e
         puts e
@@ -66,11 +67,11 @@ namespace :db do
     end
 
     def process_client_images
-      print "Seeding brand images..."
+      print "Seeding client images..."
       select_sheet('client') do |client_params|
-        brand = Company::Client.find(client_params[:id])
-        client_logo(brand, client_params)
-        client_show_images(brand, client_params)
+        company = client_params[:type] == 'Client' ? Company::Client.find(client_params[:id]) : Company::Brand.find(client_params[:id])
+        client_logo(company, client_params)
+        client_show_images(company, client_params)
       rescue StandardError => e
         puts e
       end
@@ -81,7 +82,7 @@ namespace :db do
       resources = @excel.worksheets.select {|a| a if a.sheet_name == sheet_name }.first
       resources.each_with_index do |row, index|
         @keys = define_keys(row, index) if index.zero?
-        next if index.zero? || row.cells.first.nil? || row.cells.first&.value.nil?
+        next if index.zero? || row&.cells&.first.nil? || row&.cells&.first&.value.nil?
 
         yield(formatted_params(row))
       end
@@ -111,24 +112,24 @@ namespace :db do
       puts ' done'
     end
 
-    def client_logo(brand, client_params)
-      return if client_params[:logo].blank?
+    def client_logo(brand, brand_params)
+      return if brand_params[:logo].blank?
 
-      attach_image(client_params[:logo], brand, 'logo')
+      attach_image(brand_params[:logo], brand, 'logo')
     end
 
-    def client_show_images(brand, client_params)
-      return if client_params[:products_images].blank? || !client_params[:products_images].first.is_a?(Hash)
+    def client_show_images(brand, brand_params)
+      return if brand_params[:products_images].blank? || !brand_params[:products_images].first.is_a?(Hash)
 
-      client_params[:products_images].each_with_index do |data,  index|
+      brand_params[:products_images].each_with_index do |data,  index|
         product = Product.find(data[:product_id])
         image = Attached::ResourceFile.find_by(owner: product, order: data[:orden])&.image
-        create_resourse_file(image, brand, 'client_show', index) if image.present?
+        create_resourse_file(image, brand, 'brand_show', index) if image.present?
       end
     end
 
     def define_keys(row, index)
-      row.cells.map {|c| c&.value&.delete(' ')&.to_sym if c }.compact if index.zero?
+      row&.cells&.map {|c| c&.value&.delete(' ')&.to_sym if c }.compact if index.zero?
     end
 
     def attach_image(image_name, owner, kind, index = 0)
@@ -166,7 +167,7 @@ namespace :db do
     def create_resource(sheet_name, params)
       class_name = class_name(sheet_name)
       case sheet_name
-      when 'client' then create_client(class_name, params)
+      when 'client' then create_company(params)
       when 'product' then create_product(class_name, params)
       else default_create(class_name, params)
       end
@@ -177,8 +178,13 @@ namespace :db do
       class_name.create!(params.except(:images, :files).merge(tags: tags))
     end
 
-    def create_client(class_name, params)
-      class_name.create!(params.except(:distribuitors, :logo, :products_images))
+    def create_company(params)
+      creation_params = params.except(:distribuitors, :logo, :products_images, :type)
+      if params[:type] == 'Client'
+        Company::Client.create!(creation_params)
+      elsif params[:type] == 'Brand'
+        Company::Brand.create!(creation_params)
+      end
     end
 
     def default_create(class_name, params)
@@ -203,18 +209,18 @@ namespace :db do
     def class_name(name)
       case name
       when 'client'
-        Company::Client
+        Company::Common
       else
         name.camelize.constantize
       end
     end
 
     def empty_row?(index, row)
-      index.zero? || row.cells.first.nil? || row.cells.first&.value.nil?
+      index.zero? || row&.cells&.first.nil? || row&.cells&.first&.value.nil?
     end
 
     def formatted_params(row)
-      values = row.cells.map {|a| a&.value }.map {|item| array_param(item) }
+      values = row&.cells&.map {|a| a&.value }.map {|item| array_param(item) }
       @keys.zip(values).to_h
     end
 
