@@ -4,7 +4,7 @@ module Api
     before_action :valid_session
 
     def index
-      @list = Company::Common.all
+      @list = Company::Client.all
       decorated_list = presenter.decorate_list(filtered_list.includes(:products), params)
       render json: { brands: decorated_list }, status: :ok
     end
@@ -23,7 +23,7 @@ module Api
     private
 
     def brand
-      Company::Brand.find(params[:id] || params[:brand_id])
+      Company::Client.find(params[:id] || params[:brand_id])
     end
 
     def presenter
