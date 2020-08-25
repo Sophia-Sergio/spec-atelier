@@ -11,5 +11,8 @@ module Company
       against: %i[name],
       using: { tsearch: { prefix: true, any_word: true } }
 
+    def formatted_addresses
+      addresses.map {|address| [address.name, address.text, address.country, address.city].join("\n") }
+    end
   end
 end

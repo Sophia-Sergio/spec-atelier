@@ -1,6 +1,7 @@
 module Api
   class ProductsController < ApplicationController
     include Search::Handler
+    include AssociateFiles
 
     before_action :valid_session
     before_action :product, only: %i[show]
@@ -43,13 +44,17 @@ module Api
     end
 
     def associate_images
-      GoogleStorage.new(product, images_params[:images]).perform
+      associate_files(product, images_params[:images])
       render json: { message: 'Image attached'}, status: :created
     end
 
     def associate_documents
-      GoogleStorage.new(product, documents_params[:documents]).perform
+      associate_files(product, documents_params[:documents])
       render json: {}, status: :created
+    end
+
+    def remove_images
+
     end
 
     private
