@@ -7,7 +7,7 @@ module MetaLookupTable
     end
 
     def self.fields
-      @fields = if LookupTable.all.count.positive?
+      @fields ||= if LookupTable.all.count.positive?
         JSON.parse(LookupTable.all.to_json).select {|item| searcheable_attributes.include? item['category'] }
       else
         []
