@@ -9,6 +9,7 @@ module Products
                :item,
                :reference,
                :brand,
+               :client,
                :dwg,
                :bim,
                :pdfs,
@@ -19,6 +20,11 @@ module Products
 
     def brand
       resource = subject.brand
+      { id: resource.id, name: resource.name }
+    end
+
+    def client
+      resource = subject.client
       { id: resource.id, name: resource.name }
     end
 
@@ -64,7 +70,7 @@ module Products
     end
 
     %w[project work room].each do |column|
-      define_method("#{column}_type") { subject.send("#{column}_type_key_value") }
+      define_method("#{column}_type") { subject.send("#{column}_type_key_value") || []}
     end
 
     private
