@@ -18,7 +18,7 @@
         %p{:style => "margin: 0; font-size: 20px; font-weight: bold; letter-spacing: 1.25px;"}
           Bienvenido a Spec
         %p{:style => "margin: 0; font-size: 20px;font-weight: bold; letter-spacing: 1.25px;"}
-          = "Atelier #{@user.email},"
+          = "Atelier #{@user.first_name},"
         %p{:style => "font-size: 14px; letter-spacing: 1px"}
           Estámos felices de que seas parte de la familia, empieza a construir tus especificaciones de arquitectura
           con Spec Atelier.
@@ -40,6 +40,11 @@
       %td{:align => "center"}
         %img{:src => "https://firebasestorage.googleapis.com/v0/b/spec-atelier/o/spec_images%2Fwelcome-img.jpg?alt=media", :style => "margin:0; padding:0; border:none; display:block; max-heigth: 420px; max-width: 280px;"}/
 
+  / SPACE
+  %table{:border => "0", :cellpadding => "0", :width => "100%"}
+    %tr
+      %td{:height => "60"}
+
   / FOOTER
   %table{:align => "center", :bgcolor => "#08262c", :border => "0", :cellpadding => "20", :height => "72", :width => "100%"}
     %tr
@@ -47,9 +52,9 @@
         %img{:border => "0", :height => "18", :src => "https://firebasestorage.googleapis.com/v0/b/spec-atelier/o/spec_images%2Femail.jpg?alt=media", :style => "margin: 0 4px 0 0; padding:0; border:none; display: inline-block;", :width => "18"}
         %a{:href => "mailito:contacto@specatelier.com", :style => "color:#19bea8; text-decoration: none; font-size: 12px; letter-spacing: 1px;", :target => "_blank"} contacto@specatelier.com
       %td{:align => "left"}
-        %img{:border => "0", :height => "18", :src => "https://firebasestorage.googleapis.com/v0/b/spec-atelier/o/spec_images%2Fwhatsapp.jpg?alt=media", :style => "margin:0 4px 0 0; padding:0; border:none; display: inline-block;", :width => "12"}
+        %img{:border => "0", :height => "18", :src => "https://firebasestorage.googleapis.com/v0/b/spec-atelier/o/spec_images%2Fwhatsapp.jpg?alt=media", :style => "margin:0 4px 0 0; padding:0; border:none; display: inline-block;", :width => "20"}
         %a{:href => "tel:+56987654321", :style => "color:#19bea8; text-decoration: none; font-size: 12px; letter-spacing: 1px;", :target => "_blank"} +56 9 8765 4321
       %td{:align => "right"}
         %a{:href => "#{ENV["FRONT_DOMAIN"]}", :style => "color:#19bea8; text-decoration: none; font-size: 12px; letter-spacing: 1px;", :target => "_blank"}
           Síguenos en:
-          %img{:border => "0", :height => "18", :src => "https://firebasestorage.googleapis.com/v0/b/spec-atelier/o/spec_images%2Finstagram.jpg?alt=media", :style => "margin:0 4px 0 0; padding:0; border:none; display: inline-block;", :width => "12"}
+          %img{:border => "0", :height => "18", :src => "https://firebasestorage.googleapis.com/v0/b/spec-atelier/o/spec_images%2Finstagram.jpg?alt=media", :style => "margin:0 4px 0 0; padding:0; border:none; display: inline-block;", :width => "20"}
