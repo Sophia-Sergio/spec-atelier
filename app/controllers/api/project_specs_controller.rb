@@ -1,6 +1,7 @@
 module Api
   class ProjectSpecsController < ApplicationController
     before_action :valid_session
+    load_and_authorize_resource class: ProjectSpec::Specification, only: :show
 
     def create
       ProjectSpec.create(project_spec_param)
