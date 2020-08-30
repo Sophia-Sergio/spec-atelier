@@ -5,6 +5,8 @@ module Api
     before_action :project, only: %i[show edit delete]
     before_action :projects, only: %i[index search]
 
+    load_and_authorize_resource except: :create
+
     def index
       @custom_list = current_user.projects
       render json: { projects: presenter.decorate_list(filtered_list, params) }, status: :ok
