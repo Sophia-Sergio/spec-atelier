@@ -20,11 +20,12 @@ class Product < ApplicationRecord
     associated_against: { brand: :name },
     using: { tsearch: { prefix: true, any_word: true } }
 
-  scope :by_brand,        ->(brands)   { joins(:brand).where(companies: { id: brands }) }
   scope :by_section,      ->(sections) { joins(:section).where(sections: { id: sections }) }
   scope :by_item,         ->(items)    { joins(:item).where(items: { id: items }) }
   scope :by_project_type, ->(types)    { where("project_type && ?", "{#{ types.is_a?(Array) ? types.join(',') : types }}") }
   scope :by_room_type,    ->(types)    { where("room_type && ?", "{#{ types.is_a?(Array) ? types.join(',') : types }}") }
+  scope :by_subitem,      ->(subitems) { where(subitem_id: subitems) }
+  scope :original,        ->           { where(original_product_id: nil) }
 
   enum created_reason: %i[brand_creation added_to_spec]
 
@@ -32,19 +33,22 @@ class Product < ApplicationRecord
     self.item = subitem.item if subitem.present?
   end
 
+  def self.by_brand(brands)
+    brands = joins(:brand).where(companies: { id: brands })
+    clients = joins(:client).where(companies: { id: brands })
+    Product.where(id: (brands + clients).uniq)
+  end
+
   def images
     images = files.images&.pluck(:attached_file_id)
-    Attached::Image.where(id: images)
-                   .joins(:resource_file)
-                   .select('DISTINCT(attached_files.id), attached_files.*, attached_resource_files.order')
-                   .order(:order)
+    Attached::Image.where(id: images).joins(:resource_file).select('attached_files.*, attached_resource_files.order').order(:order).uniq
   end
 
   def documents
     documents = files.documents&.pluck(:attached_file_id)
     Attached::Document.where(id: documents)
                       .joins(:resource_file)
-                      .select('DISTINCT(attached_files.id), attached_files.*, attached_resource_files.order')
+                      .select('attached_files.*, attached_resource_files.order')
                       .order(:order)
   end
 

@@ -27,6 +27,7 @@ module ProjectSpec
         created_reason: 1,
         user: user
       }))
+      original_product.files.each {|file| file.dup.update(owner: product) }
       blocks.create!(spec_item: product, section_id: params[:section], item_id: params[:item])
       product
     end

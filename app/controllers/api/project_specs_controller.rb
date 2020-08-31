@@ -1,6 +1,7 @@
 module Api
   class ProjectSpecsController < ApplicationController
     before_action :valid_session
+    load_and_authorize_resource class: ProjectSpec::Specification, only: :show
 
     def create
       ProjectSpec.create(project_spec_param)
@@ -54,7 +55,7 @@ module Api
     end
 
     def show
-      render json: { blocks: blocks }
+      render json: { blocks: blocks, project: { id: project_specification.project.id, name: project_specification.project.name } }
     end
 
     private

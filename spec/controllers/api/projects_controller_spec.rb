@@ -92,6 +92,15 @@ describe Api::ProjectsController, type: :controller do
         expect(json['project']['name']).to eq(project1.name)
       end
     end
+
+    context 'with valid session but now owning project' do
+      it 'returns an error' do
+        request.headers['Authorization'] = "Bearer #{session.token}"
+        get :show, params: { user_id: user.id, id: project4.id }
+
+        expect(json['error']).to eq('You are not authorized')
+      end
+    end
   end
 
   describe '#create' do

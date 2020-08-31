@@ -7,14 +7,15 @@ module MetaLookupTable
     end
 
     def self.fields
-      @fields ||= if LookupTable.all.count.positive?
-        JSON.parse(LookupTable.all.to_json).select {|item| searcheable_attributes.include? item['category'] }
-      else
-        []
-      end
+      return unless LookupTable.all.count.positive?
+
+      @fields ||= JSON.parse(LookupTable.all.to_json).select {|item| searcheable_attributes.include? item['category'] }
     end
 
-    fields.map {|a| a['category'] }.uniq.each {|field| new.send(:enum_methods, field) }
+    if fields.present?
+      fields.map {|a| a['category'] }.uniq.each {|field| new.send(:enum_methods, field) }
+    end
+
     after_find :define_methods
     after_update :define_methods
   end
@@ -46,7 +47,7 @@ module MetaLookupTable
   end
 
   def define_methods
-    self.class.fields.map {|a| a['category'] }.uniq.each do |field|
+    self.class.fields&.map {|a| a['category'] }&.uniq&.each do |field|
       self.class.send :define_method, "#{field}_spa" do
         if send(field.to_sym).is_a? Array
           send(field.to_sym).map do |value|

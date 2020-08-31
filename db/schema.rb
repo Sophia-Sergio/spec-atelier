@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_10_031210) do
+ActiveRecord::Schema.define(version: 2020_08_30_183439) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "hstore"
@@ -91,6 +91,8 @@ ActiveRecord::Schema.define(version: 2020_08_10_031210) do
     t.string "translation_spa"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "related_category"
+    t.text "related_category_codes", default: [], array: true
     t.index ["category"], name: "index_lookup_tables_on_category"
   end
 

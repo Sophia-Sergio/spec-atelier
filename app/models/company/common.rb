@@ -14,5 +14,9 @@ module Company
     def formatted_addresses
       addresses.map {|address| [address.name, address.text, address.country, address.city].join("\n") }
     end
+
+    def default_email
+      email["main"] if email.present?
+    end
   end
 end

@@ -4,8 +4,9 @@ describe Api::ProjectSpecsController, type: :controller do
   let(:session)        { create(:session, user: user, token: session_token(user)) }
   let(:section)        { create(:section) }
   let(:item)           { create(:item, section: section) }
-  let(:item2)           { create(:item, section: section) }
-  let(:project_spec)   { create(:project_spec_specification) }
+  let(:item2)          { create(:item, section: section) }
+  let(:project)        { create(:project, user: user) }
+  let(:project_spec)   { create(:project_spec_specification, project: project) }
   let(:spec_block)     { create(:spec_block, project_spec: project_spec) }
   let(:product1)        { create(:product, item: item, section: section) }
   let(:product2)        { create(:product, item: item2, section: section) }
@@ -105,6 +106,11 @@ describe Api::ProjectSpecsController, type: :controller do
     context 'with valid session' do
       before do
         request.headers['Authorization'] = "Bearer #{session.token}"
+        image1 = create(:image)
+        image2 = create(:image)
+        create(:resource_file, owner: product1, attached: image1)
+        create(:resource_file, owner: product1, attached: image2)
+
         post :create_product, params: {
           project_spec_id: project_spec,
           product: product1,
@@ -197,6 +203,18 @@ describe Api::ProjectSpecsController, type: :controller do
       it_behaves_like 'an unauthorized api request'
     end
 
+    context 'with valid session but no project ownsership' do
+      before { request.headers['Authorization'] = "Bearer #{session.token}" }
+
+      it 'does not allow a user who do not owns a project to see a project' do
+        project_no_logged_user = create(:project, user: no_logged_user)
+        project_spec_2 = create(:project_spec_specification, project: project_no_logged_user)
+        get :show, params: { id: project_spec_2, user_id: user}
+
+        expect(json['error']).to eq('You are not authorized')
+      end
+    end
+
     context 'with valid session' do
       before do
         request.headers['Authorization'] = "Bearer #{session.token}"
@@ -205,6 +223,8 @@ describe Api::ProjectSpecsController, type: :controller do
 
       context 'project spec' do
         it 'has spec_item ordered correctly' do
+          expect(json['project']['name']).to eq(project.name)
+
           expect(json['blocks'].first['order']).to eq(0)
           expect(json['blocks'].first['type']).to eq('Section')
 
