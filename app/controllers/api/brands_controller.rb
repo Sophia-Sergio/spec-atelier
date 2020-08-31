@@ -15,7 +15,7 @@ module Api
 
     def contact_form
       if brand.default_email.present?
-        contact_form = client.contact_forms.create(contact_form_params.merge(user_id: current_user.id))
+        contact_form = brand.contact_forms.create(contact_form_params.merge(user_id: current_user.id))
         BrandMailer.send_contact_form_to_brand(current_user, contact_form).deliver
         BrandMailer.send_contact_form_to_user(current_user, contact_form).deliver
         render json: { form: contact_form, message: 'Mensaje enviado' }, status: :created
