@@ -55,7 +55,7 @@ module Api
     end
 
     def show
-      render json: { blocks: blocks }
+      render json: { blocks: blocks, project: { id: project_specification.project.id, name: project_specification.project.name } }
     end
 
     private

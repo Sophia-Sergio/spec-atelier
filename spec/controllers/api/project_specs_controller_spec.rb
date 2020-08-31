@@ -218,6 +218,8 @@ describe Api::ProjectSpecsController, type: :controller do
 
       context 'project spec' do
         it 'has spec_item ordered correctly' do
+          expect(json['project']['name']).to eq(project.name)
+
           expect(json['blocks'].first['order']).to eq(0)
           expect(json['blocks'].first['type']).to eq('Section')
 
