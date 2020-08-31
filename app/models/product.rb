@@ -20,21 +20,23 @@ class Product < ApplicationRecord
     associated_against: { brand: :name },
     using: { tsearch: { prefix: true, any_word: true } }
 
-  scope :by_brand,        ->(brands)   {
-    brands = joins(:brand).where(companies: { id: brands })
-    clients = joins(:client).where(companies: { id: brands })
-    Product.where(id: (brands + clients).uniq)
-  }
   scope :by_section,      ->(sections) { joins(:section).where(sections: { id: sections }) }
   scope :by_item,         ->(items)    { joins(:item).where(items: { id: items }) }
   scope :by_project_type, ->(types)    { where("project_type && ?", "{#{ types.is_a?(Array) ? types.join(',') : types }}") }
   scope :by_room_type,    ->(types)    { where("room_type && ?", "{#{ types.is_a?(Array) ? types.join(',') : types }}") }
   scope :by_subitem,      ->(subitems) { where(subitem_id: subitems) }
+  scope :original,        ->           { where(original_product_id: nil) }
 
   enum created_reason: %i[brand_creation added_to_spec]
 
   before_validation(on: :create) do
     self.item = subitem.item if subitem.present?
+  end
+
+  def self.by_brand(brands)
+    brands = joins(:brand).where(companies: { id: brands })
+    clients = joins(:client).where(companies: { id: brands })
+    Product.where(id: (brands + clients).uniq)
   end
 
   def images
