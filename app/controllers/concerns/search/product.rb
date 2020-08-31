@@ -14,7 +14,7 @@ module Search
     end
 
     def product_search_params
-      %i[keyword brand project_type my_specifications room_type section item]
+      %i[keyword brand project_type my_specifications room_type section item subitem]
     end
   end
 end
