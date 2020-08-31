@@ -106,6 +106,11 @@ describe Api::ProjectSpecsController, type: :controller do
     context 'with valid session' do
       before do
         request.headers['Authorization'] = "Bearer #{session.token}"
+        image1 = create(:image)
+        image2 = create(:image)
+        create(:resource_file, owner: product1, attached: image1)
+        create(:resource_file, owner: product1, attached: image2)
+
         post :create_product, params: {
           project_spec_id: project_spec,
           product: product1,
