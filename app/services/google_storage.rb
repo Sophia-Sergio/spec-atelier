@@ -12,13 +12,14 @@ class GoogleStorage
 
   private
 
+  def client_name
+    @owner.client.name
+  end
+  
   def upload_file(file)
     storage_bucket.upload_file(file.tempfile, "images/#{client_name}-#{file.original_filename}")
   end
 
-  def client_name
-    @owner.client.name
-  end
 
   def storage_bucket
     @storage_bucket ||= begin
