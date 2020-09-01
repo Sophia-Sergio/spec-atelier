@@ -311,11 +311,11 @@ namespace :db do
     def reset(table_name)
       database_connection
       class_name(table_name).delete_all
-      reset_pk_sequence(table_name)
     end
 
     def reset_pk_sequence(table_name)
-      ActiveRecord::Base.connection.reset_pk_sequence!(table_name.pluralize)
+      table_name = table_name == 'client' ? 'company' : table_name
+      ActiveRecord::Base.connection.reset_pk_sequence!(table_name.pluralize, 'id')
     end
   end
 end
