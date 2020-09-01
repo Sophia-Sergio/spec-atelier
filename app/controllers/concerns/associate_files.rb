@@ -25,14 +25,14 @@ module AssociateFiles
     case file_stored.content_type.split('/').first
     when 'image'
       image = Attached::Image.create!(url: file_stored.public_url, name: name_stored_file)
-      create_resourse_file(product, image)
+      create_resourse_file(product, image, 'product_image')
     else
       document = Attached::Document.create!(url: file_stored.public_url, name: name_stored_file)
-      create_resourse_file(product, document)
+      create_resourse_file(product, document, 'product_document')
     end
   end
 
-  def create_resourse_file(owner, image)
-    Attached::ResourceFile.create!(owner: owner, attached: image)
+  def create_resourse_file(owner, image, kind)
+    Attached::ResourceFile.create!(owner: owner, attached: image, kind: kind)
   end
 end
