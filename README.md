@@ -8,7 +8,7 @@ its frontend is a React app built and powered by Node.
 Version Requirements:
 
 - **Ruby 2.6.5**
-- **Node 12.4.x** [(LTS)](https://github.com/nodejs/Release#release-schedule1)
+- **Node 12.14.x** [(LTS)](https://github.com/nodejs/Release#release-schedule1)
 - **PostgreSQL 9.4** (via Homebrew: `postgresql@9.4`)
 
 Assumptions:
