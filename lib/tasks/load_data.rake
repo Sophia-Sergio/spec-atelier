@@ -20,8 +20,9 @@ namespace :db do
 
     task images_and_documents: :environment do
       reset_images_and_files
-      process_product_images
+      process_item_image
       process_client_images
+      process_product_images
       process_product_documents
       sh 'rm config/google_storage_config.json'
       sh 'rm config/google_drive_config.json'
@@ -60,7 +61,19 @@ namespace :db do
 
         images = product_params[:images].split(',').map {|a| a.gsub('/','_').strip }
         product = Product.find(product_params[:id])
-        images.each_with_index {|image, index| attach_image(image, product, '', index) }
+        images.each_with_index {|image, index| attach_image(image, product, 'product_image', index) }
+      rescue StandardError => e
+        puts e
+      end
+    end
+
+    def process_item_image
+      select_sheet('item') do |item_params|
+        next if item_params[:images].blank?
+
+        images = item_params[:images].split(',').map {|a| a.gsub('/','_').strip }
+        item = Item.find(item_params[:id])
+        images.each_with_index {|image, index| attach_image(image, item, 'item_image', index) }
       rescue StandardError => e
         puts e
       end
@@ -169,8 +182,13 @@ namespace :db do
       case sheet_name
       when 'client' then create_company(params)
       when 'product' then create_product(class_name, params)
+      when 'item' then create_item(class_name, params)
       else default_create(class_name, params)
       end
+    end
+
+    def create_item(class_name, params)
+      class_name.create!(params.except(:images))
     end
 
     def create_product(class_name, params)

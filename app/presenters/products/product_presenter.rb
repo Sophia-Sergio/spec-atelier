@@ -64,7 +64,7 @@ module Products
 
     def images
       product_images = subject.images
-      return [] unless product_images.present?
+      return [item_image] unless product_images.present?
 
       product_images.map {|a| { id: a.id, urls: a.all_formats, order: a.resource_file.order } }
     end
@@ -77,6 +77,10 @@ module Products
 
     def documents
       @documents ||= subject.documents
+    end
+
+    def item_image
+      { id: 1, urls: { small: subject.item&.image_url || ''}, order: 0 }
     end
   end
 end
