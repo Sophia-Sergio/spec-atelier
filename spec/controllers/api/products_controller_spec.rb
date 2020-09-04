@@ -175,6 +175,19 @@ describe Api::ProductsController, type: :controller do
         expect(json['product']['images'].second['urls']).to eq(image2.all_formats.as_json)
       end
 
+      context 'whe product has no image' do
+        it 'returns a resource with images' do
+          image1 = create(:image)
+          create(:resource_file, owner: products.first.item, attached: image1, kind: 'item_image')
+
+          get :show, params: { id: products.first.id }
+
+          expect(json['product']['name']).to eq(products.first.name)
+          expect(json['product']['images'].first['order']).to eq(0)
+          expect(json['product']['images'].first['urls']['small']).to eq(products.first.item.image_url)
+        end
+      end
+
       it 'returns another resource with images' do
         get :show, params: { id: products.second.id }
         expect(json['product']['name']).to eq(products.second.name)
