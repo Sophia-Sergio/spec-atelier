@@ -19,6 +19,7 @@ gem 'rubyXL'
 gem 'google_drive'
 gem 'google-cloud-storage'
 gem 'pg_search'
+gem 'bullet'
 
 group :development, :test do
   gem 'pry'
