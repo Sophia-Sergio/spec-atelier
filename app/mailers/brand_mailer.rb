@@ -1,5 +1,4 @@
 class BrandMailer < ApplicationMailer
-  default from: 'paul.eaton@specatelier.com'
 
   def send_contact_form_to_brand(current_user, form)
     @current_user = current_user

@@ -44,7 +44,7 @@ module Api
       if user.new_record?
         user.password = SecureRandom.hex(10) if user.password.nil?
         user.update(user_params)
-        UserMailer.send_signup_email(user).deliver
+        EmailWorker.perform_async(user, 'send_signup_email')
       else
         user.save
       end

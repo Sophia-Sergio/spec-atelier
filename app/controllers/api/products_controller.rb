@@ -8,12 +8,6 @@ module Api
 
     load_and_authorize_resource only: %i[update]
 
-
-    def send_email
-      EmailWorker.perform_async
-      render json: { a: 'hola' }
-    end
-
     def show
       render json: { product: decorator.decorate(product) }, status: :ok
     end
