@@ -27,6 +27,10 @@ module Search
       decorator.decorate_collection(@list.offset(@limit * @page).limit(@limit).find_ordered(@ordered))
     end
 
+    def decorator
+      @decorator
+    end
+
     def paginated_format
       {
         total:     @list.count,
@@ -50,14 +54,16 @@ module Search
     end
 
     def filter_params
-      params.slice(*send("#{class_name[:name]}_search_params"))
+      params.slice(*send("#{class_name[:name]}_search_params")) rescue []
     end
 
     def class_name
-      name = params[:controller].sub('api/', '').singularize
-      case name
-      when 'brand' then { name: name, class: 'Company::Brand'.constantize }
-      else { name: name, class: name.capitalize.constantize }
+      @class_name ||= begin
+        name = params[:controller].sub('api/', '').singularize
+        case name
+        when 'brand' then { name: name, class: 'Company::Brand'.constantize }
+        else { name: name, class: name.capitalize.constantize }
+        end
       end
     end
   end

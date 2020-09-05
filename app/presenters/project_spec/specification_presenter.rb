@@ -20,7 +20,7 @@ module ProjectSpec
 
     def element
       decorator = case type
-        when 'Product' then "Products::#{spec_item.class}Presenter".constantize.decorate(spec_item)
+        when 'Product' then "ProductDecorator".constantize.decorate(spec_item)
         else "ProjectSpec::#{spec_item.class}Presenter".constantize.decorate(spec_item)
       end
     end

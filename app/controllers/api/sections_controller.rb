@@ -1,5 +1,7 @@
 module Api
   class SectionsController < ApplicationController
+    include Search::Handler
+
     before_action :valid_session
     before_action :section, only: :products
 
@@ -16,8 +18,10 @@ module Api
     end
 
     def products
-      list = section.products
-      render json: { products: ::Products::ProductPresenter.decorate_list(list, params) }, status: :ok
+      @custom_list = section.products
+      @decorator = ProductDecorator
+      @class_name = { name: 'product', class: Product }
+      render json: { products: paginated_response }, status: :ok
     end
 
     private

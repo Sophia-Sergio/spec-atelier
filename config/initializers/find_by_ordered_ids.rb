@@ -3,13 +3,15 @@ module FindByOrderedIdsActiveRecordExtension
 
   module ClassMethods
     def find_ordered(ids)
+      return self.none unless ids.present?
+
       order_clause = "CASE #{self.table_name}.id "
       ids.each_with_index do |id, index|
         order_clause << "WHEN #{id} THEN #{index} "
       end
       order_clause << "ELSE #{ids.length} END"
 
-      where(id: ids).order(order_clause)
+      where(id: ids).order(Arel.sql(order_clause))
     end
   end
 end

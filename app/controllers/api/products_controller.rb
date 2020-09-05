@@ -67,7 +67,7 @@ module Api
     private
 
     def decorator
-      ProductDecorator
+      @decorator ||= ProductDecorator
     end
 
     def product
