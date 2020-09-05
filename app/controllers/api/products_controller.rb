@@ -3,10 +3,16 @@ module Api
     include Search::Handler
     include AssociateFiles
 
-    before_action :valid_session
+    before_action :valid_session, except: :send_email
     before_action :product, only: %i[show]
 
     load_and_authorize_resource only: %i[update]
+
+
+    def send_email
+      EmailWorker.perform_async
+      render json: { a: 'hola' }
+    end
 
     def show
       render json: { product: decorator.decorate(product) }, status: :ok

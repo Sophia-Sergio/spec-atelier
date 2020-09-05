@@ -33,6 +33,8 @@ Rails.application.routes.draw do
     end
     get 'items/:item_id/systems', to: 'items#subitems', as: :systems
 
+    get 'products/send_email'
+
     resources :products, only: %i[show create index update] do
       post 'associate_images'
       delete 'remove_images'
@@ -40,6 +42,8 @@ Rails.application.routes.draw do
       delete 'remove_documents'
       post 'contact_form'
     end
+
+
 
     resources :sections, only: %i[index] do
       get 'items'
