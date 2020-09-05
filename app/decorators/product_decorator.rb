@@ -1,5 +1,18 @@
 class ProductDecorator < ApplicationDecorator
-  delegate :id
+  delegate :id, :name, :short_desc, :long_desc, :reference
+
+  new_keys :system,
+          :section,
+          :item,
+          :brand,
+          :client,
+          :dwg,
+          :bim,
+          :pdfs,
+          :images,
+          :project_type,
+          :room_type,
+          :work_type
 
   def brand
     resource = model.brand
@@ -52,9 +65,9 @@ class ProductDecorator < ApplicationDecorator
     product_images.map {|a| { id: a.id, urls: a.all_formats, order: a.resource_file.order } }
   end
 
-  # %w[project work room].each do |column|
-  #   define_method("#{column}_type") { model.respond_to?("#{column}_type_key_value") ? model.send("#{column}_type_key_value") : []}
-  # end
+  %w[project work room].each do |column|
+    define_method("#{column}_type") { model.respond_to?("#{column}_type_key_value") ? model.send("#{column}_type_key_value") : []}
+  end
 
   private
 
