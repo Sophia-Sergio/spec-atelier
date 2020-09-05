@@ -34,20 +34,21 @@ class Product < ApplicationRecord
   end
 
   def self.by_brand(brands)
-    brands = joins(:brand).where(companies: { id: brands })
-    clients = joins(:client).where(companies: { id: brands })
-    Product.where(id: (brands + clients).uniq)
+    scoped_brands = joins(:brand).where(companies: { id: brands })
+    scoped_clients = joins(:client).where(companies: { id: brands })
+    Product.where(id: (scoped_brands + scoped_clients).uniq)
   end
 
   def images
     images = files.images&.pluck(:attached_file_id)
-    Attached::Image.where(id: images).joins(:resource_file).select('attached_files.*, attached_resource_files.order').order(:order).uniq
+    Attached::Image.where(id: images).joins(:resource_file).includes(:resource_file).select('attached_files.*, attached_resource_files.order').order(:order).uniq
   end
 
   def documents
     documents = files.documents&.pluck(:attached_file_id)
     Attached::Document.where(id: documents)
                       .joins(:resource_file)
+                      .includes(:resource_file)
                       .select('attached_files.*, attached_resource_files.order')
                       .order(:order)
   end

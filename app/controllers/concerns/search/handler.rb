@@ -10,6 +10,30 @@ module Search
       sorted_list
     end
 
+    def paginated_response
+      @list = filtered_list
+      paginated_format
+    end
+
+    def list
+      @custom_list
+    end
+
+    def paginated_list
+      @page = params[:page].presence&.to_i || 0
+      @offset = params[:offset].presence&.to_i || params[:limit].presence&.to_i || 10
+      @limit = params[:limit].presence&.to_i || 10
+      decorator.decorate_collection(@list.offset(@limit * @page).limit(@limit).map)
+    end
+
+    def paginated_format
+      {
+        total:     @list.count,
+        list:      paginated_list,
+        next_page: (@page + 1) * @limit < @list.count ? @page + 1 : nil
+      }
+    end
+
     private
 
     def list

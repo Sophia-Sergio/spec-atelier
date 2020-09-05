@@ -7,9 +7,13 @@ module MetaLookupTable
     end
 
     def self.fields
-      return unless LookupTable.all.count.positive?
+      return unless lookup_table?
 
       @fields ||= JSON.parse(LookupTable.all.to_json).select {|item| searcheable_attributes.include? item['category'] }
+    end
+
+    def self.lookup_table?
+      @lookup_table ||= LookupTable.all.count.positive?
     end
 
     if fields.present?
@@ -59,12 +63,12 @@ module MetaLookupTable
       end
 
       self.class.send :define_method, "#{field}_key_value" do
+        return unless send(field.to_sym)
+
         if send(field.to_sym).is_a? Array
           send(field.to_sym).map do |value|
             { id: value.to_i, name: self.class.fields.select {|b| b['code'] == value.to_i }.first['translation_spa'] }
           end
-        else
-          { id: value.to_i, name: self.class.fields.select {|b| b['value'] == send(field.to_sym) }.first['translation_spa'] }
         end
       end
     end
