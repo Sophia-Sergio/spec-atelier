@@ -4,6 +4,6 @@ class EmailWorker
 
   def perform(user = nil)
     puts 'start sending the email'
-    UserMailer.test.deliver
+    UserMailer.test.deliver_later
   end
 end
