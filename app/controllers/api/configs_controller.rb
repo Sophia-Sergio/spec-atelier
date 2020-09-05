@@ -1,6 +1,6 @@
 module Api
   class ConfigsController < ApplicationController
-    # before_action :valid_session
+    before_action :valid_session
 
     def project_data
       cities = CITIES.values.flatten
