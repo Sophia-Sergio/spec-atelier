@@ -9,12 +9,12 @@ module Api
     load_and_authorize_resource only: %i[update]
 
     def show
-      render json: { product: presenter.decorate(product) }, status: :ok
+      render json: { product: decorator.decorate(product) }, status: :ok
     end
 
     def index
       @custom_list = Product.all.original
-      render json: { products: presenter.decorate_list(filtered_list, params) }, status: :ok
+      render json: { products: paginated_response }, status: :ok
     end
 
     def create
@@ -24,7 +24,7 @@ module Api
       brand = Company::Brand.find_or_create_by(name: product_params[:brand])
       product.brand = brand if brand.valid?
       if product.save
-        render json: { product: presenter.decorate(product) }, status: :created
+        render json: { product: decorator.decorate(product) }, status: :created
       else
         render json: { error: product.errors }, status: :unprocessable_entity
       end
@@ -34,7 +34,7 @@ module Api
       product.update(subitem_id: product_params[:system_id]) if product_params[:system_id].present?
       product.update(product_params.except(:system_id, :brand))
 
-      render json: { product: presenter.decorate(product) }, status: :ok
+      render json: { product: decorator.decorate(product) }, status: :ok
     end
 
     def contact_form
@@ -66,8 +66,8 @@ module Api
 
     private
 
-    def presenter
-      ::Products::ProductPresenter
+    def decorator
+      ProductDecorator
     end
 
     def product
