@@ -39,8 +39,8 @@ module Api
 
     def contact_form
       contact_form = product.contact_forms.create(contact_form_params.merge(user_id: current_user.id))
-      ProductMailer.send_contact_form_to_brand(current_user, contact_form).deliver
-      ProductMailer.send_contact_form_to_brand(current_user, contact_form).deliver
+      ProductMailer.send_contact_form_to_brand(current_user, contact_form).deliver_later
+      ProductMailer.send_contact_form_to_brand(current_user, contact_form).deliver_later
       render json: { form: contact_form, message: 'Mensaje enviado' }, status: :created
     end
 
