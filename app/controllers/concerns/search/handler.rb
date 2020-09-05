@@ -7,6 +7,7 @@ module Search
 
     def filtered_list
       filter_params.each {|k, v| @list = list&.send("by_#{k}".to_sym, v) unless @list&.count&.zero? }
+      @ordered = sorted_list.pluck(:id)
       sorted_list
     end
 
@@ -23,7 +24,7 @@ module Search
       @page = params[:page].presence&.to_i || 0
       @offset = params[:offset].presence&.to_i || params[:limit].presence&.to_i || 10
       @limit = params[:limit].presence&.to_i || 10
-      decorator.decorate_collection(@list.offset(@limit * @page).limit(@limit).map)
+      decorator.decorate_collection(@list.offset(@limit * @page).limit(@limit).find_ordered(@ordered))
     end
 
     def paginated_format

@@ -3,7 +3,7 @@ module Api
     include Search::Handler
     include AssociateFiles
 
-    before_action :valid_session
+    # before_action :valid_session
     before_action :product, only: %i[show]
 
     load_and_authorize_resource only: %i[update]
