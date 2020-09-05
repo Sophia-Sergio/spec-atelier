@@ -6,7 +6,7 @@ module Api
       user = User.find_by(email: params[:email])
       if user.present?
         user.generate_password_token!
-        EmailWorker.perform_async(user, 'password_reset')
+        UserMailer.password_reset(user).deliver_later
         render json: { status: 'ok', user_email: user.email }, status: :ok
       else
         render json: { error: 'Email address not found. Please check and try again.' }, status: :not_found
@@ -20,7 +20,7 @@ module Api
 
       user = User.find_by(reset_password_token: params[:token].to_s)
       if user.present? && user.password_token_valid?
-        EmailWorker.perform_async(user, 'password_reset_success')
+        UserMailer.password_reset_success(user).deliver_later
         return render json: { status: 'password updated' }, status: :ok if user.reset_password!(params[:password])
 
         render json: { error: user.errors.full_messages }, status: :unprocessable_entity
