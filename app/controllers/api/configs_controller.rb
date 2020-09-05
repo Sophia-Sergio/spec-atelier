@@ -1,18 +1,18 @@
 module Api
   class ConfigsController < ApplicationController
-    before_action :valid_session
+    # before_action :valid_session
 
     def project_data
       cities = CITIES.values.flatten
       @project_types = project_types
       data = {
         cities: cities,
-        project_types: @project_types.sort_by {|a| a[:name] },
-        work_types: work_types.sort_by {|a| a[:name] },
-        room_types: room_types.sort_by {|a| a[:name] }.map do |room_type|
+        project_types: @project_types.sort_by {|a| I18n.transliterate(a[:name]) },
+        work_types: work_types.sort_by {|a| I18n.transliterate(a[:name]) },
+        room_types: room_types.map do |room_type|
           hash = @project_types.select {|a| room_type[:related_category_codes].include? a[:id].to_s }
           room_type.merge(project_types: hash )
-        end
+        end.sort_by {|a| I18n.transliterate(a[:name].capitalize) }
       }
       render json: data, status: :ok
     end
