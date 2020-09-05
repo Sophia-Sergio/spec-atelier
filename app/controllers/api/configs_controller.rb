@@ -33,7 +33,7 @@ module Api
     def lookup_table_format(type)
       {
         id: type.code,
-        name: type.translation_spa,
+        name: type.translation_spa.capitalize,
         value: type.value,
         related_category: type.related_category,
         related_category_codes: type.related_category_codes
