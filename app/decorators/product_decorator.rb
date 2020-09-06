@@ -41,21 +41,21 @@ class ProductDecorator < ApplicationDecorator
     dwg_document = documents.with_dwg.first
     return {} unless dwg_document.present?
 
-    { name: dwg_document.name, url: dwg_document.url }
+    { id: dwg_document.id, name: dwg_document.name, url: dwg_document.url }
   end
 
   def bim
     bim_document = documents.with_bim.first
     return {} unless documents.with_bim.present?
 
-    { name: bim_document.name, url: bim_document.url }
+    { id: bim_document.id, name: bim_document.name, url: bim_document.url }
   end
 
   def pdfs
     pdf_documents = documents.with_pdf
     return [] unless pdf_documents.present?
 
-    pdf_documents.map {|a| { name: a.name, url: a.url } }
+    pdf_documents.map {|a| { id: a.id, name: a.name, url: a.url } }
   end
 
   def images
