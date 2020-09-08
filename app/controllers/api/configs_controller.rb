@@ -6,7 +6,7 @@ module Api
       cities = CITIES.values.flatten
       @project_types = project_types
       data = {
-        cities: cities,
+        cities: cities.sort,
         project_types: @project_types.sort_by {|a| I18n.transliterate(a[:name]) },
         work_types: work_types.sort_by {|a| I18n.transliterate(a[:name]) },
         room_types: room_types.map do |room_type|
