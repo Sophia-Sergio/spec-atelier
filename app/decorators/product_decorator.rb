@@ -76,6 +76,6 @@ class ProductDecorator < ApplicationDecorator
   end
 
   def item_image
-    { id: 1, urls: { small: model.item&.image_url || '', medium: model.item&.image_url || ''}, order: 0 }
+    { id: 1, hide_delete: true, urls: { small: model.item&.image_url || '', medium: model.item&.image_url || ''}, order: 0 }
   end
 end
