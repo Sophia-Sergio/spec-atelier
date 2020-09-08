@@ -1,5 +1,5 @@
 class ProductDecorator < ApplicationDecorator
-  delegate :id, :name, :short_desc, :long_desc, :reference
+  delegate :id, :name, :short_desc, :long_desc, :reference, :price
 
   new_keys :system,
           :section,
