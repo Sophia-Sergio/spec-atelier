@@ -29,7 +29,7 @@ describe Api::ConfigsController, type: :controller do
         %w[work_type project_type room_type].each do |category|
           expect(json[category.pluralize].count).to eq(LookupTable.by_category(category).count)
         end
-        expect(json['project_types'].first['name']).to eq('a')
+        expect(json['project_types'].first['name']).to eq('A')
         expect(json['cities'].count).to eq(146)
         expect(json['room_types'].first['project_types'].count).to eq(2)
       end

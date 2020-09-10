@@ -13,11 +13,6 @@ describe Api::BrandsController, type: :controller do
   end
 
   describe '#index' do
-    context 'without session' do
-      before { get :index, params: { limit: 10 } }
-      it_behaves_like 'an unauthorized api request'
-    end
-
     context 'with valid session' do
       before { request.headers['Authorization'] = "Bearer #{session.token}" }
 
