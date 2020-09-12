@@ -9,7 +9,7 @@ module Api
         UserMailer.send_signup_email(user).deliver
         render json: { logged_in: true, user: BasicUserPresenter.decorate(user) }, status: :created
       else
-        render json: { error: user.errors.to_json }, status: :conflict
+        render json: { error: { alert: user.errors.as_json } }, status: :conflict
       end
     end
   end

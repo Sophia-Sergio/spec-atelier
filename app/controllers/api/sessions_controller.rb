@@ -8,9 +8,9 @@ module Api
         start_session(user)
         render json: { logged_in: user.active?, user: basic_user_presenter }, status: :created
       elsif user&.google_token.present?
-        render json: { error: 'you signed up with google' }, status: :not_found
+        render json: { error: { alert: 'you signed up with google '} }, status: :not_found
       else
-        render json: { error: 'email or password not found' }, status: :not_found
+        render json: { error: { alert: 'email or password not found' } }, status: :not_found
       end
     end
 
