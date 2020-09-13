@@ -20,6 +20,7 @@ Rails.application.routes.draw do
         post 'create_product'
         delete 'remove_product'
         get 'specification'
+        get  'download_word'
         patch 'edit_text'
         patch 'add_product_image'
         patch 'remove_product_image'

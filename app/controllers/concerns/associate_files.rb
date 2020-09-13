@@ -1,9 +1,9 @@
 module AssociateFiles
   extend ActiveSupport::Concern
 
-  def associate_files(product, files)
+  def associate_files(product, files, kind)
     to_array_of_files(files).each do |file|
-      file_stored = GoogleStorage.new(product, file).perform
+      file_stored = GoogleStorage.new(product, file, kind).perform
       attach_to_owner(product, file_stored)
     end
   end

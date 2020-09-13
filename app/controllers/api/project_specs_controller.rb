@@ -1,6 +1,8 @@
 module Api
   class ProjectSpecsController < ApplicationController
-    before_action :valid_session
+    include AssociateFiles
+
+    before_action :valid_session, except: :download_word
     load_and_authorize_resource class: ProjectSpec::Specification, only: :show
 
     def create
@@ -58,6 +60,12 @@ module Api
       render json: { blocks: blocks, project: { id: project_specification.project.id, name: project_specification.project.name } }
     end
 
+    def download_word
+      project_specification.touch
+      uploaded_file = SpecificationGenerator.new(project_specification).generate
+      render json: { url: uploaded_file }, status: :ok
+    end
+
     private
 
     def project_specification
@@ -65,7 +73,7 @@ module Api
     end
 
     def blocks
-      ProjectSpec::SpecificationPresenter.decorate_list(project_specification.blocks.order(:order))
+      ProjectSpecDecorator.decorate_collection(project_specification.blocks.order(:order))
     end
 
     def project_spec_param
