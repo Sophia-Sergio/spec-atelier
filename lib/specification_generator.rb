@@ -82,10 +82,6 @@ class SpecificationGenerator
     end
   end
 
-  def caracal_table_cell
-
-  end
-
   def product_format(docx, block)
     docx.p block.spec_item.name, style: 'header_product'
     docx.p block.spec_item.long_desc
