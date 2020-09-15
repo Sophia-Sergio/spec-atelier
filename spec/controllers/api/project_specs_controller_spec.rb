@@ -11,6 +11,7 @@ describe Api::ProjectSpecsController, type: :controller do
   let(:product1)        { create(:product, item: item, section: section) }
   let(:product2)        { create(:product, item: item2, section: section) }
   let(:product3)        { create(:product, item: item, section: section) }
+  let(:product4)        { create(:product, item: item2, section: section) }
 
   def create_product_block(product, project_spec )
     create(:spec_block, section: product.section, item: product.item, project_spec: project_spec, spec_item: product )
@@ -122,6 +123,7 @@ describe Api::ProjectSpecsController, type: :controller do
 
       it 'creates a specification product' do
         expect(json['blocks'].third['element']['id']).to eq(product1.spec_products.first.id)
+        expect(json['blocks'].third['product_order']).to eq(1)
       end
 
       it 'creates a section "Terminación" by default with order 0' do
@@ -318,20 +320,30 @@ describe Api::ProjectSpecsController, type: :controller do
         block_product1 = create_product_block(product1, project_spec)
         block_product2 = create_product_block(product2, project_spec)
         block_product3 = create_product_block(product3, project_spec)
+        block_product4 = create_product_block(product4, project_spec)
 
         block_section  = project_spec.blocks.first
         block_item1    = block_product1.product_item_block
         block_item2    = block_product2.product_item_block
 
-        @ordered_block_ids = [block_section.id, block_item1.id, block_product3.id, block_product1.id, block_product2.id, block_item2.id].freeze
+        @ordered_block_ids = [
+          block_section.id,
+          block_item1.id,
+          block_product3.id,
+          block_product1.id,
+          block_product2.id,
+          block_item2.id,
+          block_product4.id
+        ].freeze
 
         @blocks         = [
           { block: block_section.id, type: block_section.spec_item_type, product_item: block_section.item },
           { block: block_item1.id, type: block_item1.spec_item_type, product_item: block_item1.item },
           { block: block_product3.id, type: block_product3.spec_item_type, product_item: block_product3.item.id },
           { block: block_product1.id, type: block_product1.spec_item_type, product_item: block_product1.item.id },
-          { block: block_product2.id, type: block_product2.spec_item_type, product_item: block_product1.item.id },
+          { block: block_product2.id, type: block_product2.spec_item_type, product_item: block_product2.item.id },
           { block: block_item2.id, type: block_item2.spec_item_type, product_item: block_item2.item },
+          { block: block_product4.id, type: block_product4.spec_item_type, product_item: block_product4.item.id },
         ]
 
         request.headers['Authorization'] = "Bearer #{session.token}"
@@ -341,6 +353,7 @@ describe Api::ProjectSpecsController, type: :controller do
 
       it 'creates a specification product' do
         expect(json['blocks'].map{|block| block['id'] }).to eq(@ordered_block_ids)
+        expect(json['blocks'].map{|block| block['product_order'] }).to eq([nil, nil, 1, 2, 3, nil, 1])
       end
     end
   end

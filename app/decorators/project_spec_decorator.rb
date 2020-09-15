@@ -1,4 +1,6 @@
 class ProjectSpecDecorator < ApplicationDecorator
+  delegate :section_order, :item_order, :product_order, :id, :order
+
   new_keys :section,
            :item,
            :type,
@@ -24,7 +26,7 @@ class ProjectSpecDecorator < ApplicationDecorator
 
   def element
     decorator = case type
-      when 'Product' then "ProductDecorator".constantize.decorate(spec_item)
+      when 'Product' then ProductDecorator.decorate(spec_item)
       else "ProjectSpec::#{spec_item.class}Presenter".constantize.decorate(spec_item)
     end
   end
@@ -36,6 +38,8 @@ class ProjectSpecDecorator < ApplicationDecorator
   private
 
   def spec_item
-    @spec_item ||= model.spec_item
+    block = model
+    model.spec_item.define_singleton_method(:block) { block }
+    model.spec_item
   end
 end

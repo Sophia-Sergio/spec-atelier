@@ -23,10 +23,11 @@ class SpecificationGenerator
   end
 
   def attach_to_specification(file_stored)
-    attached_document = Attached::Specification.find_or_create_by!(url: file_stored.public_url, name: file_name)
-    if attached_document.new_record?
-      create_resourse_file(@specification, deber seimage, 'specification_document')
-    end
+    attached_document = Attached::Specification.find_or_create_by!(
+      url: "#{file_stored.public_url}?generation=#{file_stored.generation}",
+      name: file_name
+    )
+    create_resourse_file(@specification, attached_document, 'specification_document')
     attached_document.url
   end
 
@@ -40,9 +41,9 @@ class SpecificationGenerator
       docx.p project.name, style: 'header_project'
       docx.hr
       @blocks.each do |block|
-        section(docx, block) if block.spec_item.class.to_s == 'Section'
-        item(docx, block) if block.spec_item.class.to_s == 'Item'
-        product(docx, block) if block.spec_item.class.to_s == 'Product'
+        section(docx, block) if block.spec_item_type == 'Section'
+        item(docx, block) if block.spec_item_type == 'Item'
+        product(docx, block) if block.spec_item_type == 'Product'
       end
     end
   end
@@ -65,8 +66,10 @@ class SpecificationGenerator
         img block.spec_item.images.first.all_formats[:medium], width: 150, height: 150
       end
 
+      product_name = product_name(block)
+
       c2 = Caracal::Core::Models::TableCellModel.new do
-        p block.spec_item.name, style: 'header_product'
+        p product_name, style: 'header_product'
         p block.spec_item.long_desc
         p ('Sistema constructivo: ' + block.spec_item.subitem.name), style: 'header_product'
         p 'Referencia ' + block.spec_item.reference
@@ -82,8 +85,12 @@ class SpecificationGenerator
     end
   end
 
+  def product_name(block)
+    "#{block.section_order}.#{block.item_order}.#{block.product_order}. #{block.spec_item.name}"
+  end
+
   def product_format(docx, block)
-    docx.p block.spec_item.name, style: 'header_product'
+    docx.p product_name(block), style: 'header_product'
     docx.p block.spec_item.long_desc
     docx.p ('Sistema constructivo: ' + block.spec_item.subitem.name), style: 'header_product'
     docx.p 'Referencia ' + block.spec_item.reference
@@ -92,13 +99,13 @@ class SpecificationGenerator
   end
 
   def item(docx, block)
-    docx.p block.spec_item.name, style: 'header_item'
+    docx.p "#{block.section_order}.#{block.item_order}.#{block.spec_item.name}", style: 'header_item'
     docx.p block.text.text.strip_tags if block.text.present?
     docx.p
   end
 
   def section(docx, block)
-    docx.p block.spec_item.name
+    docx.p "#{block.section_order}.#{block.spec_item.name}", style: 'header_section'
     docx.p block.text.text.strip_tags if block.text.present?
     docx.p
   end
@@ -116,6 +123,14 @@ class SpecificationGenerator
       bold true
       italic false
       size 34
+    end
+
+    docx.style do
+      id 'header_section'
+      name 'header section'
+      bold true
+      italic false
+      size 30
     end
 
     docx.style do
