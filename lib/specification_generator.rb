@@ -27,7 +27,10 @@ class SpecificationGenerator
       url: "#{file_stored.public_url}?generation=#{file_stored.generation}",
       name: file_name
     )
-    create_resourse_file(@specification, attached_document, 'specification_document')
+
+    if attached_document.new_record?
+      create_resourse_file(@specification, attached_document, 'specification_document')
+    end
     attached_document.url
   end
 
