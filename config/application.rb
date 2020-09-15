@@ -37,6 +37,7 @@ module Back
     config.time_zone = 'America/Santiago'
     config.active_record.default_timezone = :local
     config.active_job.queue_adapter = :sidekiq
+    config.autoload_paths << "#{Rails.root}/lib"
 
     env_file = File.join(Rails.root, 'config', 'local_env.yml')
     if (Rails.env.development? || Rails.env.test?) && File.exists?(env_file)

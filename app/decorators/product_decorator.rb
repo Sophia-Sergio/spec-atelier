@@ -1,18 +1,27 @@
 class ProductDecorator < ApplicationDecorator
-  delegate :id, :name, :short_desc, :long_desc, :reference, :price
+  delegate :id, :short_desc, :long_desc, :reference, :price
 
-  new_keys :system,
-          :section,
-          :item,
-          :brand,
-          :client,
-          :dwg,
-          :bim,
-          :pdfs,
-          :images,
-          :project_type,
-          :room_type,
-          :work_type
+  new_keys :name,
+           :system,
+           :section,
+           :item,
+           :brand,
+           :client,
+           :dwg,
+           :bim,
+           :pdfs,
+           :images,
+           :project_type,
+           :room_type,
+           :work_type
+
+  def name
+    if model.block.present?
+      "#{model.block.section_order}.#{model.block.item_order}.#{model.block.product_order}. #{model.name}"
+    else
+      model.name
+    end
+  end
 
   def brand
     resource = model.brand

@@ -7,6 +7,7 @@ class Product < ApplicationRecord
   belongs_to :subitem, optional: true
   belongs_to :item
   belongs_to :user
+  has_one :block, foreign_key: 'spec_item_id', class_name: 'ProjectSpec::Block'
   has_one :section, through: :item
   has_many :files, as: :owner, class_name: 'Attached::ResourceFile'
   has_many :contact_forms, as: :owner, class_name: 'Form::ContactForm'

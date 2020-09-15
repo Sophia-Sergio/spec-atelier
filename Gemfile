@@ -21,6 +21,7 @@ gem 'google-cloud-storage'
 gem 'pg_search'
 gem 'bullet'
 gem 'draper'
+gem 'caracal-rails'
 
 group :development, :test do
   gem 'pry'

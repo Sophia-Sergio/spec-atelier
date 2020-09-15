@@ -20,6 +20,17 @@ module ProjectSpec
 
     def set_order
       self.order = next_order
+      case spec_item_type
+      when 'Product'
+        self.product_order = next_product_order
+        self.item_order = current_item_order
+        self.section_order = 1
+      when 'Item'
+        self.item_order = next_item_order
+        self.section_order = 1
+      when 'Section'
+        self.section_order = 1
+      end
     end
 
     def reorder_blocks
@@ -57,6 +68,10 @@ module ProjectSpec
       spec_blocks.where('project_spec_blocks.order >= ? and id <> ?', order, id)
     end
 
+    def high_order_product_blocks
+      spec_blocks.where('project_spec_blocks.spec_item_type = ? and item_id = ? ', 'Product', item_id).order(:order)
+    end
+
     def current_max_order
       spec_blocks&.pluck(:order)&.max
     end
@@ -66,11 +81,23 @@ module ProjectSpec
     end
 
     def next_order
-      if spec_item.class == Product
+      if spec_item_type == 'Product'
         current_max_order_by_item.present? ? current_max_order_by_item + 1 : current_max_order + 1
       else
         current_max_order.present? ? current_max_order + 1 : 0
       end
+    end
+
+    def next_product_order
+      (spec_blocks&.where(spec_item_type: 'Product', item_id: item_id)&.pluck(:product_order)&.compact&.max || 0 ) + 1
+    end
+
+    def next_item_order
+      (spec_blocks&.where(spec_item_type: 'Item', section_id: section_id)&.pluck(:item_order)&.compact&.max || 0 ) + 1
+    end
+
+    def current_item_order
+      (spec_blocks&.where(spec_item_type: 'Item', spec_item_id: self.item_id)&.pluck(:item_order)&.compact&.max || 0 )
     end
 
     def item_names

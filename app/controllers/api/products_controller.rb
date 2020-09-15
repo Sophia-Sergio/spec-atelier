@@ -45,12 +45,12 @@ module Api
     end
 
     def associate_images
-      associate_files(product, images_params[:images])
+      associate_files(product, images_params[:images], 'image')
       render json: { message: 'Image attached'}, status: :created
     end
 
     def associate_documents
-      associate_files(product, documents_params[:documents])
+      associate_files(product, documents_params[:documents], 'document')
       render json: {}, status: :created
     end
 

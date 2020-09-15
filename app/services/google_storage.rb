@@ -1,23 +1,26 @@
 require 'google/cloud/storage'
 
 class GoogleStorage
-  def initialize(owner, file)
+  def initialize(owner, file, kind)
     @owner = owner
     @file = file
+    @kind = kind
   end
 
-  def perform
-    upload_file(@file)
+  def perform(name = nil)
+    upload_file(@file, name)
   end
 
   private
 
-  def client_name
-    @owner.client&.name || @owner.brand&.name
+  def file_name
+    (@owner.client&.name || @owner.brand&.name) + "-#{@file.original_filename}"
   end
 
-  def upload_file(file)
-    storage_bucket.upload_file(file.tempfile, "images/#{client_name}-#{file.original_filename}")
+  def upload_file(file, name)
+    file = file.respond_to?(:tempfile) ? file.tempfile : file
+    name ||= file_name
+    storage_bucket.upload_file(file, "#{@kind.pluralize}/#{name}")
   end
 
   def storage_bucket
