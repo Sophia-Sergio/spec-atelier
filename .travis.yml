@@ -10,6 +10,7 @@ cache:
 env:
   global:
     - ORIGIN_ALLOWED=hola, chao
+    - GOOGLE_APPLICATION_CREDENTIALS='{}'
 script:
   - RAILS_ENV=test bundle exec rake db:migrate --trace
   - bundle exec rake db:test:prepare
