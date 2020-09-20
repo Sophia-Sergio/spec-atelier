@@ -4,13 +4,12 @@ module Api
     before_action :valid_session, except: %i[index]
 
     def index
-      @list = Company::Client.all
-      decorated_list = presenter.decorate_list(filtered_list.includes(:products), params)
-      render json: { brands: decorated_list }, status: :ok
+      @custom_list = Company::Client.all
+      render json: { brands: paginated_response }, status: :ok
     end
 
     def show
-      render json: { brand: presenter.decorate(brand) }, status: :ok
+      render json: { brand: decorator.decorate(brand) }, status: :ok
     end
 
     def contact_form
@@ -30,8 +29,8 @@ module Api
       Company::Client.find(params[:id] || params[:brand_id])
     end
 
-    def presenter
-      Brands::BrandPresenter
+    def decorator
+      BrandDecorator
     end
 
     def contact_form_params

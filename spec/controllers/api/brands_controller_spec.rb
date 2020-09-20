@@ -5,10 +5,10 @@ describe Api::BrandsController, type: :controller do
   let(:client)          { create(:client, name: 'zzz and') }
 
   before do
-    create(:client, name: 'brand')
+    create(:client, name: 'client')
     create(:client, name: 'abc')
     create(:client, name: 'bcd')
-    create(:brand, name: 'client')
+    create(:brand, name: 'brand')
     create_list(:product, 3, client: client )
   end
 
@@ -24,14 +24,13 @@ describe Api::BrandsController, type: :controller do
       end
 
       it 'returns list of brands that by query search' do
-        get :index, params: { keyword: 'brand', limit: 10 }
+        get :index, params: { keyword: 'client', limit: 10 }
 
         expect(response).to have_http_status(:ok)
         expect(json['brands']['list'].count).to eq(1)
       end
 
       it 'returns list of brands with its products by keyword' do
-
         get :index, params: { keyword: 'and', limit: 10 }
 
         expect(response).to have_http_status(:ok)
