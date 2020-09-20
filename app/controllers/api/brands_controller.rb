@@ -4,7 +4,7 @@ module Api
     before_action :valid_session, except: %i[index]
 
     def index
-      @custom_list = Company::Client.all
+      @custom_list = with_products? ? brands_with_products : Company::Client.all
       render json: { brands: paginated_response }, status: :ok
     end
 
@@ -35,6 +35,19 @@ module Api
 
     def contact_form_params
       params.require(:brand_contact_form).permit(:user_phone, :message)
+    end
+
+    def with_products?
+      params[:section].present? || params[:item].present?
+    end
+
+    def brands_with_products
+      scope = Company::Client.all
+      if params[:section].present?
+        scope = scope.joins(products: :item).where(products: {items: { section_id:  params[:section]}})
+      end
+      scope = scope.joins(:products).where(products: {item_id:  params[:item]}) if params[:item].present?
+      scope
     end
   end
 end

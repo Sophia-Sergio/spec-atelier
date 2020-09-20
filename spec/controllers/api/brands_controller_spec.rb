@@ -23,6 +23,24 @@ describe Api::BrandsController, type: :controller do
         expect(json['brands']['list'].count).to eq(4)
       end
 
+      it 'returns list of brands by those who has products by section' do
+        section = create(:section)
+        client.products << create(:product, section: section)
+        get :index, params: { limit: 10, section: section.id }
+
+        expect(response).to have_http_status(:ok)
+        expect(json['brands']['list'].count).to eq(1)
+      end
+
+      it 'returns list of brands by those who has products by item' do
+        item = create(:item)
+        client.products << create(:product, item: item)
+        get :index, params: { limit: 10, item: item.id }
+
+        expect(response).to have_http_status(:ok)
+        expect(json['brands']['list'].count).to eq(1)
+      end
+
       it 'returns list of brands that by query search' do
         get :index, params: { keyword: 'client', limit: 10 }
 
