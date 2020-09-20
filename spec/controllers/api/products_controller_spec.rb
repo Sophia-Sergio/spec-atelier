@@ -306,7 +306,7 @@ describe Api::ProductsController, type: :controller do
 
       before do
         request.headers['Authorization'] = "Bearer #{session.token}"
-        allow_any_instance_of(Google::Cloud::Storage::Bucket).to receive(:upload_file).and_return(uploaded_file_1, uploaded_file_2)
+        allow_any_instance_of(GoogleStorage).to receive(:perform).and_return(uploaded_file_1, uploaded_file_2)
       end
 
       context 'with all params' do
@@ -360,7 +360,7 @@ describe Api::ProductsController, type: :controller do
 
       before do
         request.headers['Authorization'] = "Bearer #{session.token}"
-        allow_any_instance_of(Google::Cloud::Storage::Bucket).to receive(:upload_file).and_return(uploaded_file_1)
+        allow_any_instance_of(GoogleStorage).to receive(:perform).and_return(uploaded_file_1)
       end
 
       context 'with all params' do

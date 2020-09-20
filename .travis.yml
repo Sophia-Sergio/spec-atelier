@@ -1,0 +1,17 @@
+language: ruby
+sudo: false
+rvm:
+  - 2.6.5
+services: postgresql
+before_script:
+  - psql -c 'create database back_test;' -U postgres
+cache:
+  bundler: true
+env:
+  global:
+    - ORIGIN_ALLOWED=hola, chao
+    - GOOGLE_APPLICATION_CREDENTIALS='{}'
+script:
+  - RAILS_ENV=test bundle exec rake db:migrate --trace
+  - bundle exec rake db:test:prepare
+  - bundle exec rspec
