@@ -7,6 +7,3 @@ cache:
 env:
   global:
     - ORIGIN_ALLOWED=hola, chao
-script:
-  - bundle exec rails s &>/dev/null &
-  - bundle exec rspec spec --trace
