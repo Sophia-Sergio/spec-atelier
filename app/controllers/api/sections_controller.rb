@@ -2,7 +2,7 @@ module Api
   class SectionsController < ApplicationController
     include Search::Handler
 
-    before_action :valid_session
+    before_action :valid_session, except: :index
     before_action :section, only: :products
 
     def index

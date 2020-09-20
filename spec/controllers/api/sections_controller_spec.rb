@@ -6,10 +6,6 @@ describe Api::SectionsController, type: :controller do
 
 
   describe '#index' do
-    context 'without session' do
-      before { get :index, params: { user_id: no_logged_user.id } }
-      it_behaves_like 'an unauthorized api request'
-    end
 
     context 'with valid session' do
       it 'returns list of projects that belongs to user with session initialized' do

@@ -16,10 +16,6 @@ module Search
       paginated_format
     end
 
-    def list
-      @custom_list
-    end
-
     def paginated_list
       @page = params[:page].presence&.to_i || 0
       @offset = params[:offset].presence&.to_i || params[:limit].presence&.to_i || 10

@@ -16,11 +16,6 @@ describe Api::ConfigsController, type: :controller do
       )
     end
 
-    context 'without session' do
-      before { get :project_data, params: { user_id: no_logged_user.id } }
-      it_behaves_like 'an unauthorized api request'
-    end
-
     context 'with valid session' do
       it 'returns list of projects that belongs to user with session initialized ordered by name' do
         request.headers['Authorization'] = "Bearer #{session.token}"

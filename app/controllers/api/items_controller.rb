@@ -1,6 +1,6 @@
 module Api
   class ItemsController < ApplicationController
-    before_action :valid_session
+    before_action :valid_session, except: :index
     before_action :item, only: :products
 
     def products
