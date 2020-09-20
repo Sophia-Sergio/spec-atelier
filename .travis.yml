@@ -9,4 +9,4 @@ env:
     - ORIGIN_ALLOWED=hola, chao
 script:
   - bundle exec rails s &>/dev/null &
-  - bundle exec rake rspec spec --trace
+  - bundle exec rspec spec --trace
