@@ -3,7 +3,7 @@ module AssociateFiles
 
   def associate_files(product, files, kind)
     to_array_of_files(files).each do |file|
-      file_stored = StorageWorker.new(product, file, kind).perform
+      file_stored = StorageWorker.perform_async(product, file, kind)
       attach_to_owner(product, file_stored)
     end
   end

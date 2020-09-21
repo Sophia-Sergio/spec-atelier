@@ -306,7 +306,7 @@ describe Api::ProductsController, type: :controller do
 
       before do
         request.headers['Authorization'] = "Bearer #{session.token}"
-        allow_any_instance_of(GoogleStorage).to receive(:perform).and_return(uploaded_file_1, uploaded_file_2)
+        allow(StorageWorker).to receive(:perform_async).and_return(uploaded_file_1, uploaded_file_2)
       end
 
       context 'with all params' do
@@ -360,14 +360,13 @@ describe Api::ProductsController, type: :controller do
 
       before do
         request.headers['Authorization'] = "Bearer #{session.token}"
-        allow_any_instance_of(GoogleStorage).to receive(:perform).and_return(uploaded_file_1)
+        allow(StorageWorker).to receive(:perform_async).and_return(uploaded_file_1)
       end
 
       context 'with all params' do
         it 'attach documents to product' do
           pdf = fixture_file_upload('spec/fixtures/documents/example.pdf')
           patch :associate_documents, params: { product_id: product.id, documents: [pdf] }
-          # expect(StorageWorker.perform_async(product, [image1, image2])).to change(StorageWorker.jobs.size).by(1)
           expect(response).to have_http_status(:created)
           expect(product.documents.length).to be 1
         end
