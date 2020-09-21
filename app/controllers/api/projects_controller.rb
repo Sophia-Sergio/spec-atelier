@@ -9,18 +9,18 @@ module Api
 
     def index
       @custom_list = current_user.projects
-      render json: { projects: presenter.decorate_list(filtered_list, params) }, status: :ok
+      render json: { projects: paginated_response }, status: :ok
     end
 
     def show
-      render json: { project: presenter.decorate(project) }, status: :ok
+      render json: { project: decorator.decorate(project) }, status: :ok
     end
 
     def create
       project = Project.new(project_params.merge(user: current_user))
       project.country = 'Chile'
       if project.save
-        render json: { project: presenter.decorate(project) }, status: :created
+        render json: { project: decorator.decorate(project) }, status: :created
       else
         render json: { error: project.errors }, status: :unprocessable_entity
       end
@@ -28,7 +28,7 @@ module Api
 
     def update
       project.update(project_params)
-      render json: { project: presenter.decorate(project) }, status: :ok
+      render json: { project: decorator.decorate(project) }, status: :ok
     end
 
     def destroy
@@ -38,7 +38,7 @@ module Api
 
     def ordered
       projects_list = projects.order(formated_ordered_param)
-      render json: { projects: private_project_presenter.decorate_list(projects_list) }, status: :created
+      render json: { projects: decorator.decorate_collection(projects_list) }, status: :created
     end
 
     private
@@ -55,8 +55,8 @@ module Api
       @projects ||= current_user.projects
     end
 
-    def presenter
-      Projects::PrivateProjectPresenter
+    def decorator
+      ProjectDecorator
     end
   end
 end

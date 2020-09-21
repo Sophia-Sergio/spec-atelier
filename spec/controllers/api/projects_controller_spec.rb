@@ -72,7 +72,7 @@ describe Api::ProjectsController, type: :controller do
       context 'by keyword' do
         it 'searchs for projects containing matching with searched keywords' do
           get :index, params: {  user_id: user.id, keyword: 'abi' }
-          expect(json['projects'].count).to eq(2)
+          expect(json['projects']['list'].count).to eq(2)
         end
       end
     end
