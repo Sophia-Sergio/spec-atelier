@@ -35,7 +35,7 @@ describe Api::BrandsController, type: :controller do
       it 'returns list of brands by those who has products by item' do
         item = create(:item)
         client.products << create(:product, item: item)
-        get :index, params: { limit: 10, item: item.id }
+        get :index, params: { limit: 10, item: [item.id] } # can receive an array
 
         expect(response).to have_http_status(:ok)
         expect(json['brands']['list'].count).to eq(1)
