@@ -47,7 +47,7 @@ module Api
         scope = scope.joins(products: :item).where(products: {items: { section_id:  params[:section]}})
       end
       scope = scope.joins(:products).where(products: {item_id:  params[:item]}) if params[:item].present?
-      scope
+      Company::Client.where(id: scope.select(:id))
     end
   end
 end
