@@ -13,7 +13,13 @@ module Api
     end
 
     def index
-      @custom_list = Product.all.original
+      original_products = Product.all.original
+      user_products = Product.all.where(user: current_user)
+      @custom_list = if current_user.present?
+                       Product.union(original_products, user_products)
+                     else
+                       original_products
+                     end
       render json: { products: paginated_response }, status: :ok
     end
 
