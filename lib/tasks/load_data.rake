@@ -14,6 +14,7 @@ namespace :db do
     end
 
     task tables: :environment do
+      reset_tables
       load_data
       product_item_update
     end
@@ -223,6 +224,10 @@ namespace :db do
       ActiveRecord::Base.connection.reset_pk_sequence!('attached_resource_files')
     end
 
+    def reset_tables
+      ProjectSpec::Text.delete_all
+      ProjectSpec::Block.delete_all
+    end
 
     def class_name(name)
       case name
