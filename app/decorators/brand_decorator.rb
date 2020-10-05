@@ -52,13 +52,7 @@ class BrandDecorator < ApplicationDecorator
   end
 
   def product_images
-    [
-      { id: 1, url: "http://lorempixel.com/400/200" },
-      { id: 2, url: "http://lorempixel.com/400/200" },
-      { id: 3, url: "http://lorempixel.com/400/200" },
-      { id: 4, url: "http://lorempixel.com/400/200" },
-      { id: 5, url: "http://lorempixel.com/400/200" },
-    ]
+    model.product_images.map {|image| { id: image.id, url: image.all_formats[:medium] } }
   end
 
   private
@@ -66,7 +60,5 @@ class BrandDecorator < ApplicationDecorator
   def address_order_0
     @address_order_0 ||= model.addresses&.find_by(order: 0)
   end
-
-
 end
 

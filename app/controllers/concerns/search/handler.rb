@@ -57,7 +57,7 @@ module Search
       @class_name ||= begin
         name = params[:controller].sub('api/', '').singularize
         case name
-        when 'brand' then { name: name, class: 'Company::Brand'.constantize }
+        when 'brand' then { name: name, class: 'Brand'.constantize }
         else { name: name, class: name.capitalize.constantize }
         end
       end

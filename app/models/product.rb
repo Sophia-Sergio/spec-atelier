@@ -2,8 +2,8 @@ class Product < ApplicationRecord
   include MetaLookupTable
   include PgSearch::Model
 
-  belongs_to :client, foreign_key: 'client_id', class_name: 'Company::Client', optional: true
-  belongs_to :brand, foreign_key: 'brand_id', class_name: 'Company::Brand', optional: true
+  belongs_to :client, optional: true
+  belongs_to :brand, optional: true
   belongs_to :subitem, optional: true
   belongs_to :item
   belongs_to :user
@@ -35,8 +35,8 @@ class Product < ApplicationRecord
   end
 
   def self.by_brand(brands)
-    scoped_brands = joins(:brand).where(companies: { id: brands })
-    scoped_clients = joins(:client).where(companies: { id: brands })
+    scoped_brands = joins(:brand).where(brands: { id: brands })
+    scoped_clients = joins(:client).where(clients: { id: brands })
     Product.where(id: (scoped_brands + scoped_clients).uniq)
   end
 

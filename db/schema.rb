@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_30_042349) do
+ActiveRecord::Schema.define(version: 2020_10_04_220931) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "hstore"
@@ -48,6 +48,24 @@ ActiveRecord::Schema.define(version: 2020_09_30_042349) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["attached_file_id"], name: "index_attached_resource_files_on_attached_file_id"
     t.index ["owner_type", "owner_id"], name: "index_attached_resource_files_on_owner_type_and_owner_id"
+  end
+
+  create_table "brands", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "clients", force: :cascade do |t|
+    t.string "name"
+    t.string "description"
+    t.string "url"
+    t.hstore "phone"
+    t.hstore "email"
+    t.string "contact_info"
+    t.hstore "social_media"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "companies", force: :cascade do |t|
