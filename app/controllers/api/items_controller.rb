@@ -15,7 +15,9 @@ module Api
     end
 
     def index
-      list = Item.all.order(:name).map {|item| { id: item.id, name: item.name} }
+      list = Item.all
+      list = list.where(section_id: params[:section]) if params[:section].present?
+      list = list.order(:name).map {|item| { id: item.id, name: item.name} }
       render json: { items: list }
     end
 
