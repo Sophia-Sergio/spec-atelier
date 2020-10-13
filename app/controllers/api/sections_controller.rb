@@ -6,7 +6,9 @@ module Api
     before_action :section, only: :products
 
     def index
-      list = Section.all.order(:show_order).map do |section|
+      lits = Section.all
+      list = list.with_products if params[:with_products]
+      list = list.order(:show_order).map do |section|
         { id: section.id, eng_name: section.eng_name, name: section.name }
       end
       render json: { sections: list }

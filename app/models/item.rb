@@ -5,6 +5,8 @@ class Item < ApplicationRecord
   has_one :block, foreign_key: 'spec_item_id', class_name: 'ProjectSpec::Block'
   has_many :files, as: :owner, class_name: 'Attached::ResourceFile'
 
+  scope :with_products, -> { joins(:products).distinct }
+
   def image_url
     files&.find_by(kind: 'item_image')&.attached&.url
   end
