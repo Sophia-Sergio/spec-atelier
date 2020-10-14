@@ -27,7 +27,7 @@ module Api
       product = Product.new(product_params.except(:system_id, :brand).merge(user_id: current_user.id))
       product.subitem_id = product_params[:system_id] if product_params[:system_id].present?
       # Todo separare brand in client and brand, add validation only for client
-      brand = Company::Brand.find_or_create_by(name: product_params[:brand])
+      brand = Brand.find_or_create_by(name: product_params[:brand])
       product.brand = brand if brand.valid?
       if product.save
         render json: { product: decorator.decorate(product) }, status: :created
@@ -45,7 +45,7 @@ module Api
 
     def contact_form
       contact_form = product.contact_forms.create(contact_form_params.merge(user_id: current_user.id))
-      ProductMailer.send_contact_form_to_brand(current_user, contact_form).deliver_later
+      ProductMailer.send_contact_form_to_client(current_user, contact_form).deliver_later
       ProductMailer.send_contact_form_to_user(current_user, contact_form).deliver_later
       render json: { form: contact_form, message: 'Mensaje enviado' }, status: :created
     end

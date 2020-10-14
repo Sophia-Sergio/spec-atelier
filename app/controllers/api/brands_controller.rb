@@ -4,7 +4,7 @@ module Api
     before_action :valid_session, except: %i[index]
 
     def index
-      @custom_list = with_products? ? brands_with_products : Company::Client.all
+      @custom_list = with_products? ? brands_with_products : Client.all
       render json: { brands: paginated_response }, status: :ok
     end
 
@@ -15,8 +15,8 @@ module Api
     def contact_form
       if brand.default_email.present?
         contact_form = brand.contact_forms.create(contact_form_params.merge(user_id: current_user.id))
-        BrandMailer.send_contact_form_to_brand(current_user, contact_form).deliver_later
-        BrandMailer.send_contact_form_to_user(current_user, contact_form).deliver_later
+        ClientMailer.send_contact_form_to_client(current_user, contact_form).deliver_later
+        ClientMailer.send_contact_form_to_user(current_user, contact_form).deliver_later
         render json: { form: contact_form, message: 'Mensaje enviado' }, status: :created
       else
         render json: { message: 'Mensaje NO fue enviado, marca no tiene email' }, status: :not_acceptable
@@ -26,7 +26,7 @@ module Api
     private
 
     def brand
-      Company::Client.find(params[:id] || params[:brand_id])
+      Client.find(params[:id] || params[:brand_id])
     end
 
     def decorator
@@ -42,12 +42,12 @@ module Api
     end
 
     def brands_with_products
-      scope = Company::Client.all
+      scope = Client.all
       if params[:section].present?
         scope = scope.joins(products: :item).where(products: {items: { section_id:  params[:section]}})
       end
       scope = scope.joins(:products).where(products: {item_id:  params[:item]}) if params[:item].present?
-      Company::Client.where(id: scope.select(:id))
+      Client.where(id: scope.select(:id))
     end
   end
 end

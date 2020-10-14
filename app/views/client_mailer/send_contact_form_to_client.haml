@@ -4,7 +4,7 @@
     %tr
       %td{:align => "left", :valign => "bottom"}
         %img{:border => "0", :height => "32", :src => "https://firebasestorage.googleapis.com/v0/b/spec-atelier/o/spec_images%2Fspec-logo.jpg?alt=media", :style => "margin:0; padding:0; border: none; display: block;", :width => "160"}
-  
+
   / ICON MESSAGE
   %table{:align => "center", :bgcolor => "#ffffff", :border => "0", :cellpadding => "0", :style => "padding: 0 10% 0 10%;", :width => "100%"}
     %tr
@@ -35,8 +35,8 @@
       %td{:align => "center"}
         %img{:border => "0", :height => "18", :src => "https://firebasestorage.googleapis.com/v0/b/spec-atelier/o/spec_images%2Fsmartphone.jpg?alt=media", :style => "margin:0 4px 0 0; padding:0; border:none; display: inline-block;", :width => "12"}/
          
-        %a{:href => "tel:#{@brand.phone}", :style => "color: #19bea8; text-decoration: none; font-size: 12px; letter-spacing: 1px;", :target => "_blank"}
-          = "Teléfono: #{@brand.phone}"
+        %a{:href => "tel:#{@client.phone}", :style => "color: #19bea8; text-decoration: none; font-size: 12px; letter-spacing: 1px;", :target => "_blank"}
+          = "Teléfono: #{@client.phone}"
 
   / SPACE
   %table{:border => "0", :cellpadding => "0", :width => "100%"}
@@ -53,7 +53,7 @@
       %td{:style => "padding: 0 10%"}
         %p{:style => "font-size: 14px; letter-spacing: 1px; min-height: 60px; background-color: #ffffff; padding: 16px; color: #d6d6d6; border-radius: 4px; border: solid 1px #d6d6d6; margin: 0 0 20px 0;"}
           = @form.message
-          
+
   / SPACE
   %table{:border => "0", :cellpadding => "0", :width => "100%"}
     %tr
