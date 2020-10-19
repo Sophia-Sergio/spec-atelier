@@ -20,7 +20,7 @@ module ProjectSpec
     end
 
     def create_product(params, user)
-      original_product =  Product.find(params[:product])
+      original_product = Product.find(params[:product])
       original_product_params = original_product.as_json.except('id')
       product = Product.create(original_product_params.merge({
         original_product_id: original_product.id,
