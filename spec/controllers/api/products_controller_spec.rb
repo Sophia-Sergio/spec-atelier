@@ -13,18 +13,19 @@ describe Api::ProductsController, type: :controller do
   let(:item_a)         { create(:item, section: section_a) }
   let(:item_b)         { create(:item, section: section_b) }
   let(:subitem)        { create(:subitem) }
-  let(:product_params) { {
-                            system_id: subitem.id,
-                            name: 'new name',
-                            long_desc: 'new long desc',
-                            brand: brand_a.name,
-                            project_type: '',
-                            work_type: '',
-                            room_type: [1,2],
-                            price: 1000,
-                            item_id: item_a.id
-                          }
-                        }
+  let(:product_params) { 
+    {
+      system_id: subitem.id,
+      name: 'new name',
+      long_desc: 'new long desc',
+      brand: brand_a.name,
+      project_type: '',
+      work_type: '',
+      room_type: [1,2],
+      price: 1000,
+      item_id: item_a.id
+    } 
+  }
 
   describe '#index' do
     context 'with valid session' do
@@ -34,8 +35,8 @@ describe Api::ProductsController, type: :controller do
 
       describe "general pagination" do
         before do
-          create_list(:product, 10, item: item_b)
-          create_list(:product, 11, item: item_a)
+          create_list(:product, 10, items: [item_b])
+          create_list(:product, 11, items: [item_a])
         end
 
         it 'returns a paginated response' do
@@ -82,9 +83,9 @@ describe Api::ProductsController, type: :controller do
         before do
           create(:product, name: 'aaab', brand: brand_a)
           create(:product, name: 'baca aaa', project_type: ['1'], brand: brand_b)
-          create(:product, name: 'abbb', project_type: ['1'], room_type: ['1'], item: item_b)
-          create(:product, name: 'bbba', project_type: ['2'], room_type: ['1'], item: item_a)
-          create(:product, name: 'ccca aab', item: item_b)
+          create(:product, name: 'abbb', project_type: ['1'], room_type: ['1'], items: [item_b])
+          create(:product, name: 'bbba', project_type: ['2'], room_type: ['1'], items: [item_a])
+          create(:product, name: 'ccca aab', items: [item_b])
         end
 
         it 'returns products by keyword' do
@@ -173,13 +174,13 @@ describe Api::ProductsController, type: :controller do
       context 'whe product has no image' do
         it 'returns a resource with images' do
           image1 = create(:image)
-          create(:resource_file, owner: products.first.item, attached: image1, kind: 'item_image')
+          create(:resource_file, owner: products.first.items.first, attached: image1, kind: 'item_image')
 
           get :show, params: { id: products.first.id }
 
           expect(json['product']['name']).to eq(products.first.name)
           expect(json['product']['images'].first['order']).to eq(0)
-          expect(json['product']['images'].first['urls']['small']).to eq(products.first.item.image_url)
+          expect(json['product']['images'].first['urls']['small']).to eq(products.first.items.first.image_url)
         end
       end
 

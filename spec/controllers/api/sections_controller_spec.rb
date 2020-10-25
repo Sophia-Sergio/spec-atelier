@@ -52,7 +52,7 @@ describe Api::SectionsController, type: :controller do
       it 'returns list of projects that belongs to user with session initialized' do
         request.headers['Authorization'] = "Bearer #{session.token}"
 
-        create_list(:product, 11, item: item)
+        create_list(:product, 11, items: [item])
         get :products, params: { section_id: section, limit: 10 }
 
         expect(response).to have_http_status(:ok)

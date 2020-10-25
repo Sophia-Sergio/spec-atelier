@@ -24,23 +24,13 @@ module Api
     end
 
     def create
-      product = Product.new(product_params.except(:system_id, :brand).merge(user_id: current_user.id))
-      product.subitem_id = product_params[:system_id] if product_params[:system_id].present?
-      # Todo separare brand in client and brand, add validation only for client
-      brand = Brand.find_or_create_by(name: product_params[:brand])
-      product.brand = brand if brand.valid?
-      if product.save
-        render json: { product: decorator.decorate(product) }, status: :created
-      else
-        render json: { error: product.errors }, status: :unprocessable_entity
-      end
+      product = ::Products::ProductCreator.new(product_params, current_user).call
+      render json: { product: decorator.decorate(product) }, status: :created if product.present?
     end
 
     def update
-      product.update(subitem_id: product_params[:system_id]) if product_params[:system_id].present?
-      product.update(product_params.except(:system_id, :brand))
-
-      render json: { product: decorator.decorate(product) }, status: :ok
+      updated_product = ::Products::ProductUpdater.new(product_params, nil, product).call
+      render json: { product: decorator.decorate(updated_product) }, status: :ok
     end
 
     def contact_form

@@ -59,9 +59,11 @@ namespace :db do
       rescue StandardError => e
         puts e
       end
+      puts 'done'
     end
 
     def process_item_image
+      print "Seeding item images..."
       select_sheet('item') do |item_params|
         next if item_params[:images].blank?
 
@@ -71,6 +73,7 @@ namespace :db do
       rescue StandardError => e
         puts e
       end
+      puts 'done'
     end
 
     def process_client_images

@@ -8,13 +8,13 @@ describe Api::ProjectSpecsController, type: :controller do
   let(:project)        { create(:project, user: user) }
   let(:project_spec)   { create(:project_spec_specification, project: project) }
   let(:spec_block)     { create(:spec_block, project_spec: project_spec) }
-  let(:product1)        { create(:product, item: item, section: section) }
-  let(:product2)        { create(:product, item: item2, section: section) }
-  let(:product3)        { create(:product, item: item, section: section) }
-  let(:product4)        { create(:product, item: item2, section: section) }
+  let(:product1)       { create(:product, spec_item: item, items: [item]) }
+  let(:product2)       { create(:product, spec_item: item2, items: [item2]) }
+  let(:product3)       { create(:product, spec_item: item, items: [item]) }
+  let(:product4)       { create(:product, spec_item: item2, items: [item2]) }
 
   def create_product_block(product, project_spec )
-    create(:spec_block, section: product.section, item: product.item, project_spec: project_spec, spec_item: product )
+    create(:spec_block, section: product.sections.first, item: product.spec_item, project_spec: project_spec, spec_item: product )
   end
 
   def products_ids(blocks)
@@ -131,7 +131,7 @@ describe Api::ProjectSpecsController, type: :controller do
       end
 
       it 'creates a item by default with right order 1' do
-        expect(project_spec.blocks.find_by(order: 1).spec_item).to eq(Item.find_by(name: product1.item.name))
+        expect(project_spec.blocks.find_by(order: 1).spec_item).to eq(Item.find_by(name: product1.items.first.name))
       end
     end
   end
@@ -183,7 +183,7 @@ describe Api::ProjectSpecsController, type: :controller do
         end
 
         it 'removes the item that it belongs' do
-          expect(project_spec.blocks.find_by(spec_item: product2.item)).to be(nil)
+          expect(project_spec.blocks.find_by(spec_item: product2.spec_item)).to be(nil)
         end
       end
     end

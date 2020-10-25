@@ -4,11 +4,14 @@ class Product < ApplicationRecord
 
   belongs_to :client, optional: true
   belongs_to :brand, optional: true
-  # belongs_to :subitem, optional: true
-  # belongs_to :item
+  has_many :product_items
+  has_many :product_subitems
+  has_many :subitems, through: :product_subitems
+  has_many :items, through: :product_items
+  has_many :sections, through: :items
+  belongs_to :spec_item, class_name: 'Item', optional: true
   belongs_to :user
   has_one :block, foreign_key: 'spec_item_id', class_name: 'ProjectSpec::Block'
-  # has_one :section, through: :item
   has_many :files, as: :owner, class_name: 'Attached::ResourceFile'
   has_many :contact_forms, as: :owner, class_name: 'Form::ContactForm'
 
@@ -21,11 +24,11 @@ class Product < ApplicationRecord
     associated_against: { brand: :name },
     using: { tsearch: { prefix: true, any_word: true } }
 
-  # scope :by_section,      ->(sections) { joins(:section).where(sections: { id: sections }) }
-  # scope :by_item,         ->(items)    { joins(:item).where(items: { id: items }) }
+  scope :by_section,      ->(sections) { joins(:sections).where(sections: { id: sections }) }
+  scope :by_item,         ->(items)    { joins(:items).where(items: { id: items }) }
   scope :by_project_type, ->(types)    { where("project_type && ?", "{#{ types.is_a?(Array) ? types.join(',') : types }}") }
   scope :by_room_type,    ->(types)    { where("room_type && ?", "{#{ types.is_a?(Array) ? types.join(',') : types }}") }
-  # scope :by_subitem,      ->(subitems) { where(subitem_id: subitems) }
+  scope :by_subitem,      ->(subitems) { joins(:subitems).where(subitems: { id: subitems }) }
   scope :original,        ->           { where(original_product_id: nil) }
 
   enum created_reason: %i[brand_creation added_to_spec]

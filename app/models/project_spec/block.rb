@@ -40,7 +40,8 @@ module ProjectSpec
     end
 
     def set_item
-      item = spec_item.item
+      product = spec_item
+      item = product.spec_item
       return if item_names.include?(item.name)
 
       spec_blocks.create!(spec_item: item, section: item.section)
@@ -77,7 +78,7 @@ module ProjectSpec
     end
 
     def current_max_order_by_item
-      spec_blocks&.where(item: spec_item.item)&.pluck(:order)&.max
+      spec_blocks&.where(item: spec_item.items.first)&.pluck(:order)&.max
     end
 
     def next_order
