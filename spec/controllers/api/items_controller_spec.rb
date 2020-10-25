@@ -29,14 +29,32 @@ describe Api::ItemsController, type: :controller do
   end
 
   describe '#index' do
-
-    it 'returns list of products that belongs to item' do
+    before do
       request.headers['Authorization'] = "Bearer #{session.token}"
+    end
+
+    it 'returns list of items' do
       create_list(:item, 2)
       get :index
 
       expect(response).to have_http_status(:ok)
       expect(json['items'].count).to eq(2)
+    end
+
+    it 'returns list of items with products and filtered by section' do
+      section1 = create(:section)
+      section2 = create(:section)
+      section3 = create(:section)
+      item1 = create(:item, section: section1)
+      item2 = create(:item, section: section2)
+      item3 = create(:item, section: section3)
+      create(:product, items: [item1, item3])
+      create(:product, items: [item1])
+      create(:product, items: [item3])
+      get :index, params: { section: [section1.id, section2.id, section3.id], with_products: true }
+
+      expect(response).to have_http_status(:ok)
+      expect(json['items'].map {|item| item['id'] }).to match_array([item1.id, item3.id])
     end
   end
 end
