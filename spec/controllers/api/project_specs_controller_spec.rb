@@ -123,6 +123,7 @@ describe Api::ProjectSpecsController, type: :controller do
 
       it 'creates a specification product' do
         expect(json['blocks'].third['element']['id']).to eq(product1.spec_products.first.id)
+        expect(json['blocks'].third['element']['original_product_id']).to eq(product1.id)
         expect(json['blocks'].third['product_order']).to eq(1)
       end
 
