@@ -6,15 +6,19 @@ describe Api::SectionsController, type: :controller do
 
 
   describe '#index' do
-
     context 'with valid session' do
       it 'returns list of projects that belongs to user with session initialized' do
         request.headers['Authorization'] = "Bearer #{session.token}"
-        create_list(:section, 9)
+        sections = create_list(:section, 9)
         get :index, params: { user_id: user.id }
 
         expect(response).to have_http_status(:ok)
         expect(json['sections'].count).to eq(9)
+
+        create(:product, items: [create(:item, section: sections.first)])
+        get :index, params: { user_id: user.id, with_products: true }
+        expect(response).to have_http_status(:ok)
+        expect(json['sections'].count).to eq(1)
       end
     end
   end
@@ -45,7 +49,6 @@ describe Api::SectionsController, type: :controller do
     end
 
     context 'with valid session' do
-
       let(:section) { create(:section) }
       let(:item) { create(:item, section: section) }
 

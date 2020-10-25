@@ -18,7 +18,7 @@ module Api
       list = Item.all
       list = list.with_products if params[:with_products]
       list = list.where(section_id: params[:section]) if params[:section].present?
-      list = list.order(:name).map {|item| { id: item.id, name: item.name} }
+      list = list.order(:name).map {|item| { id: item.id, name: item.name } }
       render json: { items: list }
     end
 
