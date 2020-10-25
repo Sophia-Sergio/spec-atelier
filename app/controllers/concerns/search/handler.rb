@@ -20,7 +20,7 @@ module Search
       @page = params[:page].presence&.to_i || 0
       @offset = params[:offset].presence&.to_i || params[:limit].presence&.to_i || 10
       @limit = params[:limit].presence&.to_i || 10
-      decorator.decorate_collection(@list.offset(@limit * @page).limit(@limit).find_ordered(@ordered))
+      decorator.decorate_collection(@list.offset(@limit * @page).limit(@limit).find_ordered(@ordered), context: params)
     end
 
     def decorator

@@ -20,13 +20,9 @@ module ProjectSpec
     end
 
     def create_product(params, user)
-      original_product =  Product.find(params[:product])
+      original_product = Product.find(params[:product])
       original_product_params = original_product.as_json.except('id')
-      product = Product.create(original_product_params.merge({
-        original_product_id: original_product.id,
-        created_reason: 1,
-        user: user
-      }))
+      product = Products::ProductSpecCreator.new(original_product_params.merge(item_id: params[:item]), user, original_product).call
       original_product.files.each {|file| file.dup.update(owner: product) }
       blocks.create!(spec_item: product, section_id: params[:section], item_id: params[:item])
       product

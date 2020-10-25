@@ -25,7 +25,8 @@ describe Api::BrandsController, type: :controller do
 
       it 'returns list of brands by those who has products by section' do
         section = create(:section)
-        client.products << create(:product, section: section)
+        item = create(:item, section: section)
+        client.products << create(:product, items: [item])
         get :index, params: { limit: 10, section: section.id }
 
         expect(response).to have_http_status(:ok)
@@ -34,7 +35,7 @@ describe Api::BrandsController, type: :controller do
 
       it 'returns list of brands by those who has products by item' do
         item = create(:item)
-        client.products << create(:product, item: item)
+        client.products << create(:product, items: [item])
         get :index, params: { limit: 10, item: [item.id] } # can receive an array
 
         expect(response).to have_http_status(:ok)

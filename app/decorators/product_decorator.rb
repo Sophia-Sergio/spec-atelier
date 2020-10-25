@@ -3,8 +3,11 @@ class ProductDecorator < ApplicationDecorator
 
   new_keys :name,
            :system,
+           :systems,
            :section,
+           :sections,
            :item,
+           :items,
            :brand,
            :client,
            :dwg,
@@ -16,7 +19,7 @@ class ProductDecorator < ApplicationDecorator
            :work_type
 
   def name
-    if model.block.present?
+    if block?
       "#{model.block.section_order}.#{model.block.item_order}.#{model.block.product_order}. #{model.name}"
     else
       model.name
@@ -34,16 +37,27 @@ class ProductDecorator < ApplicationDecorator
   end
 
   def system
-    resource = model.subitem
-    { id: resource&.id, name: resource&.name }
+    { id: subitem_object.id, name: subitem_object.name } if subitem_object.present?
+  end
+
+  def systems
+    model.subitems.map {|subitem| { id: subitem&.id, name: subitem&.name } }
   end
 
   def section
-    { id: model.section.id, name: model.section.name }
+    { id: section_object.id, name: section_object.name } if section_object.present?
+  end
+
+  def sections
+    model.sections.map {|section| { id: section&.id, name: section&.name } }
   end
 
   def item
-    { id: model.item.id, name: model.item.name }
+    { id: item_object.id, name: item_object.name } if item_object.present?
+  end
+
+  def items
+    model.items.map {|item| { id: item&.id, name: item&.name } }
   end
 
   def dwg
@@ -80,11 +94,36 @@ class ProductDecorator < ApplicationDecorator
 
   private
 
+  def block?
+    @block ||= model.block.present?
+  end
+
   def documents
     @documents ||= model.documents
   end
 
+  def section_object
+    @section_object ||= if block?
+      model.spec_item.section
+    else
+      model.sections.first
+    end
+  end
+
+  def item_object
+    @item_object ||= if block?
+      model.spec_item
+    else
+      model.items.find_by(id: context["item"] || subitem_object&.item_id)
+    end
+  end
+
+  def subitem_object
+    @subitem_object ||= model.subitems.find_by(id: context["subitem"])
+  end
+
   def item_image
-    { id: 1, hide_delete: true, urls: { small: model.item&.image_url || '', medium: model.item&.image_url || ''}, order: 0 }
+    item = item_object.present? ? item_object : model.items.first
+    { id: 1, hide_delete: true, urls: { small: item.image_url || '', medium: item.image_url || '' }, order: 0 }
   end
 end
