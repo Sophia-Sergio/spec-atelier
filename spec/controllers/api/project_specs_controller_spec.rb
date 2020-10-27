@@ -2,9 +2,11 @@ describe Api::ProjectSpecsController, type: :controller do
   let(:user)           { create(:user) }
   let(:no_logged_user) { create(:user) }
   let(:session)        { create(:session, user: user, token: session_token(user)) }
-  let(:section)        { create(:section) }
-  let(:item)           { create(:item, section: section) }
-  let(:item2)          { create(:item, section: section) }
+  let(:section)        { create(:section, name: 'Section 1') }
+  let(:section2)       { create(:section, name: 'Section 2') }
+  let(:item)           { create(:item, section: section, name: 'Item 1') }
+  let(:item2)          { create(:item, section: section, name: 'Item 2') }
+  let(:item3)          { create(:item, section: section2, name: 'Item 3') }
   let(:project)        { create(:project, user: user) }
   let(:project_spec)   { create(:project_spec_specification, project: project) }
   let(:spec_block)     { create(:spec_block, project_spec: project_spec) }
@@ -12,6 +14,7 @@ describe Api::ProjectSpecsController, type: :controller do
   let(:product2)       { create(:product, spec_item: item2, items: [item2]) }
   let(:product3)       { create(:product, spec_item: item, items: [item]) }
   let(:product4)       { create(:product, spec_item: item2, items: [item2]) }
+  let(:product5)       { create(:product, spec_item: item3, items: [item3]) }
 
   def create_product_block(product, project_spec )
     create(:spec_block, section: product.sections.first, item: product.spec_item, project_spec: project_spec, spec_item: product )
@@ -22,8 +25,6 @@ describe Api::ProjectSpecsController, type: :controller do
   end
 
   describe '#create_text' do
-    before { create(:section, name: 'Terminación') }
-
     context 'without session' do
       before { post :create_text, params: { user_id: no_logged_user.id, project_spec_id: project_spec } }
       it_behaves_like 'an unauthorized api request'
@@ -40,14 +41,12 @@ describe Api::ProjectSpecsController, type: :controller do
           block: spec_block.id,
         }
 
-        expect(json['blocks'].second['text']['text']).to eq('fake text')
+        expect(json['blocks'].first['text']['text']).to eq('fake text')
       end
     end
   end
 
   describe '#remove_text' do
-    before { create(:section, name: 'Terminación') }
-
     context 'without session' do
       before { delete :remove_text, params: { user_id: no_logged_user.id, project_spec_id: project_spec } }
       it_behaves_like 'an unauthorized api request'
@@ -73,8 +72,6 @@ describe Api::ProjectSpecsController, type: :controller do
   end
 
   describe '#edit_text' do
-    before { create(:section, name: 'Terminación') }
-
     context 'without session' do
       before { patch :edit_text, params: { user_id: no_logged_user.id, project_spec_id: project_spec } }
       it_behaves_like 'an unauthorized api request'
@@ -97,8 +94,6 @@ describe Api::ProjectSpecsController, type: :controller do
   end
 
   describe '#create_product' do
-    before { create(:section, name: 'Terminación') }
-
     context 'without session' do
       before { post :create_product, params: { user_id: no_logged_user.id, project_spec_id: project_spec } }
       it_behaves_like 'an unauthorized api request'
@@ -128,7 +123,7 @@ describe Api::ProjectSpecsController, type: :controller do
       end
 
       it 'creates a section "Terminación" by default with order 0' do
-        expect(project_spec.blocks.find_by(order: 0).spec_item).to eq(Section.find_by(name: 'Terminación'))
+        expect(project_spec.blocks.find_by(order: 0).spec_item).to eq(Section.find_by(name: 'Section 1'))
       end
 
       it 'creates a item by default with right order 1' do
@@ -138,8 +133,6 @@ describe Api::ProjectSpecsController, type: :controller do
   end
 
   describe '#remove_product' do
-    before { create(:section, name: 'Terminación') }
-
     context 'without session' do
       before { delete :remove_product, params: { project_spec_id: project_spec, block: '1', user_id: no_logged_user.id } }
       it_behaves_like 'an unauthorized api request'
@@ -192,7 +185,6 @@ describe Api::ProjectSpecsController, type: :controller do
 
   describe '#show' do
     before do
-      create(:section, name: 'Terminación')
 
       @block_product1 = create_product_block(product1, project_spec)
       @block_product2 = create_product_block(product2, project_spec)
@@ -258,8 +250,6 @@ describe Api::ProjectSpecsController, type: :controller do
   end
 
   describe '#add_product_image' do
-    before { create(:section, name: 'Terminación') }
-
     context 'without session' do
       before { patch :add_product_image, params: { user_id: no_logged_user.id, project_spec_id: project_spec } }
       it_behaves_like 'an unauthorized api request'
@@ -271,7 +261,6 @@ describe Api::ProjectSpecsController, type: :controller do
         @block_product1 = create_product_block(product1, project_spec)
 
         request.headers['Authorization'] = "Bearer #{session.token}"
-
         patch :add_product_image, params: { project_spec_id: project_spec, user_id: user, block: @block_product1, image: @image }
       end
 
@@ -283,8 +272,6 @@ describe Api::ProjectSpecsController, type: :controller do
   end
 
   describe '#remove_product_image' do
-    before { create(:section, name: 'Terminación') }
-
     context 'without session' do
       before { patch :remove_product_image, params: { user_id: no_logged_user.id, project_spec_id: project_spec } }
       it_behaves_like 'an unauthorized api request'
@@ -309,8 +296,6 @@ describe Api::ProjectSpecsController, type: :controller do
   end
 
   describe '#reorder_blocks' do
-    before { create(:section, name: 'Terminación') }
-
     context 'without session' do
       before { patch :reorder_blocks, params: { user_id: no_logged_user.id, project_spec_id: project_spec } }
       it_behaves_like 'an unauthorized api request'
@@ -322,10 +307,14 @@ describe Api::ProjectSpecsController, type: :controller do
         block_product2 = create_product_block(product2, project_spec)
         block_product3 = create_product_block(product3, project_spec)
         block_product4 = create_product_block(product4, project_spec)
+        block_product5 = create_product_block(product5, project_spec)
 
-        block_section  = project_spec.blocks.first
+        block_section  = project_spec.blocks.where(spec_item: block_product1.section).first
+        block_section2 = project_spec.blocks.where(spec_item: block_product5.section).first
+
         block_item1    = block_product1.product_item_block
         block_item2    = block_product2.product_item_block
+        block_item3    = block_product5.product_item_block
 
         @ordered_block_ids = [
           block_section.id,
@@ -334,10 +323,13 @@ describe Api::ProjectSpecsController, type: :controller do
           block_product1.id,
           block_product2.id,
           block_item2.id,
-          block_product4.id
+          block_product4.id,
+          block_section2.id,
+          block_item3.id,
+          block_product5.id
         ].freeze
 
-        @blocks         = [
+        @blocks = [
           { block: block_section.id, type: block_section.spec_item_type, product_item: block_section.item },
           { block: block_item1.id, type: block_item1.spec_item_type, product_item: block_item1.item },
           { block: block_product3.id, type: block_product3.spec_item_type, product_item: block_product3.item.id },
@@ -345,6 +337,9 @@ describe Api::ProjectSpecsController, type: :controller do
           { block: block_product2.id, type: block_product2.spec_item_type, product_item: block_product2.item.id },
           { block: block_item2.id, type: block_item2.spec_item_type, product_item: block_item2.item },
           { block: block_product4.id, type: block_product4.spec_item_type, product_item: block_product4.item.id },
+          { block: block_section2.id, type: block_section2.spec_item_type, product_item: block_section2.item },
+          { block: block_item3.id, type: block_item3.spec_item_type, product_item: block_item3.item.id },
+          { block: block_product5.id, type: block_product5.spec_item_type, product_item: block_product5.item.id },
         ]
 
         request.headers['Authorization'] = "Bearer #{session.token}"
@@ -353,8 +348,8 @@ describe Api::ProjectSpecsController, type: :controller do
       end
 
       it 'creates a specification product' do
-        expect(json['blocks'].map{|block| block['id'] }).to eq(@ordered_block_ids)
-        expect(json['blocks'].map{|block| block['product_order'] }).to eq([nil, nil, 1, 2, 3, nil, 1])
+        expect(json['blocks'].map{|block| block['id'] }).to match_array(@ordered_block_ids)
+        expect(json['blocks'].map{|block| block['product_order'] }).to eq([nil, nil, 1, 2, 3, nil, 1, nil, nil, 1])
       end
     end
   end
