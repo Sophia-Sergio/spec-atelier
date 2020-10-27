@@ -21,14 +21,25 @@ module AssociateFiles
   end
 
   def attach_to_product(product, file_stored)
-    name_stored_file = file_stored.name.gsub('images/','')
-    case file_stored.content_type.split('/').first
+    file_type = file_type(file_stored)
+    name_stored_file = file_stored.name.gsub("#{file_type.pluralize}/",'')
+    case file_type
     when 'image'
       image = Attached::Image.create!(url: file_stored.public_url, name: name_stored_file)
       create_resourse_file(product, image, 'product_image')
-    else
+    when 'document'
       document = Attached::Document.create!(url: file_stored.public_url, name: name_stored_file)
       create_resourse_file(product, document, 'product_document')
+    end
+  end
+
+  def file_type(file_stored)
+    extension = File.extname(file_stored.name)
+    type = file_stored.content_type.split('/').first
+    if type == 'image' && extension != '.dwg'
+      'image'
+    else
+      'document'
     end
   end
 
