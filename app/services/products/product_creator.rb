@@ -3,7 +3,7 @@ module Products
 
     def call
       product = ::Product.create(product_params)
-      brand = Brand.find_or_create_by(name: product_params[:brand])
+      brand = Brand.find_or_create_by(name: params[:brand])
       product.brand = brand if brand.valid?
       Product.transaction do 
         ProductItem.create(product: product, item_id: params[:item_id])
