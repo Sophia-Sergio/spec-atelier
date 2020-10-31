@@ -4,7 +4,7 @@
 - send_icon = 'https://firebasestorage.googleapis.com/v0/b/spec-atelier/o/spec_images%2Fsend.jpg?alt=media'
 - smartphone_icon = 'https://firebasestorage.googleapis.com/v0/b/spec-atelier/o/spec_images%2Fsmartphone.jpg?alt=media'
 - world_icon = 'https://firebasestorage.googleapis.com/v0/b/spec-atelier/o/spec_images%2Fworld.jpg?alt=media'
- 
+
 %body{:style => "margin:0; padding:0; font-family: Lato, Arial, Helvetica, sans-serif; background-color: #ffffff !important; color: #212121 !important;"}>
   / LOGO
   %table{:align => "center", :border => "0", :cellpadding => "0", :height => "80", :width => "80%", :bgcolor => "#ffffff", :style => "background-color: #ffffff;"}
@@ -28,7 +28,7 @@
         %p{:style => "font-size: 14px; letter-spacing: 1px; margin: 2px;"}
           Tu mensaje fue enviado a
           = succeed "," do
-            %strong= @brand.name
+            %strong= @client.name
         %p{:style => "font-size: 14px; letter-spacing: 1px; margin: 2px;"}
           recibirás una respuesta.
         %p{:style => "font-size: 14px; letter-spacing: 1px; margin: 2px;"}
@@ -45,15 +45,15 @@
       %td{:align => "right"}
         %img{:border => "0", :height => "18", :src => world_icon, :style => "margin: 0 4px 0 0; padding:0; border:none; display: inline-block;", :width => "18"}/
          
-        %a{:href => @brand.url, :style => "color:#19bea8; text-decoration: none; font-size: 12px; letter-spacing: 1px;", :target => "_blank"} Website
+        %a{:href => @client.url, :style => "color:#19bea8; text-decoration: none; font-size: 12px; letter-spacing: 1px;", :target => "_blank"} Website
       %td{:align => "center"}
         %img{:border => "0", :height => "18", :src => pin_icon, :style => "margin:0 4px 0 0; padding:0; border:none; display: inline-block;", :width => "12"}/
          
-        %a{:href => @brand.formatted_addresses, :style => "color:#19bea8; text-decoration: none; font-size: 12px; letter-spacing: 1px;", :target => "_blank"} Dirección
+        %a{:href => @client.formatted_addresses, :style => "color:#19bea8; text-decoration: none; font-size: 12px; letter-spacing: 1px;", :target => "_blank"} Dirección
       %td{:align => "left"}
         %img{:border => "0", :height => "18", :src => smartphone_icon, :style => "margin:0 4px 0 0; padding:0; border:none; display: inline-block;", :width => "12"}/
          
-        %a{:href => @brand.phone, :style => "color:#19bea8; text-decoration: none; font-size: 12px; letter-spacing: 1px;", :target => "_blank"}
+        %a{:href => @client.phone, :style => "color:#19bea8; text-decoration: none; font-size: 12px; letter-spacing: 1px;", :target => "_blank"}
           Teléfono:
 
   / SPACE
@@ -101,7 +101,7 @@
       %td{:style => "padding: 0 10% 12px 10%;"}
         %p{:style => "font-size: 14px; letter-spacing: 1px; height: 80px; background-color: #ffffff; padding: 16px; color: #d6d6d6; border-radius: 4px; border: solid 1px #d6d6d6;"}
           = @form.message
-  
+
   / SPACE
   %table{:border => "0", :cellpadding => "0", :width => "100%"}
     %tr

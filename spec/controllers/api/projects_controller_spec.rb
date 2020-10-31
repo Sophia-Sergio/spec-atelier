@@ -72,7 +72,7 @@ describe Api::ProjectsController, type: :controller do
       context 'by keyword' do
         it 'searchs for projects containing matching with searched keywords' do
           get :index, params: {  user_id: user.id, keyword: 'abi' }
-          expect(json['projects'].count).to eq(2)
+          expect(json['projects']['list'].count).to eq(2)
         end
       end
     end
@@ -110,7 +110,6 @@ describe Api::ProjectsController, type: :controller do
     end
 
     context 'with valid session' do
-      before { create(:section, name: 'Terminación') }
       it 'creates a project with specification' do
         request.headers['Authorization'] = "Bearer #{session.token}"
         post :create, params: { user_id: user.id, project: { name: 'fake project', project_type: 'real_state', work_type: 'new_building'  } }
@@ -120,7 +119,6 @@ describe Api::ProjectsController, type: :controller do
         expect(response).to have_http_status(:created)
         expect(json['project']['name']).to eq('fake project')
         expect(Project.last.specification.present?).to eq(true)
-        expect(Project.last.specification.blocks.first.spec_item.name).to eq('Terminación')
       end
     end
   end

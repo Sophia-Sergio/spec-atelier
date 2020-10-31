@@ -14,16 +14,16 @@ namespace :db do
     end
 
     task tables: :environment do
+      reset_tables
       load_data
-      product_item_update
     end
 
     task images_and_documents: :environment do
       reset_images_and_files
       process_item_image
-      process_client_images
       process_product_images
       process_product_documents
+      process_client_images
       sh 'rm config/google_storage_config.json'
       sh 'rm config/google_drive_config.json'
     end
@@ -34,12 +34,6 @@ namespace :db do
     tasks.each {|task| task.enhance [:before_hook] }
 
     private
-
-    def product_item_update
-      Product.where.not(subitem: nil).each do |product|
-        product.update(item: product.subitem.item)
-      end
-    end
 
     def process_product_documents
       print "Seeding product documents..."
@@ -65,9 +59,11 @@ namespace :db do
       rescue StandardError => e
         puts e
       end
+      puts 'done'
     end
 
     def process_item_image
+      print "Seeding item images..."
       select_sheet('item') do |item_params|
         next if item_params[:images].blank?
 
@@ -77,12 +73,13 @@ namespace :db do
       rescue StandardError => e
         puts e
       end
+      puts 'done'
     end
 
     def process_client_images
       print "Seeding client images..."
       select_sheet('client') do |client_params|
-        company = client_params[:type] == 'Client' ? Company::Client.find(client_params[:id]) : Company::Brand.find(client_params[:id])
+        company = Client.find(client_params[:id])
         client_logo(company, client_params)
         client_show_images(company, client_params)
       rescue StandardError => e
@@ -180,7 +177,7 @@ namespace :db do
     def create_resource(sheet_name, params)
       class_name = class_name(sheet_name)
       case sheet_name
-      when 'client' then create_company(params)
+      when 'client' then create_client(params)
       when 'product' then create_product(class_name, params)
       when 'item' then create_item(class_name, params)
       else default_create(class_name, params)
@@ -193,16 +190,19 @@ namespace :db do
 
     def create_product(class_name, params)
       tags = params[:tags]&.split(",")&.map{|a| a.first.eql?(' ') ? a.gsub(' ', '') : a }
-      class_name.create!(params.except(:images, :files).merge(tags: tags))
+      product = class_name.create!(params.except(:images, :files, :subitem_id).merge(tags: tags))
+      subitem_id = params[:subitem_id].is_a?(Array) ? params[:subitem_id] : [params[:subitem_id]]
+      subitem_id.each {|subitem| create_product_items_and_subitems(subitem, product) }
     end
 
-    def create_company(params)
+    def create_product_items_and_subitems(subitem, product)
+      ProductSubitem.create!(product: product, subitem_id: subitem)
+      ProductItem.find_or_create_by(product: product, item: Subitem.find(subitem).item)
+    end
+
+    def create_client(params)
       creation_params = params.except(:distribuitors, :logo, :products_images, :type)
-      if params[:type] == 'Client'
-        Company::Client.create!(creation_params)
-      elsif params[:type] == 'Brand'
-        Company::Brand.create!(creation_params)
-      end
+      Client.create!(creation_params)
     end
 
     def default_create(class_name, params)
@@ -213,7 +213,6 @@ namespace :db do
       Section.connection
       Item.connection
       Subitem.connection
-      Company::Common.connection
     end
 
     def reset_images_and_files
@@ -223,14 +222,15 @@ namespace :db do
       ActiveRecord::Base.connection.reset_pk_sequence!('attached_resource_files')
     end
 
+    def reset_tables
+      ProductItem.delete_all
+      ProductSubitem.delete_all
+      ProjectSpec::Text.delete_all
+      ProjectSpec::Block.delete_all
+    end
 
     def class_name(name)
-      case name
-      when 'client'
-        Company::Common
-      else
-        name.camelize.constantize
-      end
+      name.camelize.constantize
     end
 
     def empty_row?(index, row)

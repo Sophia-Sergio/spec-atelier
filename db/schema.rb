@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_13_051217) do
+ActiveRecord::Schema.define(version: 2020_10_25_041854) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "hstore"
@@ -50,6 +50,24 @@ ActiveRecord::Schema.define(version: 2020_09_13_051217) do
     t.index ["owner_type", "owner_id"], name: "index_attached_resource_files_on_owner_type_and_owner_id"
   end
 
+  create_table "brands", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "clients", force: :cascade do |t|
+    t.string "name"
+    t.string "description"
+    t.string "url"
+    t.hstore "phone"
+    t.hstore "email"
+    t.string "contact_info"
+    t.hstore "social_media"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "companies", force: :cascade do |t|
     t.string "name"
     t.string "description"
@@ -81,6 +99,7 @@ ActiveRecord::Schema.define(version: 2020_09_13_051217) do
     t.bigint "section_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "code"
     t.index ["section_id"], name: "index_items_on_section_id"
   end
 
@@ -96,6 +115,24 @@ ActiveRecord::Schema.define(version: 2020_09_13_051217) do
     t.index ["category"], name: "index_lookup_tables_on_category"
   end
 
+  create_table "product_items", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.bigint "item_id", null: false
+    t.bigint "product_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["item_id"], name: "index_product_items_on_item_id"
+    t.index ["product_id"], name: "index_product_items_on_product_id"
+  end
+
+  create_table "product_subitems", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.bigint "subitem_id", null: false
+    t.bigint "product_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["product_id"], name: "index_product_subitems_on_product_id"
+    t.index ["subitem_id"], name: "index_product_subitems_on_subitem_id"
+  end
+
   create_table "products", force: :cascade do |t|
     t.string "name"
     t.string "short_desc"
@@ -103,8 +140,6 @@ ActiveRecord::Schema.define(version: 2020_09_13_051217) do
     t.string "reference"
     t.integer "brand_id"
     t.integer "client_id"
-    t.bigint "item_id", null: false
-    t.bigint "subitem_id"
     t.integer "price"
     t.text "work_type", default: [], array: true
     t.text "room_type", default: [], array: true
@@ -115,8 +150,7 @@ ActiveRecord::Schema.define(version: 2020_09_13_051217) do
     t.integer "created_reason"
     t.integer "original_product_id"
     t.integer "user_id"
-    t.index ["item_id"], name: "index_products_on_item_id"
-    t.index ["subitem_id"], name: "index_products_on_subitem_id"
+    t.integer "spec_item_id"
   end
 
   create_table "project_spec_blocks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -186,6 +220,7 @@ ActiveRecord::Schema.define(version: 2020_09_13_051217) do
     t.datetime "updated_at", precision: 6, null: false
     t.string "eng_name"
     t.integer "show_order"
+    t.string "code"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -203,6 +238,7 @@ ActiveRecord::Schema.define(version: 2020_09_13_051217) do
     t.bigint "item_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "code"
     t.index ["item_id"], name: "index_subitems_on_item_id"
   end
 
@@ -232,8 +268,10 @@ ActiveRecord::Schema.define(version: 2020_09_13_051217) do
   add_foreign_key "attached_resource_files", "attached_files"
   add_foreign_key "contact_forms", "users"
   add_foreign_key "items", "sections", on_delete: :cascade
-  add_foreign_key "products", "items", on_delete: :cascade
-  add_foreign_key "products", "subitems", on_delete: :cascade
+  add_foreign_key "product_items", "items"
+  add_foreign_key "product_items", "products"
+  add_foreign_key "product_subitems", "products"
+  add_foreign_key "product_subitems", "subitems"
   add_foreign_key "project_spec_blocks", "items"
   add_foreign_key "project_spec_blocks", "project_specs"
   add_foreign_key "project_spec_blocks", "sections"

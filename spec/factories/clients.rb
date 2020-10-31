@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :client, class: 'Company::Client' do
+  factory :client, class: 'Client' do
     sequence(:name) {|n| "fake client #{n}" }
     phone { { main: Faker::PhoneNumber.cell_phone } }
     email { { main: Faker::Internet.email } }

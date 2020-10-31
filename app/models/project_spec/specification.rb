@@ -6,8 +6,6 @@ module ProjectSpec
     has_one :user, through: :project
     has_many :blocks, class_name: 'ProjectSpec::Block', foreign_key: :project_spec_id
 
-    after_create :create_default_first_section # this is for the first mvp, when more section be available, this should be removed
-
     def create_text(params)
       text = ProjectSpec::Text.create!(text: params[:text], project_spec_block_id: params[:block])
       blocks.create!(spec_item: text)
@@ -20,13 +18,9 @@ module ProjectSpec
     end
 
     def create_product(params, user)
-      original_product =  Product.find(params[:product])
+      original_product = Product.find(params[:product])
       original_product_params = original_product.as_json.except('id')
-      product = Product.create(original_product_params.merge({
-        original_product_id: original_product.id,
-        created_reason: 1,
-        user: user
-      }))
+      product = Products::ProductSpecCreator.new(original_product_params.merge(item_id: params[:item]), user, original_product).call
       original_product.files.each {|file| file.dup.update(owner: product) }
       blocks.create!(spec_item: product, section_id: params[:section], item_id: params[:item])
       product
@@ -37,10 +31,6 @@ module ProjectSpec
       item = block.item
       blocks.find_by(spec_item: item)&.delete if blocks.where(spec_item_type: 'Product', item: block.item).count == 1
       blocks.find(block_id).delete
-    end
-
-    def create_default_first_section
-      blocks.create!(spec_item: Section.find_by(name: 'Terminación'))
     end
 
     def reorder_blocks(block_params)

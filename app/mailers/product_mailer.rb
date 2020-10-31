@@ -1,11 +1,11 @@
 class ProductMailer < ApplicationMailer
 
-  def send_contact_form_to_brand(current_user, form)
+  def send_contact_form_to_client(current_user, form)
     @current_user = current_user
     @form = form
     @product = @form.owner
-    @brand = @product.brand
-    @brand_email = @brand.email
+    @client = @product.client
+    @brand_email = @client.email
     mail(to: @current_user.email, subject: 'Product contact_form')
   end
 
@@ -13,7 +13,7 @@ class ProductMailer < ApplicationMailer
     @current_user = current_user
     @form = form
     @product = @form.owner
-    @brand = @product.brand
+    @client = @product.client
     mail(to: @current_user.email, subject: 'Your mail was sent contact_form')
   end
 end

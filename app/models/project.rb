@@ -15,9 +15,14 @@ class Project < ApplicationRecord
   scope :by_project_type, ->(types)    { where(project_type: types) }
   scope :by_work_type,    ->(types)    { where(work_type: types) }
 
+  before_create :work_type_default
   after_create :create_specification
 
   def create_specification
     ProjectSpec::Specification.create(project: self)
+  end
+
+  def work_type_default
+    self.work_type = 1
   end
 end
