@@ -31,7 +31,7 @@ describe Api::ConfigsController, type: :controller do
     end
   end
 
-  describe '#room_types_by_project_type' do
+  describe '#room_types' do
 
     before do
       create(:lookup_table, category: 'room_type', related_category: 'project_type', related_category_codes: [1, 2])
@@ -43,50 +43,58 @@ describe Api::ConfigsController, type: :controller do
 
     context 'when project_type ["1", "2"]' do
       it 'returns correct number of room_types' do
-        get :room_types_by_project_type, params: { project_type: [1, 2] }
+        get :room_types, params: { project_type: [1, 2] }
 
         expect(json['room_types'].count).to be 3
       end
 
       it 'returns correct number of room_types' do
-        get :room_types_by_project_type, params: { project_type: [4] }
+        get :room_types, params: { project_type: [4] }
 
         expect(json['room_types'].count).to be 2
       end
 
       it 'returns correct number of room_types' do
-        get :room_types_by_project_type, params: { project_type: [2] }
+        get :room_types, params: { project_type: [2] }
 
         expect(json['room_types'].count).to be 2
       end
     end
   end
 
-  describe '#room_types_by_project_type' do
+  describe '#room_types' do
 
     before do
-      create(:lookup_table, category: 'room_type', related_category: 'project_type', related_category_codes: [1, 2])
+      room_type1 = create(:lookup_table, category: 'room_type', related_category: 'project_type', related_category_codes: [1, 2])
       create(:lookup_table, category: 'room_type', related_category: 'project_type', related_category_codes: [1, 2, 4])
       create(:lookup_table, category: 'room_type', related_category: 'project_type', related_category_codes: [1, 4])
+      create(:product, room_type: [room_type1.code])
+
       request.headers['Authorization'] = "Bearer #{session.token}"
 
     end
 
     context 'when project_type ["1", "2"]' do
       it 'returns correct number of room_types' do
-        get :room_types_by_project_type, params: { project_type: [1, 2] }
+        get :room_types, params: { project_type: [1, 2] }
 
         expect(json['room_types'].count).to be 3
       end
 
+      it 'returns correct number of room_types with_products' do
+        get :room_types, params: { project_type: [1, 2], with_products: true }
+
+        expect(json['room_types'].count).to be 1
+      end
+
       it 'returns correct number of room_types' do
-        get :room_types_by_project_type, params: { project_type: [4] }
+        get :room_types, params: { project_type: [4] }
 
         expect(json['room_types'].count).to be 2
       end
 
       it 'returns correct number of room_types' do
-        get :room_types_by_project_type, params: { project_type: [2] }
+        get :room_types, params: { project_type: [2] }
 
         expect(json['room_types'].count).to be 2
       end
