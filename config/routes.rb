@@ -29,6 +29,10 @@ Rails.application.routes.draw do
       end
     end
 
+    namespace :project_specs do
+      get 'my_specifications'
+    end
+
     resources :items, only: %i[index] do
       get 'products'
     end
