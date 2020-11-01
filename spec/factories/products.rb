@@ -7,5 +7,6 @@ FactoryBot.define do
     price { 1000 }
     user { create(:user) }
     items { [create(:item)]}
+    spec_item { create(:item)}
   end
 end
