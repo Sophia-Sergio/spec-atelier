@@ -66,6 +66,13 @@ module Api
       render json: { url: uploaded_file }, status: :ok
     end
 
+    def my_specifications
+      list = current_user.specifications.includes(:project)
+      list = list.with_products if params[:with_products]
+      list = list.map { |specification| { id: specification.id, name: specification.project.name } }
+      render json: { specifications: list }
+    end
+
     private
 
     def project_specification

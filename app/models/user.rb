@@ -6,6 +6,7 @@ class User < ApplicationRecord
   validates :email, presence: true, uniqueness: true
   has_one :session, dependent: :destroy
   has_many :projects, dependent: :destroy
+  has_many :specifications, through: :projects
   has_many :products
 
   def generate_password_token!

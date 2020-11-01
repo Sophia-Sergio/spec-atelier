@@ -6,6 +6,8 @@ module ProjectSpec
     has_one :user, through: :project
     has_many :blocks, class_name: 'ProjectSpec::Block', foreign_key: :project_spec_id
 
+    scope :with_products, -> { joins(:blocks).distinct }
+
     def create_text(params)
       text = ProjectSpec::Text.create!(text: params[:text], project_spec_block_id: params[:block])
       blocks.create!(spec_item: text)

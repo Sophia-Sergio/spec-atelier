@@ -353,4 +353,41 @@ describe Api::ProjectSpecsController, type: :controller do
       end
     end
   end
+
+  describe '#my_specificatinos' do
+    context 'without session' do
+      before { get :my_specifications }
+      it_behaves_like 'an unauthorized api request'
+    end
+
+    before { create_list(:project_spec_specification, 2, project: project, user: session.user) }
+
+    context 'all my specifications' do
+      before do
+        request.headers['Authorization'] = "Bearer #{session.token}"
+        get :my_specifications
+      end
+
+      it 'returns a list' do
+        expect(json['specifications'].count).to eq 3
+      end
+    end
+
+    let(:project2) { create(:project, user: session.user) }
+    let(:project_spec2) { create(:project_spec_specification, project: project2) }
+
+    context 'only my specifications with products' do
+      before do
+        create_product_block(product1, project_spec)
+        create_product_block(product1, project_spec2)
+        request.headers['Authorization'] = "Bearer #{session.token}"
+
+        get :my_specifications, params: { with_products: true }
+      end
+
+      it 'returns a list' do
+        expect(json['specifications'].count).to eq 2
+      end
+    end
+  end
 end
