@@ -17,7 +17,7 @@ module Api
     end
 
     def room_types_by_project_type
-      list = LookupTable.by_category('room_type').by_project_type(params[:project_types])
+      list = LookupTable.by_category('room_type').by_project_type(params[:project_type])
       render json: { room_types: list.map {|type| lookup_table_format(type) } }
     end
 

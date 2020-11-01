@@ -43,19 +43,19 @@ describe Api::ConfigsController, type: :controller do
 
     context 'when project_type ["1", "2"]' do
       it 'returns correct number of room_types' do
-        get :room_types_by_project_type, params: { project_types: [1, 2] }
+        get :room_types_by_project_type, params: { project_type: [1, 2] }
 
         expect(json['room_types'].count).to be 3
       end
 
       it 'returns correct number of room_types' do
-        get :room_types_by_project_type, params: { project_types: [4] }
+        get :room_types_by_project_type, params: { project_type: [4] }
 
         expect(json['room_types'].count).to be 2
       end
 
       it 'returns correct number of room_types' do
-        get :room_types_by_project_type, params: { project_types: [2] }
+        get :room_types_by_project_type, params: { project_type: [2] }
 
         expect(json['room_types'].count).to be 2
       end
@@ -74,19 +74,19 @@ describe Api::ConfigsController, type: :controller do
 
     context 'when project_type ["1", "2"]' do
       it 'returns correct number of room_types' do
-        get :room_types_by_project_type, params: { project_types: [1, 2] }
+        get :room_types_by_project_type, params: { project_type: [1, 2] }
 
         expect(json['room_types'].count).to be 3
       end
 
       it 'returns correct number of room_types' do
-        get :room_types_by_project_type, params: { project_types: [4] }
+        get :room_types_by_project_type, params: { project_type: [4] }
 
         expect(json['room_types'].count).to be 2
       end
 
       it 'returns correct number of room_types' do
-        get :room_types_by_project_type, params: { project_types: [2] }
+        get :room_types_by_project_type, params: { project_type: [2] }
 
         expect(json['room_types'].count).to be 2
       end
