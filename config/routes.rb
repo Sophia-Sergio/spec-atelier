@@ -55,7 +55,7 @@ Rails.application.routes.draw do
 
     get 'general/cities'
     get 'configs/project_data'
-    get 'configs/room_types_by_project_type'
+    get 'configs/room_types'
 
     resources :brands, only: %i[index show] do
       post 'contact_form'
