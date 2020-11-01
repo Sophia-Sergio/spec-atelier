@@ -31,6 +31,14 @@ class Product < ApplicationRecord
   scope :by_subitem,      ->(subitems) { joins(:subitems).where(subitems: { id: subitems }) }
   scope :original,        ->           { where(original_product_id: nil) }
 
+  scope :by_specification,->(specs) { 
+    query = <<-SQL
+      INNER JOIN project_spec_blocks ON products.id = project_spec_blocks.spec_item_id
+      INNER JOIN project_specs ON project_spec_blocks.project_spec_id = project_specs.id
+    SQL
+    joins(query).where(project_specs: { id: specs })
+  }
+
   enum created_reason: %i[brand_creation added_to_spec]
 
   def self.by_brand(brands)

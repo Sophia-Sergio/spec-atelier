@@ -92,6 +92,15 @@ describe Api::ProductsController, type: :controller do
           get :index, params: { limit: 10, page: 0, keyword: 'aaa'}
           expect(json['products']['list'].count).to eq(2)
         end
+        
+        it 'returns products by specification' do
+          project_spec = create(:project_spec_specification, project: create(:project, user: session.user ))
+          create(:spec_block, section: product.sections.first, item: product.spec_item, project_spec: project_spec, spec_item: product )
+
+          get :index, params: { limit: 10, page: 0, specification: [project_spec.id]}
+          expect(json['products']['list'].count).to eq(1)
+          expect(json['products']['list'].first["id"]).to eq(product.id)
+        end
 
         it 'returns products by project_type' do
           get :index, params: { limit: 10, page: 0, project_type: [1,2]}
