@@ -349,7 +349,7 @@ describe Api::ProjectSpecsController, type: :controller do
 
       it 'creates a specification product' do
         expect(json['blocks'].map{|block| block['id'] }).to match_array(@ordered_block_ids)
-        expect(json['blocks'].map{|block| block['product_order'] }).to eq([nil, nil, 1, 2, 3, nil, 1, nil, nil, 1])
+        expect(json['blocks'].map{|block| block['product_order'] }).to eq([0, 0, 1, 2, 3, 0, 1, 0, 0, 1])
       end
     end
   end

@@ -9,11 +9,9 @@ module BlocksOrder
     after_destroy :reorder_blocks, if: -> { spec_item.class == Product }
   end
 
-
-
   def reorder_blocks
     high_order_blocks.each_with_index do |block, index|
-      block.update(order: order + index + 1)
+      block.update(order: index)
     end
   end
 
@@ -27,9 +25,12 @@ module BlocksOrder
       self.item_order = current_item_order
       self.section_order = current_section_order
     when 'Item'
+      self.product_order = 0
       self.item_order = next_item_order
       self.section_order = current_section_order
     when 'Section'
+      self.product_order = 0
+      self.item_order = 0
       self.section_order = next_section_order
     end
   end
@@ -54,7 +55,7 @@ module BlocksOrder
   end
 
   def high_order_blocks
-    spec_blocks.where('project_spec_blocks.order >= ? and id <> ?', order, id)
+    spec_blocks.order(:section_order, :item_order, :product_order)
   end
 
   def high_order_product_blocks
@@ -92,7 +93,16 @@ module BlocksOrder
   end
 
   def next_section_order
-    (spec_blocks&.where(spec_item_type: 'Section')&.pluck(:section_order)&.compact&.max || 0 ) + 1
+    sections = spec_blocks&.where(spec_item_type: 'Section')
+    order = 0
+    if sections.count >= 1
+      Section.where(id: sections.pluck(:spec_item_id) + [self.section_id]).order(:show_order).each.with_index do |section, i|
+        order = i + 1 unless sections.find_by(spec_item_id: section.id)&.update(section_order: i + 1)
+      end
+    else
+      order = 1
+    end
+    order
   end
 
   def current_item_order
@@ -100,7 +110,11 @@ module BlocksOrder
   end
 
   def current_section_order
-    (spec_blocks&.where(spec_item_type: 'Section', spec_item_id: self.section_id)&.pluck(:section_order)&.compact&.max || 0 )
+    spec_blocks.where(spec_item_type: ['Item', 'Product']).each do |spec_block|
+      order = spec_blocks.find_by(spec_item_type: 'Section', spec_item_id: spec_block.section_id)&.section_order
+      spec_block.update(section_order: order)
+    end
+    spec_blocks.find_by(spec_item_type: 'Section', spec_item_id: self.section_id)&.section_order
   end
 
   def item_names
