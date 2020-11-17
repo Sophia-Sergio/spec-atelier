@@ -46,7 +46,7 @@ module Search
     end
 
     def sorted_list
-      @sorted_lis ||= send("#{class_name[:name]}_sort")
+      @sorted_list ||= send("#{class_name[:name]}_sort")
     end
 
     def filter_params

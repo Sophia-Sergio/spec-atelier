@@ -9,7 +9,8 @@ class ProjectDecorator < ApplicationDecorator
             :status,
             :project_spec_id,
             :created_at,
-            :updated_at
+            :updated_at,
+            :description
 
   new_keys :project_spec_id
 
