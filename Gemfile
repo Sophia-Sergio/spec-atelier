@@ -22,6 +22,7 @@ gem 'pg_search'
 gem 'bullet'
 gem 'draper'
 gem 'caracal-rails'
+gem 'rubocop'
 
 group :development, :test do
   gem 'pry'
@@ -35,7 +36,6 @@ group :development do
   gem 'listen', '>= 3.0.5', '< 3.2'
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
-  gem 'rubocop'
 end
 
 group :test do

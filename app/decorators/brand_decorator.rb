@@ -62,4 +62,3 @@ class BrandDecorator < ApplicationDecorator
     @address_order0 ||= model.addresses&.find_by(order: 0)
   end
 end
-
