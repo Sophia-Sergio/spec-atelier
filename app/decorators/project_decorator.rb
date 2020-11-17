@@ -10,10 +10,10 @@ class ProjectDecorator < ApplicationDecorator
             :project_spec_id,
             :created_at,
             :updated_at,
-            :description
+            :description,
+            :size
 
   new_keys :project_spec_id
-
 
   def project_spec_id
     model.specification.id
