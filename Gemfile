@@ -22,7 +22,6 @@ gem 'pg_search'
 gem 'bullet'
 gem 'draper'
 gem 'caracal-rails'
-gem 'rubocop'
 
 group :development, :test do
   gem 'pry'
