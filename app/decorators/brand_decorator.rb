@@ -9,14 +9,15 @@ class BrandDecorator < ApplicationDecorator
            :email,
            :social_media,
            :product_images,
-           :contact_type
+           :contact_type,
+           :logo
 
   def products_count
     model.products.count
   end
 
   def description
-    "<p><strong>Pellentesque habitant morbi tristique</strong> senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. <em>Aenean ultricies mi vitae est.</em> Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, <code>commodo vitae</code>, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui</p>"
+    model.decorator
   end
 
   def image
@@ -28,7 +29,11 @@ class BrandDecorator < ApplicationDecorator
   end
 
   def country
-    'Chile'
+    address_order0&.country
+  end
+
+  def logo
+    model.logo_url
   end
 
   def web
@@ -36,7 +41,7 @@ class BrandDecorator < ApplicationDecorator
   end
 
   def address
-    "#{address_order_0&.text}, #{address_order_0&.city}, #{address_order_0&.country}"
+    "#{address_order0&.text}, #{address_order0&.city}, #{address_order0&.country}"
   end
 
   def social_media
@@ -57,8 +62,8 @@ class BrandDecorator < ApplicationDecorator
 
   private
 
-  def address_order_0
-    @address_order_0 ||= model.addresses&.find_by(order: 0)
+  def address_order0
+    @address_order0 ||= model.addresses&.find_by(order: 0)
   end
 end
 
