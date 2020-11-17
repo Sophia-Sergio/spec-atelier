@@ -16,10 +16,6 @@ class BrandDecorator < ApplicationDecorator
     model.products.count
   end
 
-  def description
-    model.description
-  end
-
   def image
     model.logo_url
   end
