@@ -33,12 +33,13 @@ module ProjectSpec
       item = block.item
       blocks.find_by(spec_item: item)&.delete if blocks.where(spec_item_type: 'Product', item: block.item).count == 1
       blocks.find(block_id).delete
+      block.send(:reorder_blocks)
     end
 
     def reorder_blocks(block_params)
       block_params.each_with_index do |block_param, index|
         block = blocks.find(block_param[:block])
-        updated_orders = block_orders(block, index)
+        block_orders(block, index)
       end
     end
 
@@ -48,7 +49,7 @@ module ProjectSpec
       @current_item ||= nil
       @product_order ||= 0
       @item_order ||= 0
-      @section_order ||= 0;
+      @section_order ||= 0
 
       if block.spec_item_type == 'Item' && @current_item != block.spec_item.name
         item_update(block, index)

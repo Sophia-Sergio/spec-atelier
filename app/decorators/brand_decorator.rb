@@ -17,7 +17,7 @@ class BrandDecorator < ApplicationDecorator
   end
 
   def description
-    model.decorator
+    model.description
   end
 
   def image

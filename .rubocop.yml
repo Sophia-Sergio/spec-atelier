@@ -18,9 +18,6 @@ AllCops:
     - "app/interactors/api/accounts/v2/*" # TODO: Remove this asap - MRT 01aug17
     - "lib/tasks/db-unsafe.rake"
 
-Rails:
-  Enabled: true
-
 Style/EmptyCaseCondition:
   Enabled: false
 
@@ -35,7 +32,7 @@ Layout/SpaceInsideBlockBraces:
 Style/StringLiterals:
   Enabled: false
   # Feel free to argue with me - MRT 24may17
-Layout/AlignHash:
+Layout/HashAlignment:
   EnforcedHashRocketStyle: table
   EnforcedColonStyle: table
 
@@ -55,10 +52,10 @@ Style/PercentLiteralDelimiters:
     "%W": "[]"
     "%x": "[]"
 
-Layout/IndentFirstArrayElement:
+Layout/FirstArrayElementIndentation:
   Enabled: false
   # This just doesn't work properly with any settings - MRT 24may17
-Layout/IndentFirstHashElement:
+Layout/FirstHashElementIndentation:
   EnforcedStyle: align_braces
 
 Style/CommentAnnotation:
@@ -89,8 +86,6 @@ Style/TrailingCommaInArrayLiteral:
   EnforcedStyleForMultiline: consistent_comma
   # Fight me - MRT 24may17
 Style/NumericLiterals:
-  Enabled: false
-Style/BracesAroundHashParameters:
   Enabled: false
   # Tricky one. Kill it for now. - MRT 24may17
 Style/BlockDelimiters:
@@ -159,20 +154,13 @@ Style/FrozenStringLiteralComment:
 Style/RedundantSelf:
   Enabled: false
   # We might consider turning this back on at some point in the future, but I see nothing wrong with being explicit - MRT 24may17
-Style/UnneededPercentQ:
+Style/RedundantPercentQ:
   Enabled: false
   # This is a good idea, but not today - MRT 24may17
 Style/PercentQLiterals:
   Enabled: false
   # This is a good idea, but not today - MRT 24may17
-Rails/Delegate:
-  Enabled: false
-  # This is a good idea, but not today - MRT 24may17
-
 Layout/MultilineOperationIndentation:
-  Enabled: false
-  # We have code-that-writes-code that this cop can't parse properly. Ignoring for now. - MRT 24may17
-Rails/DynamicFindBy:
   Enabled: false
   # Reenable this with a whitelist as soon as possible. - MRT 24may17
 Style/GuardClause:
@@ -185,17 +173,12 @@ Style/Next:
 Naming/ConstantName:
   Enabled: false
   # Ignore due to namespacing workarounds - MRT 24may17
-Lint/HandleExceptions:
-  Enabled: false
-  # Sometimes it's the right thing to do - MRT 01aug17
-Rails/ReadWriteAttribute:
+Lint/SuppressedException:
   Enabled: false
   # If someone can come up with a good argument, I'll consider it. - MRT 01aug17
 Security/Eval:
   Enabled: false
   # We really should have this on, but not while I need it. - MRT 01aug17
-Rails/FindBy:
-  Enabled: false
   # I /like/ where().first - MRT 01aug17
 Security/YAMLLoad:
   Enabled: false
@@ -206,13 +189,8 @@ Naming/HeredocDelimiterNaming:
 Lint/LiteralAsCondition:
   Enabled: false
   # It aids readability, tyvm. - MRT 02jan18
-Rails/SkipsModelValidations:
-  Enabled: false
   # Yes, that's why I use it. - MRT 02jan18
 Lint/InterpolationCheck:
-  Enabled: false
-  # Intentional use, but I wish I could just make specific exceptions. - MRT 02jan18
-Rails/Blank:
   Enabled: false
   # Why? - MRT 02jan18
 Style/RedundantConditional:
@@ -223,49 +201,27 @@ Layout/EmptyLinesAroundArguments:
   # Getting false positives - MRT 02jan18
 Style/FormatStringToken:
   Enabled: false
-  # Nope. - MRT 02jan18
-Rails/InverseOf:
-  Enabled: false
-  # Maybe? Not right now. - MRT 02jan18
-Rails/HasManyOrHasOneDependent:
-  Enabled: false
   # Maybe? Not right now. - MRT 02jan18
 Style/CommentedKeyword:
   Enabled: false
   # You're not my real dad! - MRT 02jan18
-Layout/IndentHeredoc:
+Layout/HeredocIndentation:
   Enabled: false
   # Buggy - MRT 17jan18
 Layout/CommentIndentation:
   Enabled: false
-  # False positives - MRT 17jan18
-Rails/Output:
-  Enabled: false
-  # inappropriate limitation - MRT 18jan18
-Rails/Exit:
-  Enabled: false
   # inappropriate limitation - MRT 18jan18
 Lint/RescueException:
-  Enabled: false
-  # Sometimes it's apprropriate - MRT 18jan18
-Rails/UnknownEnv:
   Enabled: false
   # Seriously? - MRT 30jan18
 Metrics/BlockNesting:
   Enabled: false
   # HAHAHAHAno - MRT 07may18
-Layout/IndentFirstArgument:
+Layout/FirstArgumentIndentation:
   EnforcedStyle: consistent
   # default causes some seriously ugly results sometimes - MRT 07may18
-Lint/UnneededSplatExpansion:
+Lint/RedundantSplatExpansion:
   Enabled: false
-
-Rails/LexicallyScopedActionFilter:
-  Enabled: false
-  # Who caren't if a method is explicitly defined or not? - MRT 06aug18
-Rails/OutputSafety:
-  Enabled: false
-
 Metrics/ParameterLists:
   Enabled: false
 
@@ -279,6 +235,3 @@ Style/SpecialGlobalVars:
 Style/AsciiComments:
   Enabled: false
   # 🖕🏻 ~EAKM 2019-Jan-29
-Rails/HasAndBelongsToMany:
-  Enabled: false
-  # ... No? - MRT 14mar19

@@ -2,37 +2,76 @@ module BlocksOrder
   extend ActiveSupport::Concern
 
   included do
-    before_create :set_item, if: -> { spec_item.class == Product }
-    before_create :set_section, if: -> { spec_item.class == Item }
-    before_create :set_order, if: -> { spec_item.class != ProjectSpec::Text }
-    after_create :reorder_blocks, if: -> { spec_item.class == Product }
-    after_destroy :reorder_blocks, if: -> { spec_item.class == Product }
+    before_create :set_item, if: -> { spec_item.instance_of? Product }
+    before_create :set_section, if: -> { spec_item.instance_of? Item }
+    before_create :update_order, if: -> { spec_item.instance_of? Product }
+    after_create :reorder_blocks, if: -> { spec_item.instance_of? Product }
   end
 
   def reorder_blocks
+    reorder_sections
+    reorder_items
+    reorder_products
     high_order_blocks.each_with_index do |block, index|
       block.update(order: index)
     end
   end
 
+  def sections
+    spec_blocks&.where(spec_item_type: 'Section')
+  end
+
+  def items(section_id)
+    spec_blocks&.where(spec_item_type: 'Item', section_id: section_id)
+  end
+
+  def products(section_id, item_id)
+    spec_blocks.where(spec_item_type: 'Product', section_id: section_id, item_id: item_id)
+  end
+
+  def block_section_order
+    sections.find_by(section_id: section_id).section_order
+  end
+
+  def block_item_order(section_id)
+    items(section_id).find_by(item_id: item_id).item_order
+  end
+
+  def reorder_sections
+    Section.where(id: sections.pluck(:spec_item_id)).order(:show_order).each.with_index do |section, i|
+      sections.find_by(spec_item: section)
+              .update(section_order: i + 1, item_order: 0, product_order: 0)
+    end
+  end
+
+  def reorder_items
+    sections.each do |section|
+      items = items(section.section_id)
+      Item.where(id: items.pluck(:spec_item_id)).order(:show_order).each.with_index do |item, i|
+        spec_item = items.find_by(spec_item: item)
+        spec_item.update(section_order: spec_item.block_section_order, item_order: i + 1, product_order: 0)
+      end
+    end
+  end
+
+  def reorder_products
+    sections.each do |section|
+      items(section.section_id).each do |item|
+        products(section.section_id, item.item_id).order(:product_order).each_with_index do |product, index|
+          product.update(
+            section_order: product.block_section_order,
+            item_order:    product.block_item_order(product.section_id),
+            product_order: index + 1
+          )
+        end
+      end
+    end
+  end
+
   private
 
-  def set_order
-    self.order = next_order
-    case spec_item_type
-    when 'Product'
-      self.product_order = next_product_order
-      self.item_order = current_item_order
-      self.section_order = current_section_order
-    when 'Item'
-      self.product_order = 0
-      self.item_order = next_item_order
-      self.section_order = current_section_order
-    when 'Section'
-      self.product_order = 0
-      self.item_order = 0
-      self.section_order = next_section_order
-    end
+  def update_order
+    self.product_order = next_product_order
   end
 
   def set_section
@@ -58,63 +97,14 @@ module BlocksOrder
     spec_blocks.order(:section_order, :item_order, :product_order)
   end
 
-  def high_order_product_blocks
-    spec_blocks.where('project_spec_blocks.spec_item_type = ? and item_id = ? ', 'Product', item_id).order(:order)
-  end
-
   def current_max_order
     spec_blocks&.pluck(:order)&.max
   end
 
-  def current_max_order_by_item
-    spec_blocks&.where(item: spec_item.spec_item)&.pluck(:order)&.max
-  end
-  
-  def current_max_order_by_section
-    spec_blocks&.where(section: spec_item.section)&.pluck(:order)&.max
-  end
-
-  def next_order
-    if spec_item_type == 'Product'
-      current_max_order_by_item.present? ? current_max_order_by_item + 1 : current_max_order + 1
-    elsif spec_item_type == 'Item'
-      current_max_order_by_section.present? ? current_max_order_by_section + 1 : 0
-    else
-      current_max_order.present? ? current_max_order + 1 : 0
-    end
-  end
-
   def next_product_order
-    (spec_blocks&.where(spec_item_type: 'Product', item_id: item_id)&.pluck(:product_order)&.compact&.max || 0 ) + 1
-  end
-
-  def next_item_order
-    (spec_blocks&.where(spec_item_type: 'Item', section_id: section_id)&.pluck(:item_order)&.compact&.max || 0 ) + 1
-  end
-
-  def next_section_order
-    sections = spec_blocks&.where(spec_item_type: 'Section')
-    order = 0
-    if sections.count >= 1
-      Section.where(id: sections.pluck(:spec_item_id) + [self.section_id]).order(:show_order).each.with_index do |section, i|
-        order = i + 1 unless sections.find_by(spec_item_id: section.id)&.update(section_order: i + 1)
-      end
-    else
-      order = 1
-    end
-    order
-  end
-
-  def current_item_order
-    (spec_blocks&.where(spec_item_type: 'Item', spec_item_id: self.item_id)&.pluck(:item_order)&.compact&.max || 0 )
-  end
-
-  def current_section_order
-    spec_blocks.where(spec_item_type: ['Item', 'Product']).each do |spec_block|
-      order = spec_blocks.find_by(spec_item_type: 'Section', spec_item_id: spec_block.section_id)&.section_order
-      spec_block.update(section_order: order)
-    end
-    spec_blocks.find_by(spec_item_type: 'Section', spec_item_id: self.section_id)&.section_order
+    (spec_blocks
+      &.where(spec_item_type: 'Product', item_id: item_id)
+      &.count || 0 ) + 1
   end
 
   def item_names

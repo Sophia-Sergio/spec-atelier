@@ -255,7 +255,7 @@ namespace :db do
 
     def recursive_array_shift(array)
       @array ||= []
-      if array.count == 0
+      if array.count.zero?
         new_array = @array
         @array = []
         return new_array
@@ -279,22 +279,22 @@ namespace :db do
     end
 
     def convert_to_integer_or_string(string)
-      is_number?(string) ? string.to_i : string.gsub('https//', 'https://')
+      number?(string) ? string.to_i : string.gsub('https//', 'https://')
     end
 
-    def is_number? string
+    def number?(string)
       true if Float(string) rescue false
     end
 
-    def array_only? param
+    def array_only?(param)
       param.try(:include?, '[') && !param.try(:include?, '{')
     end
 
-    def array_with_hashes? param
+    def array_with_hashes?(param)
       param.try(:include?, '[') && param.try(:include?, '{')
     end
 
-    def hash_only? param
+    def hash_only?(param)
       !param.try(:include?, '[') && param.try(:include?, '{')
     end
 
