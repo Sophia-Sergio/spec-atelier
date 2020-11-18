@@ -72,7 +72,7 @@ describe Api::BrandsController, type: :controller do
       it 'returns brand' do
         get :show, params: { id: client }
 
-        KEYS = %w[id name products_count description address country phone web email social_media contact_type product_images]
+        KEYS = %w[id name products_count description address country phone web email logo social_media contact_type product_images]
         expect(response).to have_http_status(:ok)
         expect(json['brand'].keys).to match_array(KEYS)
       end

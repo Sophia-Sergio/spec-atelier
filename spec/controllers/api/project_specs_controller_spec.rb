@@ -156,7 +156,7 @@ describe Api::ProjectSpecsController, type: :controller do
 
         it 'reorders the specification items' do
           expect(project_spec.blocks.find_by(spec_item: product3).id).to eq(@block_product2.id)
-          expect(project_spec.blocks.find_by(spec_item: product3).order).to be(3)
+          expect(project_spec.blocks.find_by(spec_item: product3).order).to be(2)
         end
 
       end
