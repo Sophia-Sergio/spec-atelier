@@ -190,7 +190,9 @@ namespace :db do
 
     def create_product(class_name, params)
       tags = params[:tags]&.split(",")&.map{|a| a.first.eql?(' ') ? a.gsub(' ', '') : a }
-      product = class_name.create!(params.except(:images, :files, :subitem_id).merge(tags: tags))
+      product = class_name.new(params.except(:images, :files, :subitem_id).merge(tags: tags))
+      product.room_type = LookupTable.by_project_type(product.project_type).pluck(:code).map(&:to_s)
+      product.save!
       subitem_id = params[:subitem_id].is_a?(Array) ? params[:subitem_id] : [params[:subitem_id]]
       subitem_id.each {|subitem| create_product_items_and_subitems(subitem, product) }
     end
