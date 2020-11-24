@@ -16,12 +16,12 @@ module Api
     end
 
     def create_text
-      project_spec_text = project_specification.create_text(project_spec_block_params)
+      project_specification.create_text(project_spec_block_params)
       render json: { blocks: blocks }
     end
 
     def remove_text
-      project_spec_text = project_specification.remove_text(params[:text])
+      project_specification.remove_text(params[:text])
       render json: { blocks: blocks }
     end
 
@@ -31,12 +31,12 @@ module Api
     end
 
     def create_product
-      product = project_specification.create_product(project_spec_block_params, current_user)
+      project_specification.create_product(project_spec_block_params, current_user)
       render json: { blocks: blocks }
     end
 
     def remove_product
-      product = project_specification.remove_product(params[:block])
+      project_specification.remove_product(params[:block])
       render json: { blocks: blocks, message: 'Producto removido' }
     end
 
@@ -69,7 +69,7 @@ module Api
     def my_specifications
       list = current_user.specifications.includes(:project)
       list = list.with_products if params[:with_products]
-      list = list.map { |specification| { id: specification.id, name: specification.project.name } }
+      list = list.map {|specification| { id: specification.id, name: specification.project.name } }
       render json: { specifications: list }
     end
 

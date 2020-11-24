@@ -25,9 +25,9 @@ class ProjectSpecDecorator < ApplicationDecorator
   end
 
   def element
-    decorator = case type
-      when 'Product' then ProductDecorator.decorate(spec_item)
-      else "ProjectSpec::#{spec_item.class}Presenter".constantize.decorate(spec_item)
+    case type
+    when 'Product' then ProductDecorator.decorate(spec_item)
+    else "ProjectSpec::#{spec_item.class}Presenter".constantize.decorate(spec_item)
     end
   end
 
