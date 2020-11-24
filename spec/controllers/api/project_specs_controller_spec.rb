@@ -132,6 +132,22 @@ describe Api::ProjectSpecsController, type: :controller do
     end
   end
 
+  describe '#download_word' do
+    let(:url) { 'some_url/name_spec.docx' }
+    before do
+      create_product_block(product1, project_spec)
+      create_product_block(product2, project_spec)
+      create_product_block(product3, project_spec)
+      allow_any_instance_of(SpecificationGenerator).to receive(:upload_file).and_return(url)
+    end
+
+    it 'returns a url document' do
+      get :download_word, params: { user_id: user, project_spec_id: project_spec.id }
+
+      expect(json['url']).to eq(url)
+    end
+  end
+
   describe '#remove_product' do
     context 'without session' do
       before { delete :remove_product, params: { project_spec_id: project_spec, block: '1', user_id: no_logged_user.id } }

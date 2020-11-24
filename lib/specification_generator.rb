@@ -74,7 +74,6 @@ class SpecificationGenerator
       c2 = Caracal::Core::Models::TableCellModel.new do
         p product_name, style: 'header_product'
         p block.spec_item.long_desc&.to_s
-        p "Sistema constructivo: #{block.spec_item.subitem&.name&.to_s}", style: 'header_product'
         p "Referencia #{block.spec_item.reference&.to_s}"
         p block.text.text.strip_tagss if block.text.present?
         p
@@ -95,7 +94,6 @@ class SpecificationGenerator
   def product_format(docx, block)
     docx.p product_name(block), style: 'header_product'
     docx.p block.spec_item.long_desc&.to_s
-    docx.p "Sistema constructivo: #{block.spec_item.subitem&.name&.to_s}", style: 'header_product'
     docx.p "Referencia #{block.spec_item.reference&.to_s}"
     docx.p block.text.text.strip_tags if block.text.present?
     docx.p
