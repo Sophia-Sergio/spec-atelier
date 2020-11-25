@@ -42,9 +42,8 @@ class Product < ApplicationRecord
   enum created_reason: %i[brand_creation added_to_spec]
 
   def self.by_brand(brands)
-    scoped_brands = joins(:brand).where(brands: { id: brands })
     scoped_clients = joins(:client).where(clients: { id: brands })
-    Product.where(id: (scoped_brands + scoped_clients).uniq)
+    Product.where(id: scoped_clients)
   end
 
   def images
