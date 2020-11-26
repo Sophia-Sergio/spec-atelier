@@ -12,6 +12,6 @@ class ClientMailer < ApplicationMailer
     @current_user = current_user
     @client = form.owner
     @form = form
-    mail(to: @current_user.email, subject: "Tu email fue enviado correctamente a #{form.owner}")
+    mail(to: @current_user.email, subject: "Tu email fue enviado correctamente a #{form.owner.name}")
   end
 end
