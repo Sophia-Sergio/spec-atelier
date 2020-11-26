@@ -26,4 +26,8 @@ class Client < ApplicationRecord
   def logo_url
     files&.images&.find_by(kind: 'logo')&.image&.url
   end
+
+  def main_phone
+    phone["main"]
+  end
 end

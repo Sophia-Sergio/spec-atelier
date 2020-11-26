@@ -1,7 +1,7 @@
 module Api
   class BrandsController < ApplicationController
     include Search::Handler
-    before_action :valid_session, except: %i[index]
+    before_action :valid_session, except: %i[index show]
 
     def index
       @custom_list = with_products? ? brands_with_products : Client.all
