@@ -28,11 +28,9 @@ module ProjectSpec
       product
     end
 
-    def remove_product(block_id)
+    def remove_block(block_id)
       block = blocks.find(block_id)
-      item = block.item
-      blocks.find_by(spec_item: item)&.delete if blocks.where(spec_item_type: 'Product', item: block.item).count == 1
-      blocks.find(block_id).delete
+      send("remove_#{block.spec_item_type.downcase}", block)
       block.send(:reorder_blocks)
     end
 
@@ -75,6 +73,26 @@ module ProjectSpec
     def section_update(block, index)
       @section_order += 1
       block.update(order: index, section_order: @section_order)
+    end
+
+    def remove_product(block)
+      self.class.transaction do
+        text = ProjectSpec::Text.find_by(block_item: block)
+        blocks.unscoped.find_by(spec_item: text)&.delete
+        text&.delete
+        blocks.find_by(spec_item: block.item)&.delete if blocks.products.where(item: block.item).count == 1
+        blocks.find_by(spec_item: block.section)&.delete if blocks.products.where(section: block.section).count == 1
+        blocks.find(block.id).delete
+      end
+    end
+
+    def remove_section(block)
+      blocks.unscoped.where(section: block.section).delete_all
+    end
+
+    def remove_item(block)
+      blocks.find_by(spec_item: block.section)&.delete if blocks.products.where(section: block.section).count == 1
+      blocks.unscoped.where(item: block.item).delete_all
     end
   end
 end

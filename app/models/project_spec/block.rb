@@ -10,8 +10,11 @@ module ProjectSpec
     belongs_to :spec_item, polymorphic: true
     belongs_to :section, optional: true
     belongs_to :item, optional: true
+    scope :products, -> { where(spec_item_type: 'Product') }
 
-    validates :section_id, presence: true, if: -> { spec_item.class == Item || spec_item.class == Product}
+    after_destroy :cleanup
+
+    validates :section_id, presence: true, if: -> { spec_item.instance_of?(Item) || spec_item.instance_of?(Product)}
 
     default_scope { where.not(spec_item_type: 'ProjectSpec::Text') }
 
@@ -25,6 +28,11 @@ module ProjectSpec
 
     def product_item_block
       spec_blocks.find_by(spec_item_type: 'Item', spec_item_id: item_id) if spec_item.class == Product
+    end
+
+    def cleanup
+      binding.pry
+      item.destroy if ['Product', 'ProjectSpec::Text'].include? spec_item_type
     end
   end
 end

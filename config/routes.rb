@@ -18,7 +18,7 @@ Rails.application.routes.draw do
         post 'create_text'
         delete 'remove_text'
         post 'create_product'
-        delete 'remove_product'
+        delete 'remove_block'
         get 'specification'
         get  'download_word'
         patch 'edit_text'

@@ -35,8 +35,8 @@ module Api
       render json: { blocks: blocks }
     end
 
-    def remove_product
-      project_specification.remove_product(params[:block])
+    def remove_block
+      project_specification.remove_block(params[:block])
       render json: { blocks: blocks, message: 'Producto removido' }
     end
 
@@ -80,7 +80,8 @@ module Api
     end
 
     def blocks
-      ProjectSpecDecorator.decorate_collection(project_specification.blocks.order(:order))
+      blocks = project_specification.blocks.includes(:section, :item, :spec_item).order(:order)
+      ProjectSpecDecorator.decorate_collection(blocks)
     end
 
     def project_spec_param
