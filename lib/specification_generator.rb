@@ -7,6 +7,7 @@ class SpecificationGenerator
   def generate
     generate_file
     upload_file
+    remove_file
   end
 
   private
@@ -14,7 +15,6 @@ class SpecificationGenerator
   def upload_file
     file = File.new(file_name_path)
     file_stored = GoogleStorage.new(project, file, 'specification').perform(file_name)
-    remove_file
     attach_to_specification(file_stored)
   end
 
@@ -56,7 +56,7 @@ class SpecificationGenerator
   end
 
   def file_name
-    'EETT-' + project.name.parameterize.underscore + '.docx'
+    "EETT-#{project.name.parameterize.underscore}.docx"
   end
 
   def project
