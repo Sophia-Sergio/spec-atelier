@@ -48,7 +48,17 @@ module Api
     end
 
     def project_params
-      params.require(:project).permit(:name, :project_type, :work_type, :country, :city, :delivery_date, :visibility)
+      params.require(:project).permit(
+        :name,
+        :project_type,
+        :work_type,
+        :country,
+        :city,
+        :delivery_date,
+        :visibility,
+        :description,
+        :size
+      )
     end
 
     def projects
