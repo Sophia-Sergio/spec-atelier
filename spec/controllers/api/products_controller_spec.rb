@@ -13,7 +13,7 @@ describe Api::ProductsController, type: :controller do
   let(:item_a)         { create(:item, section: section_a) }
   let(:item_b)         { create(:item, section: section_b) }
   let(:subitem)        { create(:subitem) }
-  let(:product_params) { 
+  let(:product_params) {
     {
       system_id: subitem.id,
       name: 'new name',
@@ -24,7 +24,7 @@ describe Api::ProductsController, type: :controller do
       room_type: [1,2],
       price: 1000,
       item_id: item_a.id
-    } 
+    }
   }
 
   describe '#index' do
@@ -92,7 +92,7 @@ describe Api::ProductsController, type: :controller do
           get :index, params: { limit: 10, page: 0, keyword: 'aaa'}
           expect(json['products']['list'].count).to eq(2)
         end
-        
+
         it 'returns products by specification' do
           project_spec = create(:project_spec_specification, project: create(:project, user: session.user ))
           create(:spec_block, section: product.sections.first, item: product.spec_item, project_spec: project_spec, spec_item: product )
@@ -155,11 +155,6 @@ describe Api::ProductsController, type: :controller do
   end
 
   describe '#show' do
-    context 'without session' do
-      before { get :show, params: { user_id: no_logged_user.id, id: products.first.id } }
-      it_behaves_like 'an unauthorized api request'
-    end
-
     context 'with valid session' do
       before do
         request.headers['Authorization'] = "Bearer #{session.token}"
@@ -204,7 +199,7 @@ describe Api::ProductsController, type: :controller do
           @document2 = create(:document, name: 'document2.pdf')
           @document3 = create(:document, name: 'document1.pdf')
           @document4 = create(:document, name: 'document0.pdf')
-          @document5 = create(:document, name: 'document.bim')
+          @document5 = create(:document, name: 'document.rfa')
           create(:resource_file, owner: product, attached: @document1, order: 0)
           create(:resource_file, owner: product, attached: @document2, order: 2)
           create(:resource_file, owner: product, attached: @document3, order: 1)

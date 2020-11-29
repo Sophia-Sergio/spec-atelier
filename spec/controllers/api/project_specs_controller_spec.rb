@@ -148,9 +148,9 @@ describe Api::ProjectSpecsController, type: :controller do
     end
   end
 
-  describe '#remove_product' do
+  describe '#remove_block' do
     context 'without session' do
-      before { delete :remove_product, params: { project_spec_id: project_spec, block: '1', user_id: no_logged_user.id } }
+      before { delete :remove_block, params: { project_spec_id: project_spec, block: '1', user_id: no_logged_user.id } }
       it_behaves_like 'an unauthorized api request'
     end
 
@@ -162,7 +162,7 @@ describe Api::ProjectSpecsController, type: :controller do
           @block_product1 = create_product_block(product1, project_spec)
           @block_product2 = create_product_block(product3, project_spec)
 
-          delete :remove_product, params: { project_spec_id: project_spec, user_id: user, block: @block_product1.id }
+          delete :remove_block, params: { project_spec_id: project_spec, user_id: user, block: @block_product1.id }
         end
 
         it 'returns the listwithout the removed product' do
@@ -184,7 +184,7 @@ describe Api::ProjectSpecsController, type: :controller do
           @block_product3 = create_product_block(product3, project_spec)
           request.headers['Authorization'] = "Bearer #{session.token}"
 
-          delete :remove_product, params: { project_spec_id: project_spec, user_id: user, block: @block_product2.id }
+          delete :remove_block, params: { project_spec_id: project_spec, user_id: user, block: @block_product2.id }
         end
 
         it 'returns the list without product removed' do

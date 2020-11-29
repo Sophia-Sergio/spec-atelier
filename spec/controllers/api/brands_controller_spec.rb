@@ -61,11 +61,6 @@ describe Api::BrandsController, type: :controller do
 
 
   describe '#show' do
-    context 'without session' do
-      before { get :show, params:  { id: client } }
-      it_behaves_like 'an unauthorized api request'
-    end
-
     context 'with valid session' do
       before { request.headers['Authorization'] = "Bearer #{session.token}" }
 
