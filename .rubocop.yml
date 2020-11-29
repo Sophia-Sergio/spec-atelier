@@ -33,8 +33,7 @@ Style/StringLiterals:
   Enabled: false
   # Feel free to argue with me - MRT 24may17
 Layout/HashAlignment:
-  EnforcedHashRocketStyle: table
-  EnforcedColonStyle: table
+  EnforcedLastArgumentHashStyle: always_inspect
 
 Layout/TrailingWhitespace:
   Enabled: false
