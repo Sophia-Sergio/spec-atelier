@@ -36,7 +36,9 @@ class Product < ApplicationRecord
       INNER JOIN project_spec_blocks ON products.id = project_spec_blocks.spec_item_id
       INNER JOIN project_specs ON project_spec_blocks.project_spec_id = project_specs.id
     SQL
-    joins(query).where(project_specs: { id: specs })
+    ids = unscoped.joins(query).where(project_specs: { id: specs }, project_spec_blocks: { spec_item_type: 'Product' } )
+                  .pluck(:original_product_id)
+    original.where(id: ids)
   }
 
   enum created_reason: %i[brand_creation added_to_spec]
