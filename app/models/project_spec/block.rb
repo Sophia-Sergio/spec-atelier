@@ -31,7 +31,6 @@ module ProjectSpec
     end
 
     def cleanup
-      binding.pry
       item.destroy if ['Product', 'ProjectSpec::Text'].include? spec_item_type
     end
   end
