@@ -104,7 +104,7 @@ class ProductDecorator < ApplicationDecorator
 
   def section_object
     @section_object ||= if block?
-      model.spec_item.section
+      model.spec_item&.section
     else
       model.sections.first
     end
