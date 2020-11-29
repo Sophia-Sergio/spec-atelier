@@ -11,7 +11,6 @@ class Product < ApplicationRecord
   has_many :sections, through: :items
   belongs_to :spec_item, class_name: 'Item', optional: true
   belongs_to :user
-  has_one :block, foreign_key: 'spec_item_id', class_name: 'ProjectSpec::Block'
   has_many :files, as: :owner, class_name: 'Attached::ResourceFile'
   has_many :contact_forms, as: :owner, class_name: 'Form::ContactForm'
 
@@ -46,6 +45,10 @@ class Product < ApplicationRecord
   def self.by_brand(brands)
     scoped_clients = joins(:client).where(clients: { id: brands })
     Product.where(id: scoped_clients)
+  end
+
+  def block
+    ProjectSpec::Block.products.find_by(spec_item: self)
   end
 
   def images
