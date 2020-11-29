@@ -33,7 +33,7 @@ module Api
 
     def destroy
       project.update(soft_deleted: true)
-      render json: { message: 'Proyecto borrado con éxito' }, status: :no_content
+      render json: { message: 'Proyecto borrado con éxito' }, status: :ok
     end
 
     def ordered
