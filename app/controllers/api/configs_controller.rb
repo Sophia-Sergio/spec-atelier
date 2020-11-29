@@ -5,19 +5,20 @@ module Api
       cities = CITIES.values.flatten
       @project_types = project_types_list
       data = {
-        cities: cities.sort,
-        project_types: @project_types.sort_by {|a| I18n.transliterate(a[:name]) },
-        work_types: work_types_list.sort_by {|a| I18n.transliterate(a[:name]) },
-        room_types: room_types_list.map do |room_type|
-          hash = @project_types.select {|a| room_type[:related_category_codes].include? a[:id].to_s }
-          room_type.merge(project_types: hash )
-        end.sort_by {|a| I18n.transliterate(a[:name].capitalize) }
-      }
+               cities:        cities.sort,
+               project_types: @project_types.sort_by {|a| I18n.transliterate(a[:name]) },
+               work_types:    work_types_list.sort_by {|a| I18n.transliterate(a[:name]) },
+               room_types:    room_types_list.map {|room_type|
+                 hash = @project_types.select {|a| room_type[:related_category_codes].include? a[:id].to_s }
+                 room_type.merge(project_types: hash )
+               }.sort_by {|a| I18n.transliterate(a[:name].capitalize) }
+             }
       render json: data, status: :ok
     end
 
     def room_types
-      list = LookupTable.by_category('room_type').by_project_type(params[:project_type])
+      list = LookupTable.by_category('room_type')
+      list = list.by_project_type(params[:project_type]) if params[:project_type].present?
       if params[:with_products]
         products = Product.all.where.not(room_type: []).pluck(:room_type).flatten.uniq
         list = list.select {|room_type| products.include? room_type.code.to_s }
@@ -35,10 +36,10 @@ module Api
 
     def lookup_table_format(type)
       {
-        id: type.code,
-        name: type.translation_spa.capitalize,
-        value: type.value,
-        related_category: type.related_category,
+        id:                     type.code,
+        name:                   type.translation_spa.capitalize,
+        value:                  type.value,
+        related_category:       type.related_category,
         related_category_codes: type.related_category_codes
       }
     end
