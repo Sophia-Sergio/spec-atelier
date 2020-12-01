@@ -73,7 +73,7 @@ class SpecificationGenerator
         p product_name, style: 'header_product'
         p block.spec_item.long_desc&.to_s
         p "Referencia #{block.spec_item.reference&.to_s}"
-        p block.text.text.strip_tagss if block.text.present?
+        p block.text.text.strip_tags if block.text.present?
         p
       end
 
