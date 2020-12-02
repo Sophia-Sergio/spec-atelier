@@ -25,6 +25,10 @@ class User < ApplicationRecord
     session.active?
   end
 
+  def name
+    "#{first_name.capitalize} #{last_name.capitalize}"
+  end
+
   private
 
   def assign_default_role

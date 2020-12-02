@@ -39,18 +39,28 @@ class SpecificationGenerator
   def generate_file
     Caracal::Document.save file_name_path do |docx|
       styles(docx)
-      docx.p project.name, style: 'header_project'
-      docx.hr
+      project_summarize(docx)
       @blocks.each do |block|
-        section(docx, block) if block.spec_item_type == 'Section'
-        item(docx, block) if block.spec_item_type == 'Item'
-        product(docx, block) if block.spec_item_type == 'Product'
+        %w[section item product].each do |block_type|
+          send(block_type, docx, block) if block.spec_item_type == block_type.capitalize
+        end
       end
     end
   end
 
   def file_name_path
     "tmp/#{file_name}"
+  end
+
+  def project_summarize(docx)
+    docx.p project.name, style: 'header_project'
+    docx.p "Tipo de Proyecto: #{project.project_type_spa.capitalize}"
+    docx.p "Descripción: #{project.description}" if project.description.present?
+    docx.p "m²: #{project.size}" if project.size.present?
+    docx.p "Ciudad: #{project.city}" if project.city.present?
+    docx.p "Arquitecto: #{project.user.name}" if project.user.name.present?
+    docx.p "Contacto: #{project.user.email}" if project.user.email.present?
+    docx.hr
   end
 
   def file_name
