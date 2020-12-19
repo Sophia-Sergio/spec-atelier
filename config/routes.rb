@@ -36,6 +36,8 @@ Rails.application.routes.draw do
     resources :items, only: %i[index] do
       get 'products'
     end
+    resources :subitems, only: %i[index]
+
     get 'items/:item_id/systems', to: 'items#subitems', as: :systems
 
     resources :products, only: %i[show create index update] do
