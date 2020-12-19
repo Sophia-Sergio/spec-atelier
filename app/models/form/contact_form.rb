@@ -5,6 +5,8 @@ module Form
     belongs_to :owner, polymorphic: true
     belongs_to :user
 
+    validates :message, presence: true
+
   end
 
 end

@@ -4,15 +4,15 @@ class Product < ApplicationRecord
 
   belongs_to :client, optional: true
   belongs_to :brand, optional: true
-  has_many :product_items
-  has_many :product_subitems
+  has_many :product_items, dependent: :destroy
+  has_many :product_subitems, dependent: :destroy
   has_many :subitems, through: :product_subitems
   has_many :items, through: :product_items
   has_many :sections, through: :items
   belongs_to :spec_item, class_name: 'Item', optional: true
   belongs_to :user
-  has_many :files, as: :owner, class_name: 'Attached::ResourceFile'
-  has_many :contact_forms, as: :owner, class_name: 'Form::ContactForm'
+  has_many :files, as: :owner, class_name: 'Attached::ResourceFile', dependent: :destroy
+  has_many :contact_forms, as: :owner, class_name: 'Form::ContactForm', dependent: :destroy
 
   validates :name, :long_desc, presence: true
   validates :client_id, presence: true, unless: :brand_id
