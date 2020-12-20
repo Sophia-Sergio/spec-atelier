@@ -2,12 +2,28 @@ module Products
   class ProductUpdater < Products::ProductCommon
 
     def call
-      product.update(product_params.except(:system_id, :brand))
-      Product.transaction do 
-        ProductItem.find_or_create_by(product: product, item_id: params[:item_id])
-        ProductSubitem.find_or_create_by(product: product, subitem_id: params[:system_id])
+      Product.transaction do
+        product.update(product_params)
+        items_update(product, params[:item_id]) if params[:item_id].present?
+        subitems_update(product, params[:system_id]) if params[:system_id].present?
+        product
       end
-      product
+    end
+
+    private
+
+    def items_update(product, items)
+      product.product_items.where.not(item_id: items).delete_all
+      items.each {|item| ProductItem.find_or_create_by!(product: product, item_id: item) }
+    end
+
+    def subitems_update(product, subitems)
+      product.product_subitems.where.not(subitem_id: subitems).delete_all
+      subitems.each do |subitem|
+        if subitem_belongs_to_known_item? subitem
+          ProductSubitem.find_or_create_by!(product: product, subitem_id: subitem)
+        end
+      end
     end
   end
 end

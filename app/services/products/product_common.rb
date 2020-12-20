@@ -17,9 +17,13 @@ module Products
     def user_params
       user.present? ? { user_id: user&.id } : {}
     end
-    
+
     def not_supported_attributes
       %i[system_id brand item_id]
+    end
+
+    def subitem_belongs_to_known_item?(subitem)
+      Item.where(id: params[:item_id]).joins(:subitems).where(subitems: { id: subitem }).present?
     end
   end
 end

@@ -6,7 +6,7 @@ module Products
     end
 
     def creation_params
-      product_params.merge({original_product_id: product.id, created_reason: 1, spec_item_id: params[:item_id].to_i })
+      product_params.merge({ original_product_id: product.id, created_reason: 1, spec_item_id: params[:item_id].to_i })
     end
   end
 end

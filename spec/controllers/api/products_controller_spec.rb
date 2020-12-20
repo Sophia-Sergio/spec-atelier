@@ -12,10 +12,10 @@ describe Api::ProductsController, type: :controller do
   let(:section_b)      { create(:section, name: 'Section B') }
   let(:item_a)         { create(:item, section: section_a) }
   let(:item_b)         { create(:item, section: section_b) }
-  let(:subitem)        { create(:subitem) }
+  let(:subitem_a)        { create(:subitem, item: item_a) }
+  let(:subitem_b)        { create(:subitem, item: item_b) }
   let(:product_params) {
     {
-      system_id: subitem.id,
       name: 'new name',
       long_desc: 'new long desc',
       brand: brand_a.name,
@@ -23,7 +23,8 @@ describe Api::ProductsController, type: :controller do
       work_type: '',
       room_type: [1,2],
       price: 1000,
-      item_id: item_a.id
+      item_id: [item_a.id, item_b.id],
+      system_id: [subitem_a.id, subitem_b.id],
     }
   }
 
@@ -95,7 +96,9 @@ describe Api::ProductsController, type: :controller do
 
         it 'returns products by specification' do
           project_spec = create(:project_spec_specification, project: create(:project, user: session.user ))
-          create(:spec_block, section: product.sections.first, item: product.spec_item, project_spec: project_spec, spec_item: product )
+          product2 = product.dup
+          product2.update(original_product_id: product.id)
+          create(:spec_block, section: product.sections.first, item: product2.spec_item, project_spec: project_spec, spec_item: product2)
 
           get :index, params: { limit: 10, page: 0, specification: [project_spec.id]}
           expect(json['products']['list'].count).to eq(1)
@@ -264,9 +267,23 @@ describe Api::ProductsController, type: :controller do
       context 'when current_user did create the product' do
         it 'returns not authorized' do
           product = create(:product, user: user)
+          product_item1 = create(:product_item, product: product)
+          product_item2 = create(:product_item, product: product)
+          product_subitem1 = create(:product_subitem, product: product)
+          product_subitem2 = create(:product_subitem, product: product)
 
-          put :update, params: { id: product.id, product: product_params }
+          update_params = {
+            item_id: [product_item1.item.id, item_a.id],
+            system_id: [product_subitem1.subitem.id, subitem_a.id],
+          }
+          product.reload
+
+          put :update, params: { id: product.id, product: product_params.deep_merge(update_params) }
           expect(json['product']['name']).to eq(product.reload.name)
+          expect(product.items.where(id: [product_item1.item.id, item_a.id]).count).to be(2)
+          expect(product.subitems.where(id: [product_subitem1.subitem.id, subitem_a.id]).count).to be(2)
+          expect(ProductSubitem.find_by(id: product_subitem2.id)).to be(nil)
+          expect(ProductItem.find_by(id: product_item2.id)).to be(nil)
         end
       end
     end
@@ -287,6 +304,9 @@ describe Api::ProductsController, type: :controller do
         it 'creates a resource' do
           post :create, params: { product: product_params }
           expect(response).to have_http_status(:created)
+          product = Product.find(json['product']['id'])
+          expect(product.reload.items.where(id: [item_a.id, item_b.id]).count).to be(2)
+          expect(product.reload.subitems.where(id: [subitem_a.id, subitem_b.id]).count).to be(2)
         end
       end
 

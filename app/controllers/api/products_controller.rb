@@ -74,7 +74,7 @@ module Api
 
     def product_params
       permitted = %i[name item_id system_id brand long_desc short_desc price project_type work_type room_type product_id]
-      params.require(:product).permit(permitted)
+      params.require(:product).permit(permitted + [item_id: [], system_id: []])
     end
 
     def contact_form_params
