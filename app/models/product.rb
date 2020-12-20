@@ -29,6 +29,10 @@ class Product < ApplicationRecord
   scope :by_room_type,    ->(types)    { where("room_type && ?", "{#{ types.is_a?(Array) ? types.join(',') : types }}") }
   scope :by_subitem,      ->(subitems) { joins(:subitems).where(subitems: { id: subitems }) }
   scope :original,        ->           { where(original_product_id: nil) }
+  scope :system,          ->           { joins(user: :roles).where(roles: { name: 'superadmin' }) }
+  scope :by_user,         ->(user)     { where(user: user) }
+  scope :readable,        ->           { original.system }
+  scope :readable_by,     ->(user)     { union(readable, original.by_user(user)) }
 
   scope :by_specification, ->(specs) {
     query = <<-SQL
@@ -53,7 +57,12 @@ class Product < ApplicationRecord
 
   def images
     images = files.images&.pluck(:attached_file_id)
-    Attached::Image.where(id: images).joins(:resource_file).includes(:resource_file).select('attached_files.*, attached_resource_files.order').order(:order).uniq
+    Attached::Image
+      .where(id: images)
+      .joins(:resource_file)
+      .includes(:resource_file)
+      .select('attached_files.*, attached_resource_files.order')
+      .order(:order).uniq
   end
 
   def documents

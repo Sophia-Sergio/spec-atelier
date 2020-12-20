@@ -13,7 +13,7 @@ module Api
     end
 
     def index
-      @custom_list = Product.all.original
+      @custom_list = current_user.present? ? Product.readable_by(current_user) : Product.readeable
       render json: { products: paginated_response }, status: :ok
     end
 
