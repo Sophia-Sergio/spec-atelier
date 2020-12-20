@@ -36,8 +36,8 @@ describe Api::ProductsController, type: :controller do
 
       describe "general pagination" do
         before do
-          create_list(:product, 10, items: [item_b])
-          create_list(:product, 11, items: [item_a])
+          create_list(:product, 10, items: [item_b], user: create(:user, :superadmin))
+          create_list(:product, 11, items: [item_a], user: create(:user, :superadmin))
         end
 
         it 'returns a paginated response' do
@@ -82,11 +82,11 @@ describe Api::ProductsController, type: :controller do
       context 'filtered paginated response' do
 
         before do
-          create(:product, name: 'aaab', brand: brand_a)
-          create(:product, name: 'baca aaa', project_type: ['1'], brand: brand_b)
-          create(:product, name: 'abbb', project_type: ['1'], room_type: ['1'], items: [item_b])
-          create(:product, name: 'bbba', project_type: ['2'], room_type: ['1'], items: [item_a])
-          create(:product, name: 'ccca aab', items: [item_b])
+          create(:product, name: 'aaab', brand: brand_a, user: create(:user, :superadmin))
+          create(:product, name: 'baca aaa', project_type: ['1'], brand: brand_b, user: create(:user, :superadmin))
+          create(:product, name: 'abbb', project_type: ['1'], room_type: ['1'], items: [item_b], user: create(:user, :superadmin))
+          create(:product, name: 'bbba', project_type: ['2'], room_type: ['1'], items: [item_a], user: create(:user, :superadmin))
+          create(:product, name: 'ccca aab', items: [item_b], user: create(:user, :superadmin))
         end
 
         it 'returns products by keyword' do
