@@ -58,7 +58,7 @@ module MetaLookupTable
             self.class.fields.select {|b| b['code'] == value.to_i }.first['translation_spa']
           end
         else
-          self.class.fields.select {|b| b['code'] == send(field.to_sym) }.first['translation_spa']
+          self.class.fields.select {|b| b['value'] == send(field.to_sym) }.first['translation_spa']
         end
       end
 

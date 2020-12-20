@@ -7,7 +7,7 @@ describe Api::ProjectSpecsController, type: :controller do
   let(:item)           { create(:item, section: section, name: 'Item 1') }
   let(:item2)          { create(:item, section: section, name: 'Item 2') }
   let(:item3)          { create(:item, section: section2, name: 'Item 3') }
-  let(:lookup_table)   { create(:lookup_table, category: 'project_type') }
+  let(:lookup_table)   { create(:lookup_table, category: 'project_type', code: 1) }
   let(:project)        { create(:project, user: user, project_type: lookup_table.code) }
   let(:project_spec)   { create(:project_spec_specification, project: project) }
   let(:spec_block)     { create(:spec_block, project_spec: project_spec) }
@@ -136,7 +136,6 @@ describe Api::ProjectSpecsController, type: :controller do
   describe '#download_word' do
     let(:url) { 'some_url/name_spec.docx' }
     before do
-
       create_product_block(product1, project_spec)
       create_product_block(product2, project_spec)
       create_product_block(product3, project_spec)
