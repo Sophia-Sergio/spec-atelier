@@ -4,8 +4,8 @@ module Products
     def call
       Product.transaction do
         product.update(product_params)
-        items_update(product, params[:item_id]) if params[:item_id].present?
-        subitems_update(product, params[:system_id]) if params[:system_id].present?
+        items_update(product, params[:item]) if params[:item].present?
+        subitems_update(product, params[:system]) if params[:system].present?
         product
       end
     end

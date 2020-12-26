@@ -6,8 +6,8 @@ module Products
         product = ::Product.create(product_params)
         brand = Brand.find_or_create_by(name: params[:brand])
         product.brand = brand if brand.valid?
-        items_creation(product, params[:item_id])
-        subitems_creation(product, params[:system_id]) if params[:system_id].present?
+        items_creation(product, params[:item])
+        subitems_creation(product, params[:system]) if params[:system].present?
         product
       end
     end
