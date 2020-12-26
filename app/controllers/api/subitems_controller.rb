@@ -4,7 +4,7 @@ module Api
 
     def index
       list = Subitem.all
-      list = list.where(item_id: params[:item_id]) if params[:item_id].present?
+      list = list.where(item_id: params[:item]) if params[:item].present?
       list = list.order(:name).map {|item| { id: item.id, name: item.name } }
       render json: { subitems: list }
     end
