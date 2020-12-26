@@ -19,11 +19,11 @@ module Products
     end
 
     def not_supported_attributes
-      %i[system_id brand item_id]
+      %i[system brand item]
     end
 
     def subitem_belongs_to_known_item?(subitem)
-      Item.where(id: params[:item_id]).joins(:subitems).where(subitems: { id: subitem }).present?
+      Item.where(id: params[:item]).joins(:subitems).where(subitems: { id: subitem }).present?
     end
   end
 end
