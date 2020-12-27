@@ -23,8 +23,8 @@ describe Api::ProductsController, type: :controller do
       work_type: '',
       room_type: [1,2],
       price: 1000,
-      item_id: [item_a.id, item_b.id],
-      system_id: [subitem_a.id, subitem_b.id],
+      item: [item_a.id, item_b.id],
+      system: [subitem_a.id, subitem_b.id],
     }
   }
 
@@ -153,6 +153,20 @@ describe Api::ProductsController, type: :controller do
           get :index, params: { limit: 10, page: 0, item: item_a.id }
           expect(json['products']['list'].count).to eq(1)
         end
+
+        it 'returns products order by most_used' do
+          product_last = create(:product, :used_on_spec)
+          get :index, params: { limit: 10, page: 0, most_used: true }
+
+          expect(json['products']['list'].first['id']).to eq(product_last.original_product.id)
+        end
+
+        it 'returns products order filtered by my_products' do
+          create_list(:product, 3, user: user)
+          get :index, params: { limit: 10, page: 0, my_products: true }
+
+          expect(json['products']['list'].count).to eq(3)
+        end
       end
     end
   end
@@ -273,8 +287,8 @@ describe Api::ProductsController, type: :controller do
           product_subitem2 = create(:product_subitem, product: product)
 
           update_params = {
-            item_id: [product_item1.item.id, item_a.id],
-            system_id: [product_subitem1.subitem.id, subitem_a.id],
+            item: [product_item1.item.id, item_a.id],
+            system: [product_subitem1.subitem.id, subitem_a.id],
           }
           product.reload
 
@@ -312,7 +326,7 @@ describe Api::ProductsController, type: :controller do
 
       context 'without all params, without existing brand' do
         it 'creates a resource' do
-          post :create, params: { product: product_params.except(:brand, :system_id).merge(brand: 'simpson') }
+          post :create, params: { product: product_params.except(:brand, :system).merge(brand: 'simpson') }
           expect(response).to have_http_status(:created)
         end
       end

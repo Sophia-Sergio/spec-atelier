@@ -29,12 +29,20 @@ class Product < ApplicationRecord
   scope :by_room_type,    ->(types)    { where("room_type && ?", "{#{ types.is_a?(Array) ? types.join(',') : types }}") }
   scope :by_subitem,      ->(subitems) { joins(:subitems).where(subitems: { id: subitems }) }
   scope :original,        ->           { where(original_product_id: nil) }
-  scope :system,          ->           { joins(user: :roles).where(roles: { name: 'superadmin' }) }
+  scope :used_on_spec,    ->           { where.not(original_product_id: nil) }
+  scope :system_owned,    ->           { joins(user: :roles).where(roles: { name: 'superadmin' }) }
   scope :by_user,         ->(user)     { where(user: user) }
-  scope :readable,        ->           { original.system }
+  scope :readable,        ->           { original.system_owned }
   scope :readable_by,     ->(user)     { union(readable, original.by_user(user)) }
 
-  scope :by_specification, ->(specs) {
+  scope :most_used, lambda {
+    orderded_ids = unscoped.used_on_spec.select('original_product_id, COUNT(original_product_id) AS product_count')
+                           .group(:original_product_id)
+                           .order('product_count DESC')
+                           .map(&:original_product_id)
+    original.find_ordered(orderded_ids)
+  }
+  scope :by_specification, lambda {|specs|
     query = <<-SQL
       INNER JOIN project_spec_blocks ON products.id = project_spec_blocks.spec_item_id
       INNER JOIN project_specs ON project_spec_blocks.project_spec_id = project_specs.id

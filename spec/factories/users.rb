@@ -5,7 +5,6 @@ FactoryBot.define do
     first_name { 'fake first name' }
     last_name  { 'fake last name' }
 
-
     trait :with_password_token do
       reset_password_token { 'token' }
       reset_password_sent_at { Time.zone.now }

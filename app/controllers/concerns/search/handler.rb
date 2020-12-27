@@ -6,6 +6,7 @@ module Search
     include Search::Brand
 
     def filtered_list
+      @list = try("#{class_name[:name]}_custom_list".to_sym) || list
       filter_params.each {|k, v| @list = list&.send("by_#{k}".to_sym, v) unless @list&.count&.zero? }
       @ordered = sorted_list.pluck(:id)
       sorted_list
@@ -29,8 +30,8 @@ module Search
 
     def paginated_format
       {
-        total:     @list.count,
-        list:      paginated_list,
+        total: @list.count,
+        list: paginated_list,
         next_page: (@page + 1) * @limit < @list.count ? @page + 1 : nil
       }
     end
