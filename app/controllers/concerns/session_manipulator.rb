@@ -36,10 +36,14 @@ module SessionManipulator
     render json: { error: 'No session found' }, status: :unauthorized unless valid_session_conditions
   end
 
+  def valid_session_conditions
+    header_token.present? && current_session&.active? && header_token == current_session&.token && check_expires_date?
+  end
+
   private
 
   def header_token
-    request.headers["Authorization"]&.remove('Bearer ')
+    request.headers["Authorization"]&.remove('Bearer')&.remove(' ')
   end
 
   def token(user)
@@ -48,10 +52,6 @@ module SessionManipulator
 
   def put_cookie(token)
     cookies.signed[:jwt] = { value: token, httponly: true, expires: expires }
-  end
-
-  def valid_session_conditions
-    header_token.present? && current_session&.active? && header_token == current_session&.token && check_expires_date?
   end
 
   def check_expires_date?
