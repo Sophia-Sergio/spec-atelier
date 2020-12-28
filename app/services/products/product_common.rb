@@ -19,7 +19,7 @@ module Products
     end
 
     def not_supported_attributes
-      %i[system brand item]
+      %i[system brand item product section]
     end
 
     def subitem_belongs_to_known_item?(subitem)
