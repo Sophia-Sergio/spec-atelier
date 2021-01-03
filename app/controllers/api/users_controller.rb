@@ -15,7 +15,7 @@ module Api
     end
 
     def show
-      render json: { user: BasicUserPresenter.decorate(@user) }, status: :ok
+      render json: { user: UserDecorator.decorate(@user) }, status: :ok
     end
 
     private
