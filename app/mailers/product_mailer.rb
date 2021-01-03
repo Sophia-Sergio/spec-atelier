@@ -6,7 +6,7 @@ class ProductMailer < ApplicationMailer
     @product = @form.owner
     @client = @product.client
     @brand_email = @client.email
-    mail(to: @current_user.email, subject: 'Product contact_form')
+    mail(to: @brand_email, subject: "SpecAtelier - A recibido una consulta sobre #{@product.name}")
   end
 
   def send_contact_form_to_user(current_user, form)
@@ -14,6 +14,7 @@ class ProductMailer < ApplicationMailer
     @form = form
     @product = @form.owner
     @client = @product.client
-    mail(to: @current_user.email, subject: 'Your mail was sent contact_form')
+    subject = "SpecAtelier - Hiciste una consulta a #{@client.name} sobre el producto #{@product.name}"
+    mail(to: @current_user.email, subject: subject)
   end
 end

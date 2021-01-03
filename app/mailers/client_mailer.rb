@@ -5,7 +5,7 @@ class ClientMailer < ApplicationMailer
     @form = form
     @client = @form.owner
     @brand_email = @client.email
-    mail(to: 'paul.eaton@specatelier.com', subject: 'SpecAtelier - Ha recibido un email de uno de nuestros usuarios')
+    mail(to: @brand_email, subject: 'SpecAtelier - Ha recibido un email de uno de nuestros usuarios')
   end
 
   def send_contact_form_to_user(current_user, form)
