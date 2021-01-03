@@ -7,7 +7,7 @@ class Ability
     can :show, User
 
     can :update, Product do |product|
-      can :update, Product if product.user ==  current_user
+      can :update, Product if product.user == current_user
     end
 
     can :show, ProjectSpec::Specification do |project_spec|
@@ -34,6 +34,9 @@ class Ability
       can :update, User
     elsif current_user.user?
       can :update, User do |user|
+        user == current_user
+      end
+      can :profile_image_upload, User do |user|
         user == current_user
       end
     end

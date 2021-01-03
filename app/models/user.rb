@@ -8,6 +8,7 @@ class User < ApplicationRecord
   has_many :projects, dependent: :destroy
   has_many :specifications, through: :projects
   has_many :products
+  has_one :file, as: :owner, class_name: 'Attached::ResourceFile', dependent: :destroy
 
   def generate_password_token!
     update(reset_password_token: SecureRandom.hex(10), reset_password_sent_at: Time.zone.now)
@@ -27,6 +28,10 @@ class User < ApplicationRecord
 
   def name
     "#{first_name.capitalize} #{last_name.capitalize}"
+  end
+
+  def profile_image
+    file&.image
   end
 
   private

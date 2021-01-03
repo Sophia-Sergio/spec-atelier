@@ -3,7 +3,7 @@ describe Api::UsersController, type: :controller do
   let(:user2) { create(:user) }
   let!(:session) { create(:session, user: current_user, token: session_token(current_user)) }
 
-  USER_EXPECTED_KEYS ||= %w[id email jwt first_name last_name birthday office profile_image projects_count]
+  USER_EXPECTED_KEYS ||= %w[id email jwt first_name last_name profile_image projects_count]
 
   describe '#update' do
     describe 'when  user logged in' do
@@ -11,14 +11,12 @@ describe Api::UsersController, type: :controller do
         it 'updates the resource' do
           current_user.add_role :superadmin
           request.headers['Authorization'] = "Bearer #{session.token}"
-          put :update, params: { id: user2, user: { first_name: 'test', last_name: 'test_', birthday: '1985-03-19', office: 'spec atelier' } }
+          put :update, params: { id: user2, user: { first_name: 'test', last_name: 'test_'} }
 
           expect(response).to have_http_status(:ok)
           expect(json['user'].keys).to match_array(USER_EXPECTED_KEYS)
           expect(json['user']['first_name']).to eq('test')
           expect(json['user']['last_name']).to eq('test_')
-          expect(json['user']['birthday']).to eq('1985-03-19')
-          expect(json['user']['office']).to eq('spec atelier')
         end
       end
 
@@ -57,6 +55,29 @@ describe Api::UsersController, type: :controller do
     describe 'without session' do
       before { put :update, params: { id: '100000' }}
       it_behaves_like 'an unauthorized api request'
+    end
+  end
+
+  describe '#profile_image_upload' do
+
+    context 'without session' do
+      before { patch :profile_image_upload, params: { user_id: user2.id } }
+      it_behaves_like 'an unauthorized api request'
+    end
+
+    context 'with valid session' do
+      let(:uploaded_file_1) { double('uploaded_file', public_url: 'https:://some_url/', content_type: 'image/png', name: 'images/test_file_1.jpg') }
+      before do
+        request.headers['Authorization'] = "Bearer #{session.token}"
+        allow_any_instance_of(GoogleStorage).to receive(:perform).and_return(uploaded_file_1)
+      end
+
+      it 'updates successfully' do
+        image = fixture_file_upload('spec/fixtures/images/logo1.png')
+        patch :profile_image_upload, params: { user_id: current_user.id, image: image }
+        expect(response).to have_http_status(:ok)
+        expect(json['user']['profile_image']['name']).to eq(image.original_filename)
+      end
     end
   end
 

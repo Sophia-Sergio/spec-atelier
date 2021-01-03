@@ -5,8 +5,13 @@ module Api
     load_and_authorize_resource
 
     def update
-      @user.update(user_params)
-      render json: { user: BasicUserPresenter.decorate(@user) }, status: :ok
+      user = Users::UserUpdater.new(@user, user_params).call
+      render json: { user: UserDecorator.decorate(user) }, status: :ok
+    end
+
+    def profile_image_upload
+      Users::UserProfileImageUpdater.new(@user, params[:image]).call
+      render json: { user: UserDecorator.decorate(@user) }, status: :ok
     end
 
     def show
@@ -16,7 +21,7 @@ module Api
     private
 
     def set_user
-      @user = User.find(params[:id])
+      @user = User.find(params[:id] || params[:user_id])
     rescue ActiveRecord::RecordNotFound => e
       render json: { error: e }, status: :not_found
     end

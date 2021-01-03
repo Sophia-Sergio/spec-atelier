@@ -27,6 +27,5 @@ module Attached
     def document
       attached if attached.document?
     end
-
   end
 end
