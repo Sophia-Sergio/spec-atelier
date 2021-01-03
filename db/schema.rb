@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_17_033234) do
+ActiveRecord::Schema.define(version: 2021_01_03_221710) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "hstore"
@@ -255,8 +255,7 @@ ActiveRecord::Schema.define(version: 2020_11_17_033234) do
     t.string "first_name"
     t.string "last_name"
     t.date "birthday"
-    t.string "office"
-    t.string "profile_image"
+    t.string "company"
   end
 
   create_table "users_roles", id: false, force: :cascade do |t|
