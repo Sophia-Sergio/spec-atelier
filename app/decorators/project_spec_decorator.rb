@@ -21,13 +21,13 @@ class ProjectSpecDecorator < ApplicationDecorator
   end
 
   def text
-    ProjectSpec::TextPresenter.decorate(model.text) if model&.text&.present?
+    ProjectSpec::TextDecorator.decorate(model.text) if model&.text&.present?
   end
 
   def element
     case type
-    when 'Product' then ProductDecorator.decorate(spec_item)
-    else "ProjectSpec::#{spec_item.class}Presenter".constantize.decorate(spec_item)
+    when 'Product' then ProductDecorator.decorate(product_item)
+    else "ProjectSpec::#{spec_item.class}Decorator".constantize.decorate(spec_item)
     end
   end
 
