@@ -23,6 +23,8 @@ gem 'bullet'
 gem 'draper'
 gem 'caracal-rails'
 gem 'rubocop'
+gem 'sentry-ruby'
+gem 'sentry-rails'
 
 group :development, :test do
   gem 'pry'
