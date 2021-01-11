@@ -1,5 +1,5 @@
 class UserDecorator < ApplicationDecorator
-  delegate :id, :email, :first_name, :last_name
+  delegate :id, :email, :first_name, :last_name, :company, :city
   new_keys :jwt, :projects_count, :profile_image
 
   def jwt
