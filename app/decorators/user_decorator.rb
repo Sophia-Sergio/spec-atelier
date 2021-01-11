@@ -11,7 +11,7 @@ class UserDecorator < ApplicationDecorator
   end
 
   def profile_image
-    return unless image.present?
+    return unless model.profile_image.present?
 
     image = model.profile_image
     { id: image.id, name: image.name, urls: image.all_formats }
