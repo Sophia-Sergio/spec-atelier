@@ -19,6 +19,7 @@ class ProductDecorator < ApplicationDecorator
            :work_type
 
   def name
+    adsas
     if block?
       "#{model.block.section_order}.#{model.block.item_order}.#{model.block.product_order}. #{model.name}"
     else
