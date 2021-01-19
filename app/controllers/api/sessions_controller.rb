@@ -6,9 +6,9 @@ module Api
       user = User.find_by(email: params['user']['email'])
       if user.try(:authenticate, params['user']['password']).present?
         start_session(user)
-        render json: { logged_in: user.active?, user: basic_user_presenter }, status: :created
+        render json: { logged_in: user.active?, user: user_decorator }, status: :created
       elsif user&.google_token.present?
-        render json: { error: { alert: 'you signed up with google '} }, status: :not_found
+        render json: { error: { alert: 'you signed up with google'} }, status: :not_found
       else
         render json: { error: { alert: 'email or password not found' } }, status: :not_found
       end
@@ -16,7 +16,7 @@ module Api
 
     def logged_in
       if current_user.present?
-        render json: { logged_in: current_user.active?, user: basic_user_presenter }, status: :ok
+        render json: { logged_in: current_user.active?, user: user_decorator }, status: :ok
       else
         render json: { logged_in: false }, status: :not_found
       end
@@ -29,7 +29,7 @@ module Api
 
     def google_auth
       omniouth_handler_login
-      render json: { logged_in: current_user.active?, user: basic_user_presenter }, status: :created
+      render json: { logged_in: current_user.active?, user: user_decorator }, status: :created
     end
 
     def google_auth_failure
@@ -51,8 +51,8 @@ module Api
       start_session(user)
     end
 
-    def basic_user_presenter
-      BasicUserPresenter.decorate(current_user)
+    def user_decorator
+      UserDecorator.decorate(current_user)
     end
 
     def user_params

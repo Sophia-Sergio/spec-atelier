@@ -2,7 +2,7 @@ describe Api::SessionsController, type: :controller do
   let(:user) { create(:user) }
   let(:session) { create(:session, user: user, token: session_token(user)) }
 
-  USER_EXPECTED_KEYS ||= %w[id email jwt first_name last_name birthday office profile_image projects_count]
+  USER_EXPECTED_KEYS ||= %w[id email jwt first_name last_name profile_image projects_count city company]
 
   describe '#create' do
     describe 'when user exists' do
