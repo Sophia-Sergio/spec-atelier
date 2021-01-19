@@ -43,7 +43,7 @@ module Api
       user.google_token = user_params[:google_token]
       if user.new_record?
         user.password = SecureRandom.hex(10) if user.password.nil?
-        user.update(user_params)
+        user.update(user_params.except(:profile_image))
         UserMailer.send_signup_email(user).deliver_later
       else
         user.save
