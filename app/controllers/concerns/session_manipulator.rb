@@ -18,7 +18,7 @@ module SessionManipulator
       end
     end
   rescue StandardError
-    render json: { error: 'No session found' }, status: :unauthorized
+    nil
   end
 
   def end_session
@@ -30,6 +30,7 @@ module SessionManipulator
     token = token(user)
     put_cookie(token)
     Session.find_or_create_by(user: user).update(token: token, expires: expires, active: true)
+    Sentry.set_user(email: user.email)
   end
 
   def valid_session
