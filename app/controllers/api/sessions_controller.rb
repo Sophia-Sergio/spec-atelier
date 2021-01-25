@@ -41,7 +41,7 @@ module Api
     def omniouth_handler_login
       user = User.where(email: user_params[:email]).first_or_initialize
       user.google_token = user_params[:google_token]
-      if user.new_record?
+      if user.new_record? # todo test new record
         user.password = SecureRandom.hex(10) if user.password.nil?
         user.update(user_params.except(:profile_image))
         UserMailer.send_signup_email(user).deliver_later
