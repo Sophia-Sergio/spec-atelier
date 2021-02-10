@@ -3,6 +3,9 @@ module Api
     include AssociateFiles
 
     before_action :valid_session, except: :download_word
+    before_action :touch_project, only: %i[
+      create_text remove_text edit_text create_product remove_block add_product_image remove_product_image
+    ]
     load_and_authorize_resource class: ProjectSpec::Specification, only: :show
 
     def create
@@ -67,9 +70,13 @@ module Api
     end
 
     def download_word
-      project_specification.touch
       uploaded_file = SpecificationGenerator.new(project_specification).generate
       render json: { url: uploaded_file }, status: :ok
+    end
+
+    def download_budget
+      excel = ProjectSpec::BudgetCreation.new(project_specification).generate
+      send_data(excel, filename: 'presupuesto.xlsx')
     end
 
     def my_specifications
@@ -80,6 +87,10 @@ module Api
     end
 
     private
+
+    def touch_project
+      project_specification.touch
+    end
 
     def project_specification
       ProjectSpec::Specification.find(params[:id] || params[:project_spec_id])

@@ -22,6 +22,7 @@ Rails.application.routes.draw do
         delete 'remove_block'
         get 'specification'
         get  'download_word'
+        get 'download_budget'
         patch 'edit_text'
         patch 'add_product_image'
         patch 'remove_product_image'

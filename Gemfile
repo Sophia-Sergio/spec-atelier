@@ -25,6 +25,7 @@ gem 'caracal-rails'
 gem 'rubocop'
 gem 'sentry-ruby'
 gem 'sentry-rails'
+gem 'spreadsheet'
 
 group :development, :test do
   gem 'pry'

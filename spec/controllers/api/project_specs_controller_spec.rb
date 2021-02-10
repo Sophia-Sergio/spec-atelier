@@ -17,7 +17,7 @@ describe Api::ProjectSpecsController, type: :controller do
   let(:product4)       { create(:product, spec_item: item2, items: [item2]) }
   let(:product5)       { create(:product, spec_item: item3, items: [item3]) }
 
-  def create_product_block(product, project_spec )
+  def create_product_block(product, project_spec)
     create(:spec_block, section: product.sections.first, item: product.spec_item, project_spec: project_spec, spec_item: product )
   end
 
@@ -81,9 +81,9 @@ describe Api::ProjectSpecsController, type: :controller do
     context 'with valid session' do
       before do
         request.headers['Authorization'] = "Bearer #{session.token}"
-        @block_product1 = create_product_block(product1, project_spec)
+        block_product1 = create_product_block(product1, project_spec)
 
-        @text = create(:spec_text, block_item: @block_product1 )
+        @text = create(:spec_text, block_item: block_product1)
       end
 
       it 'removes a specification text' do
@@ -91,6 +91,27 @@ describe Api::ProjectSpecsController, type: :controller do
 
         expect(@text.reload.text).to eq('new text')
       end
+    end
+  end
+
+  describe '#download_budget' do
+    context 'without session' do
+      before { get :download_budget, params: { user_id: user, project_spec_id: project_spec } }
+      it_behaves_like 'an unauthorized api request'
+    end
+
+    context 'with valid session' do
+      before do
+        request.headers['Authorization'] = "Bearer #{session.token}"
+        block_product1 = create_product_block(product1, project_spec)
+        create(:spec_text, block_item: block_product1)
+        create_product_block(product2, project_spec)
+        create_product_block(product3, project_spec)
+        create_product_block(product4, project_spec)
+        create_product_block(product5, project_spec)
+        get :download_budget, params: { user_id: user, project_spec_id: project_spec }
+      end
+      it_behaves_like 'a successfull api request'
     end
   end
 
