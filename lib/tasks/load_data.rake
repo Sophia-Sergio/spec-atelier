@@ -185,6 +185,7 @@ namespace :db do
     end
 
     def create_item(class_name, params)
+      params[:code] = format_code(params[:code]) if params[:code].present?
       class_name.create!(params.except(:images))
     end
 
@@ -208,7 +209,14 @@ namespace :db do
     end
 
     def default_create(class_name, params)
+      params[:code] = format_code(params[:code]) if params[:code].present?
       class_name.create!(params)
+    end
+
+    def format_code(code)
+      code = code.to_s[/[^.]+/]
+      code = "0#{code}" if code.length == 1 && number?(code) && code != '0'
+      code
     end
 
     def database_connection
