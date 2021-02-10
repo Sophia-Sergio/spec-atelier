@@ -28,6 +28,7 @@ class Product < ApplicationRecord
   scope :by_project_type, ->(types)    { where("project_type && ?", "{#{ types.is_a?(Array) ? types.join(',') : types }}") }
   scope :by_room_type,    ->(types)    { where("room_type && ?", "{#{ types.is_a?(Array) ? types.join(',') : types }}") }
   scope :by_subitem,      ->(subitems) { joins(:subitems).where(subitems: { id: subitems }) }
+  scope :by_brand,        ->(brands)   { joins(:brand).where(brands: { id: brands }) }
   scope :original,        ->           { where(original_product_id: nil) }
   scope :used_on_spec,    ->           { where.not(original_product_id: nil) }
   scope :system_owned,    ->           { joins(user: :roles).where(roles: { name: 'superadmin' }) }
@@ -54,11 +55,6 @@ class Product < ApplicationRecord
   }
 
   enum created_reason: %i[brand_creation added_to_spec]
-
-  def self.by_brand(brands)
-    scoped_clients = joins(:client).where(clients: { id: brands })
-    Product.where(id: scoped_clients)
-  end
 
   def block
     ProjectSpec::Block.products.find_by(spec_item: self)
