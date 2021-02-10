@@ -2,20 +2,23 @@ module Products
   class ProductCreator < Products::ProductCommon
 
     def call
-      ::Product.transaction do
-        product = ::Product.create(product_params)
-        brand = Brand.find_or_create_by(name: params[:brand])
-        product.brand = brand if brand.valid?
-        items_creation(product, params[:item])
-        subitems_creation(product, params[:system]) if params[:system].present?
-        product
+      product = ::Product.new(product_params)
+      brand = Brand.find_or_initialize_by(name: params[:brand])
+      if brand.new_record?
+        brand.client = Client.find_by(name: 'usuario')
+        brand.save!
       end
+      product.brand = brand if brand.valid?
+      product.save!
+      items_creation(product, params[:item])
+      subitems_creation(product, params[:system]) if params[:system].present?
+      product
     end
 
     private
 
     def items_creation(product, items)
-      items.each {|item| ProductItem.create!(product: product, item_id: item) }
+      items.each {|item_id| ProductItem.create!(product_id: product.id, item_id: item_id) }
     end
 
     def subitems_creation(product, subitems)
