@@ -16,9 +16,7 @@ module MetaLookupTable
       @lookup_table ||= LookupTable.all.count.positive?
     end
 
-    if fields.present?
-      fields.map {|a| a['category'] }.uniq.each {|field| new.send(:enum_methods, field) }
-    end
+    fields.map {|a| a['category'] }.uniq.each {|field| new.send(:enum_methods, field) } if fields.present?
 
     after_find :define_methods
     after_update :define_methods
@@ -52,23 +50,32 @@ module MetaLookupTable
 
   def define_methods
     self.class.fields&.map {|a| a['category'] }&.uniq&.each do |field|
-      self.class.send :define_method, "#{field}_spa" do
-        if send(field.to_sym).is_a? Array
-          send(field.to_sym).map do |value|
-            self.class.fields.select {|b| b['code'] == value.to_i }.first['translation_spa']
-          end
-        else
-          self.class.fields.select {|b| b['code'] == read_attribute_before_type_cast(field.to_sym) }.first['translation_spa']
+      spa_translations(field)
+      key_value(field)
+    end
+  end
+
+  def spa_translations(field)
+    self.class.send :define_method, "#{field}_spa" do
+      if send(field.to_sym).is_a? Array
+        send(field.to_sym).map do |value|
+          self.class.fields.select {|b| b['code'] == value.to_i }.first['translation_spa']
         end
+      else
+        self.class.fields.select do |b|
+          b['code'] == read_attribute_before_type_cast(field.to_sym) && b['category'] == field
+        end.first['translation_spa']
       end
+    end
+  end
 
-      self.class.send :define_method, "#{field}_key_value" do
-        return unless send(field.to_sym)
+  def key_value(field)
+    self.class.send :define_method, "#{field}_key_value" do
+      return unless send(field.to_sym)
 
-        if send(field.to_sym).is_a? Array
-          send(field.to_sym).map do |value|
-            { id: value.to_i, name: self.class.fields.select {|b| b['code'] == value.to_i }.first['translation_spa'] }
-          end
+      if send(field.to_sym).is_a? Array
+        send(field.to_sym).map do |value|
+          { id: value.to_i, name: self.class.fields.select {|b| b['code'] == value.to_i }.first['translation_spa'] }
         end
       end
     end
