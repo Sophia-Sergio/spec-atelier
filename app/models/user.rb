@@ -27,7 +27,7 @@ class User < ApplicationRecord
   end
 
   def name
-    "#{first_name.capitalize} #{last_name.capitalize}"
+    "#{first_name.capitalize} #{last_name.capitalize}" if first_name.present? && last_name.present?
   end
 
   def profile_image
