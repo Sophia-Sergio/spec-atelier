@@ -5,6 +5,7 @@ module Search
     include Search::Product
     include Search::Client
     include Search::Brand
+    include Search::Client
 
     def filtered_list
       @list = try("#{class_name[:name]}_custom_list".to_sym) || list
