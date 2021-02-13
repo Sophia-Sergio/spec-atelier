@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :product do
-    sequence(:name) {|n| "fake product #{n}" }
+    sequence(:name, ('A'..'Z').cycle) {|n| "fake product #{n}" }
     brand { create(:brand) }
     client { create(:client) }
     long_desc { 'long desc' }
