@@ -50,11 +50,10 @@ describe Product, type: :model do
   end
 
   describe 'most_used' do
-    it 'brings the original_product and then by name' do
-      original_product1 = create(:product, name: 'a')
+    it 'brings the original_product orderer by times used in specifications' do
+      original_product1 = create(:product)
       original_product2 = create(:product)
-      original_product3 = create(:product, name: 'b')
-      create(:product, :used_on_spec, original_product_id: original_product1.id)
+      original_product3 = create(:product)
       create(:product, :used_on_spec, original_product_id: original_product1.id)
       create(:product, :used_on_spec, original_product_id: original_product2.id)
       create(:product, :used_on_spec, original_product_id: original_product2.id)

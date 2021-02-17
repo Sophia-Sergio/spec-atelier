@@ -1,4 +1,3 @@
-
 module Search
   module Brand
     def brand_sort

@@ -41,7 +41,7 @@ class Product < ApplicationRecord
                            .group(:original_product_id)
                            .order('product_count DESC')
                            .map(&:original_product_id)
-    original.find_ordered(orderded_ids).order(:name)
+    original.find_ordered(orderded_ids)
   }
   scope :by_specification, lambda {|specs|
     query = <<-SQL

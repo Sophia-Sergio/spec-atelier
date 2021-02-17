@@ -36,6 +36,7 @@ describe Api::ProductsController, type: :controller do
 
       describe "general pagination" do
         before do
+          FactoryBot.reload
           create_list(:product, 10, items: [item_b], user: create(:user, :superadmin))
           create_list(:product, 11, items: [item_a], user: create(:user, :superadmin))
         end
