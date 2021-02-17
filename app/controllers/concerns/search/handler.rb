@@ -3,6 +3,7 @@ module Search
     extend ActiveSupport::Concern
     include Search::Project
     include Search::Product
+    include Search::Client
     include Search::Brand
 
     def filtered_list

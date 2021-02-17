@@ -64,6 +64,9 @@ Rails.application.routes.draw do
     resources :brands, only: %i[index show] do
       post 'contact_form'
     end
+    resources :clients, only: %i[index show] do
+      post 'contact_form'
+    end
   end
 
   post 'auth/google_login_service', to: 'api/sessions#google_auth'
