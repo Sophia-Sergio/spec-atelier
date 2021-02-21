@@ -54,8 +54,7 @@ ActiveRecord::Schema.define(version: 2021_02_09_213730) do
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.bigint "client_id"
-    t.index ["client_id"], name: "index_brands_on_client_id"
+    t.integer "client_id"
   end
 
   create_table "clients", force: :cascade do |t|
@@ -270,7 +269,6 @@ ActiveRecord::Schema.define(version: 2021_02_09_213730) do
   end
 
   add_foreign_key "attached_resource_files", "attached_files"
-  add_foreign_key "brands", "clients"
   add_foreign_key "contact_forms", "users"
   add_foreign_key "items", "sections", on_delete: :cascade
   add_foreign_key "product_items", "items"

@@ -1,5 +1,5 @@
 class AddClientToBrand < ActiveRecord::Migration[6.0]
   def change
-    add_reference :brands, :client, foreign_key: true
+    add_column :brands, :client_id, :integer
   end
 end
