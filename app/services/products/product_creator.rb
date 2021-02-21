@@ -4,10 +4,7 @@ module Products
     def call
       product = ::Product.new(product_params)
       brand = Brand.find_or_initialize_by(name: params[:brand])
-      if brand.new_record?
-        brand.client = Client.find_by(name: 'usuario')
-        brand.save!
-      end
+      brand.save! if brand.new_record?
       product.brand = brand if brand.valid?
       product.save!
       items_creation(product, params[:item])
