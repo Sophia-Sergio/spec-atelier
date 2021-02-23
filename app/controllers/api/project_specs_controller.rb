@@ -76,7 +76,7 @@ module Api
 
     def download_budget
       excel = ProjectSpec::BudgetCreation.new(project_specification).generate
-      send_data(excel, filename: 'presupuesto.xlsx')
+      send_data(excel, filename: 'presupuesto.xls')
     end
 
     def my_specifications
