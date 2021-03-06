@@ -3,7 +3,7 @@ class Client < ApplicationRecord
 
   has_many :products
   has_many :brands
-  validates :name, :url, :contact_info, :description, :email, presence: true
+  validates :name, :url, :contact_info, :description, :email, :phone, presence: true
   has_many :contact_forms, as: :owner, class_name: 'Form::ContactForm'
   has_many :addresses, as: :owner, dependent: :destroy
   has_many :files, as: :owner, class_name: 'Attached::ResourceFile'
