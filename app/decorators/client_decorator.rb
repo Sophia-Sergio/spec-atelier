@@ -45,7 +45,7 @@ class ClientDecorator < ApplicationDecorator
   end
 
   def phone
-    model.phone['main']
+    model.main_phone
   end
 
   def contact_type
