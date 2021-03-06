@@ -8,10 +8,7 @@ module Api
     def index
       list = Section.all
       list = list.with_products if params[:with_products]
-      list = list.order(:show_order).map do |section|
-        { id: section.id, eng_name: section.eng_name, name: section.name }
-      end
-      render json: { sections: list }
+      render json: { sections: SectionDecorator.decorate_collection(list.order(:show_order)) }
     end
 
     def items
