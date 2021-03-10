@@ -3,6 +3,6 @@ class ApplicationMailer < ActionMailer::Base
 
   layout 'mailer'
 
-  default from: 'paul.eaton@specatelier.com'
+  default from: 'contacto@specatelier.com'
   default bbc: EMAILS_WITH_COPY
 end
