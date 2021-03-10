@@ -327,7 +327,6 @@ describe Api::ProductsController, type: :controller do
 
       context 'without all params, without existing brand' do
         it 'creates a resource' do
-          create(:client, name: 'usuario')
           post :create, params: { product: product_params.except(:brand, :system).merge(brand: 'simpson') }
           expect(response).to have_http_status(:created)
         end
