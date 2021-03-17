@@ -6,6 +6,6 @@ module Attached
       FORMATS.each_with_object({}) {|key, h| h[key] = "#{url.gsub(name, '')}resized-#{key}-#{name}" }
     end
 
-    FORMATS.each{|format| define_method("#{format}_format") { all_formats[format] } }
+    FORMATS.each {|format| define_method("#{format}_format") { all_formats[format] } }
   end
 end
