@@ -32,6 +32,7 @@ group :development, :test do
   gem 'pry-rails'
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
   gem 'letter_opener'
+  gem 'factory_bot_rails'
 end
 
 group :development do
@@ -46,7 +47,6 @@ group :test do
   gem 'capybara'
   gem 'database_cleaner'
   gem 'rspec-collection_matchers'
-  gem 'factory_bot_rails'
   gem 'rspec-sidekiq'
   gem 'sidekiq-status'
 end
