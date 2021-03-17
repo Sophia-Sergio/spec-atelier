@@ -10,56 +10,130 @@ namespace :db do
   namespace :load do
     task :before_hook do
       google_drive_session
-      download_excel_from_google_drive
     end
 
     task tables: :environment do
+      download_excel_from_google_drive('bd.xlsx', all: true)
       reset_tables
       load_data
     end
 
+    task :new_products, [:date] => :environment do |_, arg|
+      path = ['specatelier', 'uploads', arg[:date], 'new_products']
+      download_excel_from_google_drive(path)
+      load_new_products
+    end
+
+    task :new_clients, [:date] => :environment do |_, arg|
+      path = ['specatelier', 'uploads', arg[:date], 'new_clients']
+      download_excel_from_google_drive(path)
+      load_new_clients
+    end
+
     task images_and_documents: :environment do
+      download_excel_from_google_drive('bd.xlsx', all: true)
       reset_images_and_files
       process_item_image
-      process_product_images
-      process_product_documents
+      print "Seeding product images..."
+      select_sheet('product') {|params| process_product_images(params) }
+      print "Seeding product documents..."
+      select_sheet('product') {|params| process_product_documents(params) }
       process_client_images
       sh 'rm config/google_storage_config.json'
       sh 'rm config/google_drive_config.json'
     end
 
     tasks = Rake.application.tasks.select do |task|
-      task if ['db:load:tables', 'db:load:images_and_documents'].include?(task.to_s)
+      task if ['db:load:tables', 'db:load:images_and_documents', 'db:load:new_products'].include?(task.to_s)
     end
     tasks.each {|task| task.enhance [:before_hook] }
 
     private
 
-    def process_product_documents
-      print "Seeding product documents..."
-      select_sheet('product') do |product_params|
-        next if product_params[:files].blank?
-
-        documents = product_params[:files].split(',').map {|a| a.gsub('/','_').strip }
-        product = Product.find(product_params[:id])
-        documents.each {|document| attach_document(document, product) }
-      rescue StandardError => e
-        puts e
+    def load_new_products
+      select_sheet('product') do |params|
+        if Product.find_by(find_except_product_params(params)).present?
+          puts "<Product id: #{params[:id].to_i}, name: #{params[:name]}> already exists, it will be skiped"
+          next
+        end
+        Product.transaction do
+          create_product(params)
+          process_product_images(params)
+          process_product_documents(params)
+        end
       end
     end
 
-    def process_product_images
-      print "Seeding product images..."
-      select_sheet('product') do |product_params|
-        next if product_params[:images].blank?
-
-        images = product_params[:images].split(',').map {|a| a.gsub('/','_').strip }
-        product = Product.find(product_params[:id])
-        images.each_with_index {|image, index| attach_image(image, product, 'product_image', index) }
-      rescue StandardError => e
-        puts e
+    def load_new_clients
+      select_sheet('client') do |params|
+        if Client.find_by(find_except_client_params(params)).present?
+          puts "<Client id: #{params[:id].to_i}, name: #{params[:name]}> already exists, it will be skiped"
+          next
+        end
+        create_client(params)
       end
-      puts 'done'
+      select_sheet('address') do |params|
+        next unless Client.find_by(name: params[:owner]).present?
+
+        if Address.find_by(find_except_address_params(params)).present?
+          puts "<Address id: #{params[:id].to_i}, text: #{params[:text]}> already exists, it will be skiped"
+          next
+        end
+        create_address(params)
+      end
+
+      select_sheet('brand') do |params|
+        next unless Client.find_by(name: params[:client]).present?
+
+        if Brand.find_by(find_except_brand_params(params)).present?
+          puts "<Brand id: #{params[:id].to_i}, name: #{params[:name]}> already exists, it will be skiped"
+          next
+        end
+        create_brand(params)
+      end
+    end
+
+    def process_product_documents(params)
+      return if params[:files].blank?
+
+      documents = params[:files].split(',').map {|a| a.gsub('/', '_').strip }
+      product = Product.find_by(find_except_product_params(params))
+      documents.each {|document| attach_document(document, product) }
+    rescue StandardError => e
+      puts e
+    end
+
+    def find_except_product_params(params)
+      client_and_brand = {
+        tags: tags(params[:tags]),
+        brand_id: Brand.find_by(name: params[:brand]).id,
+        client_id: Client.find_by(name: params[:client]).id
+      }
+      params.except(:images, :files, :subitem_id, :room_type, :id, :tags, :brand, :client).merge(client_and_brand)
+    end
+
+    def find_except_client_params(params)
+      params.except(:id, :distribuitors, :logo, :products_images)
+    end
+
+    def find_except_brand_params(params)
+      client = { client_id: Client.find_by(name: params[:client]).id }
+      params.except(:id, :client).merge(client)
+    end
+
+    def find_except_address_params(params)
+      owner = { owner_id: Client.find_by(name: params[:owner]).id }
+      params.except(:owner, :id).merge(owner)
+    end
+
+    def process_product_images(params)
+      return if params[:images].blank?
+
+      images = params[:images].split(',').map {|a| a.gsub('/', '_').strip }
+      product = Product.find_by(find_except_product_params(params))
+      images.each_with_index {|image, index| attach_image(image, product, 'product_image', index) }
+    rescue StandardError => e
+      puts e
     end
 
     def process_item_image
@@ -106,8 +180,8 @@ namespace :db do
       @excel.worksheets.each do |sheet|
         sheet_name = sheet.sheet_name
         reset(sheet_name)
-        iterate_sheet_rows(sheet_name, sheet)
         reset_pk_sequence(sheet_name)
+        iterate_sheet_rows(sheet_name, sheet)
       end
     end
 
@@ -139,7 +213,7 @@ namespace :db do
     end
 
     def define_keys(row, index)
-      row&.cells&.map {|c| c&.value&.delete(' ')&.to_sym if c }.compact if index.zero?
+      row&.cells&.map {|c| c&.value&.delete(' ')&.to_sym if c }&.compact if index.zero?
     end
 
     def attach_image(image_name, owner, kind, index = 0)
@@ -178,7 +252,9 @@ namespace :db do
       class_name = class_name(sheet_name)
       case sheet_name
       when 'client' then create_client(params)
-      when 'product' then create_product(class_name, params)
+      when 'address' then create_address(params)
+      when 'brand' then create_brand(params)
+      when 'product' then create_product(params)
       when 'item' then create_item(class_name, params)
       else default_create(class_name, params)
       end
@@ -189,13 +265,16 @@ namespace :db do
       class_name.create!(params.except(:images))
     end
 
-    def create_product(class_name, params)
-      tags = params[:tags]&.split(",")&.map{|a| a.first.eql?(' ') ? a.gsub(' ', '') : a }
-      product = class_name.new(params.except(:images, :files, :subitem_id).merge(tags: tags))
+    def create_product(params)
+      product = Product.new(find_except_product_params(params))
       product.room_type = LookupTable.by_project_type(product.project_type).pluck(:code).map(&:to_s)
       product.save!
       subitem_id = params[:subitem_id].is_a?(Array) ? params[:subitem_id] : [params[:subitem_id]]
       subitem_id.each {|subitem| create_product_items_and_subitems(subitem, product) }
+    end
+
+    def tags(tags)
+      tags&.split(",")&.map {|a| a.first.eql?(' ') ? a.gsub(' ', '') : a }
     end
 
     def create_product_items_and_subitems(subitem, product)
@@ -203,9 +282,16 @@ namespace :db do
       ProductItem.find_or_create_by(product: product, item: Subitem.find(subitem).item)
     end
 
+    def create_address(params)
+      Address.create!(find_except_address_params(params))
+    end
+
     def create_client(params)
-      creation_params = params.except(:distribuitors, :logo, :products_images, :type)
-      Client.create!(creation_params)
+      Client.create!(find_except_client_params(params))
+    end
+
+    def create_brand(params)
+      Brand.create!(find_except_brand_params(params))
     end
 
     def default_create(class_name, params)
@@ -268,7 +354,7 @@ namespace :db do
       if array.count.zero?
         new_array = @array
         @array = []
-        return new_array
+        new_array
       else
         data = array.shift(2)
         @array << data[0].merge(data[1])
@@ -330,10 +416,12 @@ namespace :db do
       end
     end
 
-    def download_excel_from_google_drive
-      file = google_drive_session.file_by_title('bd.xlsx')
-      file.download_to_file("lib/data/bd.xlsx")
-      load_excel('bd.xlsx')
+    def download_excel_from_google_drive(name, all: false)
+      file = google_drive_session.file_by_title(name)
+      name = all ? name : "#{name.last}.xlsx"
+      path = "lib/data/#{name}"
+      all ? file.download_to_file(path) : file.export_as_file(path)
+      load_excel(name)
     end
 
     def reset(table_name)
@@ -342,7 +430,6 @@ namespace :db do
     end
 
     def reset_pk_sequence(table_name)
-      table_name = table_name == 'client' ? 'company' : table_name
       ActiveRecord::Base.connection.reset_pk_sequence!(table_name.pluralize, 'id')
     end
   end
