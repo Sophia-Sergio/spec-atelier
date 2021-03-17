@@ -61,9 +61,7 @@ Rails.application.routes.draw do
     get 'configs/project_data'
     get 'configs/room_types'
 
-    resources :brands, only: %i[index show] do
-      post 'contact_form'
-    end
+    resources :brands, only: %i[index]
     resources :clients, only: %i[index show] do
       post 'contact_form'
     end
