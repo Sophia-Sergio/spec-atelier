@@ -7,8 +7,8 @@ module Api
       if user.try(:authenticate, params['user']['password']).present?
         start_session(user)
         render json: { logged_in: user.active?, user: user_decorator }, status: :created
-      elsif user&.google_token.present?
-        render json: { error: { alert: 'you signed up with google'} }, status: :not_found
+      elsif user&.google_token.present? && user&.google_token != 'fake_token'
+        render json: { error: { alert: 'you signed up with google' } }, status: :not_found
       else
         render json: { error: { alert: 'email or password not found' } }, status: :not_found
       end
