@@ -23,7 +23,7 @@
 lib/data/.DS_Store
 .DS_Store
 lib/.DS_Store
-lib/data/bd.xlsx
+lib/data/*
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
