@@ -20,7 +20,7 @@ describe Api::ClientsController, type: :controller do
         get :index, params: { limit: 10 }
 
         expect(response).to have_http_status(:ok)
-        expect(json['clients']['list'].count).to eq(7)
+        expect(json['clients']['list'].count).to eq(4)
       end
 
       it 'returns list of clients by those who has products by section' do

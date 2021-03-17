@@ -2,17 +2,23 @@ describe Api::BrandsController, type: :controller do
   let(:user)           { create(:user) }
   let(:no_logged_user) { create(:user) }
   let(:session)        { create(:session, user: user, token: session_token(user)) }
-  let(:client)          { create(:client, name: 'zzz and') }
 
   before do
-    create(:client, name: 'cliente')
-    create(:client, name: 'abc')
-    create(:client, name: 'bcd')
-    brand = create(:brand, name: 'brand', client: client)
-    create_list(:product, 3, client: client)
+    create_list(:brand, 2, :with_client)
+    create_list(:brand, 2)
+    create_list(:product, 3, user: user)
   end
 
   describe '#index' do
+    context 'without session' do
+      it 'returns list of brands' do
+        get :index, params: { limit: 10 }
+
+        expect(response).to have_http_status(:ok)
+        expect(json['brands']['list'].count).to eq(2)
+      end
+    end
+
     context 'with valid session' do
       before { request.headers['Authorization'] = "Bearer #{session.token}" }
 
@@ -20,13 +26,13 @@ describe Api::BrandsController, type: :controller do
         get :index, params: { limit: 10 }
 
         expect(response).to have_http_status(:ok)
-        expect(json['brands']['list'].count).to eq(7)
+        expect(json['brands']['list'].count).to eq(5)
       end
 
       it 'returns list of brands by those who has products by section' do
         section = create(:section)
         item = create(:item, section: section)
-        client.products << create(:product, items: [item])
+        create(:product, items: [item], user: user)
         get :index, params: { limit: 10, section: section.id }
 
         expect(response).to have_http_status(:ok)
@@ -35,7 +41,7 @@ describe Api::BrandsController, type: :controller do
 
       it 'returns list of brands by those who has products by item' do
         item = create(:item)
-        client.products << create(:product, items: [item])
+        create(:product, items: [item], user: user)
         get :index, params: { limit: 10, item: [item.id] } # can receive an array
 
         expect(response).to have_http_status(:ok)
@@ -43,52 +49,21 @@ describe Api::BrandsController, type: :controller do
       end
 
       it 'returns list of brands that by query search' do
-        get :index, params: { keyword: 'cliente', limit: 10 }
+        create(:brand, :with_client, name: 'custom_brand')
+        get :index, params: { keyword: 'custom_brand', limit: 10 }
 
         expect(response).to have_http_status(:ok)
         expect(json['brands']['list'].count).to eq(1)
       end
 
       it 'returns list of brands with its products by keyword' do
+        brand = create(:brand, :with_client, name: 'and')
+        brand.products << create_list(:product, 2)
         get :index, params: { keyword: 'and', limit: 10 }
 
         expect(response).to have_http_status(:ok)
         expect(json['brands']['list'].count).to eq(1)
-        expect(json['brands']['list'].first['products_count']).to eq(3)
-      end
-    end
-  end
-
-
-  describe '#show' do
-    context 'with valid session' do
-      before { request.headers['Authorization'] = "Bearer #{session.token}" }
-
-      it 'returns brand' do
-        get :show, params: { id: client }
-
-        KEYS = %w[id name products_count description address country phone web email logo social_media contact_type product_images]
-        expect(response).to have_http_status(:ok)
-        expect(json['brand'].keys).to match_array(KEYS)
-      end
-    end
-  end
-
-
-  describe '#form_contact' do
-    context 'without session' do
-      before { post :contact_form, params:  { brand_id: client } }
-      it_behaves_like 'an unauthorized api request'
-    end
-
-    context 'with valid session' do
-      before { request.headers['Authorization'] = "Bearer #{session.token}" }
-
-      it 'returns brand' do
-        post :contact_form, params: { brand_id: client, brand_contact_form: { message: 'message brand', user_phone: '+56 9 99944656' }}
-
-        expect(response).to have_http_status(:created)
-        expect(json['message']).to eq('Mensaje enviado')
+        expect(json['brands']['list'].first['products_count']).to eq(2)
       end
     end
   end

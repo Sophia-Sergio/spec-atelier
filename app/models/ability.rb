@@ -8,7 +8,7 @@ class Ability
 
     return unless current_user.present?
 
-    project_permissions
+    project_permissions(current_user)
 
     can :show, User
     can :update, Product do |product|
@@ -32,11 +32,10 @@ class Ability
   end
 
   def brand_ids(current_user)
-    binding.pry
     (current_user&.products&.pluck(:brand_id) || []) + Brand.with_client.pluck(:id)
   end
 
-  def project_permissions
+  def project_permissions(current_user)
     can :show, Project do |project|
       project.user == current_user
     end
