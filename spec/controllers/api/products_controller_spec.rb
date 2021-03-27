@@ -28,6 +28,15 @@ describe Api::ProductsController, type: :controller do
     }
   }
 
+  before do
+    create(:lookup_table, category: 'project_type', code: 1, translation_spa: 'a')
+    create(:lookup_table, category: 'project_type', code: 2, translation_spa: 'b')
+    create(:lookup_table, category: 'room_type', code: 1, translation_spa: 'a')
+    create(:lookup_table, category: 'room_type', code: 2, translation_spa: 'b')
+    create(:lookup_table, category: 'work_type', code: 1, translation_spa: 'a')
+    create(:lookup_table, category: 'work_type', code: 2, translation_spa: 'b')
+  end
+
   describe '#index' do
     context 'with valid session' do
       before do
@@ -95,13 +104,13 @@ describe Api::ProductsController, type: :controller do
           expect(json['products']['list'].count).to eq(2)
         end
 
-        it 'returns products by specification' do
+        it 'returns products by specification with filters' do
           project_spec = create(:project_spec_specification, project: create(:project, user: session.user ))
           product2 = product.dup
           product2.update(original_product_id: product.id)
           create(:spec_block, section: product.sections.first, item: product2.spec_item, project_spec: project_spec, spec_item: product2)
 
-          get :index, params: { limit: 10, page: 0, specification: [project_spec.id]}
+          get :index, params: { limit: 10, page: 0, specification: [project_spec.id], filters: ['specification']}
           expect(json['products']['list'].count).to eq(1)
           expect(json['products']['list'].first["id"]).to eq(product.id)
         end
@@ -128,6 +137,18 @@ describe Api::ProductsController, type: :controller do
         it 'returns products by project_type and room_type' do
           get :index, params: { limit: 10, page: 0,  project_type: [1], room_type: [1]}
           expect(json['products']['list'].count).to eq(1)
+        end
+
+        context 'when fetchs filters available' do
+          before do
+            create(:lookup_table, category: 'project_type', code: 1, translation_spa: 'tipo de proyecto 1')
+            create(:lookup_table, category: 'room_type', code: 1, translation_spa: 'tipo de habitación 1')
+          end
+
+          it 'returns products by project_type and room_type with filters' do
+            get :index, params: { limit: 10, page: 0,  project_type: [1], room_type: [1], filters: %w[project_type room_type brand section item subitem specification] }
+            expect(json['products']['filters'].keys).to match_array(%w[project_types room_types brands sections items subitems specifications])
+          end
         end
 
         it 'returns products by keyword, project_type and room_type' do
@@ -223,12 +244,6 @@ describe Api::ProductsController, type: :controller do
           create(:resource_file, owner: product, attached: @document3, order: 1)
           create(:resource_file, owner: product, attached: @document4, order: 3)
           create(:resource_file, owner: product, attached: @document5, order: 4)
-          create(:lookup_table, category: 'project_type', code: 1, translation_spa: 'a')
-          create(:lookup_table, category: 'project_type', code: 2, translation_spa: 'b')
-          create(:lookup_table, category: 'room_type', code: 1, translation_spa: 'a')
-          create(:lookup_table, category: 'room_type', code: 2, translation_spa: 'b')
-          create(:lookup_table, category: 'work_type', code: 1, translation_spa: 'a')
-          create(:lookup_table, category: 'work_type', code: 2, translation_spa: 'b')
           product.update!(project_type: ['1', '2'], room_type: ['1', '2'], work_type: ['1', '2'])
         end
 

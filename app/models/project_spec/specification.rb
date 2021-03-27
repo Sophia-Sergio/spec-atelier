@@ -5,7 +5,11 @@ module ProjectSpec
     belongs_to :project
     has_one :user, through: :project
     has_many :blocks, class_name: 'ProjectSpec::Block', foreign_key: :project_spec_id
-
+    scope :by_products, lambda {|products|
+      product_ids = Product.where(original_product_id: products).pluck(:id)
+      with_products.where(project_spec_blocks: { spec_item_id: product_ids, spec_item_type: 'Product' })
+    }
+    scope :by_user, ->(user) { joins(:user).where(users: { id: user }) }
     scope :with_products, -> { joins(:blocks).distinct }
 
     def create_text(params)

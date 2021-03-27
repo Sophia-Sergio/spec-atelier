@@ -1,6 +1,7 @@
 module Api
   class ProductsController < ApplicationController
     include Search::Handler
+    include Search::ProductFilters
     include AssociateFiles
 
     before_action :valid_session, except: %i[send_email index show]
@@ -14,7 +15,9 @@ module Api
 
     def index
       @custom_list = valid_session_conditions ? Product.readable_by(current_user) : Product.readable
-      render json: { products: paginated_response }, status: :ok
+      list = paginated_response
+      filters = params[:filters].present? ? filters(@list, params[:filters]) : {}
+      render json: { products: list.merge(filters) }, status: :ok
     end
 
     def create

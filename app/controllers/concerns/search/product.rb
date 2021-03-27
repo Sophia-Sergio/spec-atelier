@@ -13,7 +13,7 @@ module Search
     end
 
     def product_search_params
-      %i[keyword brand project_type specification room_type section item subitem]
+      %i[keyword brand client project_type specification room_type section item subitem]
     end
 
     def product_custom_list
