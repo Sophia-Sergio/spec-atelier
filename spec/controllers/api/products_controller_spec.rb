@@ -28,6 +28,15 @@ describe Api::ProductsController, type: :controller do
     }
   }
 
+  before do
+    create(:lookup_table, category: 'project_type', code: 1, translation_spa: 'a')
+    create(:lookup_table, category: 'project_type', code: 2, translation_spa: 'b')
+    create(:lookup_table, category: 'room_type', code: 1, translation_spa: 'a')
+    create(:lookup_table, category: 'room_type', code: 2, translation_spa: 'b')
+    create(:lookup_table, category: 'work_type', code: 1, translation_spa: 'a')
+    create(:lookup_table, category: 'work_type', code: 2, translation_spa: 'b')
+  end
+
   describe '#index' do
     context 'with valid session' do
       before do
@@ -235,12 +244,6 @@ describe Api::ProductsController, type: :controller do
           create(:resource_file, owner: product, attached: @document3, order: 1)
           create(:resource_file, owner: product, attached: @document4, order: 3)
           create(:resource_file, owner: product, attached: @document5, order: 4)
-          create(:lookup_table, category: 'project_type', code: 1, translation_spa: 'a')
-          create(:lookup_table, category: 'project_type', code: 2, translation_spa: 'b')
-          create(:lookup_table, category: 'room_type', code: 1, translation_spa: 'a')
-          create(:lookup_table, category: 'room_type', code: 2, translation_spa: 'b')
-          create(:lookup_table, category: 'work_type', code: 1, translation_spa: 'a')
-          create(:lookup_table, category: 'work_type', code: 2, translation_spa: 'b')
           product.update!(project_type: ['1', '2'], room_type: ['1', '2'], work_type: ['1', '2'])
         end
 
