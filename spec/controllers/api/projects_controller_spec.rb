@@ -1,8 +1,4 @@
 describe Api::ProjectsController, type: :controller do
-  before do
-    create(:lookup_table, category: 'project_type', code: 1, value: 'new_building')
-    create(:lookup_table, category: 'project_type', code: 2, value: 'real_state')
-  end
 
   let(:user)           { create(:user) }
   let(:user2)          { create(:user) }
@@ -113,7 +109,7 @@ describe Api::ProjectsController, type: :controller do
     context 'with valid session' do
       it 'creates a project with specification' do
         request.headers['Authorization'] = "Bearer #{session.token}"
-        post :create, params: { user_id: user.id, project: { name: 'fake project', project_type: 'real_state', work_type: 'new_building'  } }
+        post :create, params: { user_id: user.id, project: { name: 'fake project', project_type: project1.project_type, work_type: project1.work_type } }
 
         expect(Project.last.name).to eq('fake project')
         expect(Project.last.user.id).to eq(user.id)
@@ -143,7 +139,7 @@ describe Api::ProjectsController, type: :controller do
     context 'with valid session' do
       it 'updates a project' do
         request.headers['Authorization'] = "Bearer #{session.token}"
-        patch :update, params: { user_id: user.id, id: project1.id, project: { name: 'new name', project_type: 'real_state' } }
+        patch :update, params: { user_id: user.id, id: project1.id, project: { name: 'new name', project_type: project1.project_type } }
 
         expect(project1.reload.name).to eq('new name')
         # expect(project1.reload.new_building?).to eq(true)
