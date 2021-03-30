@@ -12,7 +12,7 @@ class ApplicationDecorator < Draper::Decorator
 
   def new_atributtes
     self.class.new_keys.each_with_object({}) do |key, hash|
-      hash[key.to_s] = model.try(key).nil? ? self.send(key) : model.try(key)
+      hash[key.to_s] = self.try(:send, key) rescue model.try(key).presence
     end
   end
 end
