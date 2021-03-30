@@ -1,4 +1,4 @@
-describe Ability, type: :model do
+describe Abilities::BrandAbility, type: :model do
   describe 'brand' do
 
     let(:user) { create(:user) }
@@ -12,7 +12,7 @@ describe Ability, type: :model do
       end
 
       it 'fetchs brands he owns through products' do
-        ability = Ability.new(user)
+        ability = Abilities::BrandAbility.new(user)
         expect(Brand.accessible_by(ability).count).to be(4)
       end
     end

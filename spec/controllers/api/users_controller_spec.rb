@@ -3,7 +3,7 @@ describe Api::UsersController, type: :controller do
   let(:user2) { create(:user) }
   let!(:session) { create(:session, user: current_user, token: session_token(current_user)) }
 
-  USER_EXPECTED_KEYS = %w[id email jwt first_name last_name profile_image projects_count city company]
+  USER_EXPECTED_KEYS = %w[id email jwt first_name last_name profile_image projects_count city company client?]
 
   describe '#update' do
     describe 'when  user logged in' do
@@ -39,6 +39,14 @@ describe Api::UsersController, type: :controller do
             put :update, params: { id: user2 }
 
             expect(response).to have_http_status(:forbidden)
+          end
+        end
+
+        describe 'when user is not logged in' do
+          it 'cannot updates the resource' do
+            put :update, params: { id: user2 }
+
+            expect(response).to have_http_status(:unauthorized)
           end
         end
       end
