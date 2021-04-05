@@ -66,7 +66,7 @@ module Api
     end
 
     def decorator
-      ProjectDecorator
+      Projects::ProjectDecorator
     end
   end
 end
