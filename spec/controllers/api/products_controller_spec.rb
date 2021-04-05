@@ -107,6 +107,7 @@ describe Api::ProductsController, type: :controller do
         it 'returns products by specification with filters' do
           project_spec = create(:project_spec_specification, project: create(:project, user: session.user ))
           product2 = product.dup
+          product2.save!
           product2.update(original_product_id: product.id)
           create(:spec_block, section: product.sections.first, item: product2.spec_item, project_spec: project_spec, spec_item: product2)
 
