@@ -8,16 +8,16 @@ describe User, type: :model do
   end
 
   describe '#client?' do
-    context 'when it has a client role' do
+    context 'when he/she has a client role' do
       before { user.add_role(:client) }
 
-      it 'return true' do
+      it 'returns true' do
         expect(user.client?).to be true
       end
     end
 
-    context 'when it hasnt a client role' do
-      it 'return true' do
+    context 'when he/she hasnt a client role' do
+      it 'returns true' do
         expect(user.client?).to be false
       end
     end
