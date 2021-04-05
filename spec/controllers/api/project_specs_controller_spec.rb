@@ -7,7 +7,8 @@ describe Api::ProjectSpecsController, type: :controller do
   let(:item)           { create(:item, section: section, name: 'Item 1') }
   let(:item2)          { create(:item, section: section, name: 'Item 2') }
   let(:item3)          { create(:item, section: section2, name: 'Item 3') }
-  let(:project)        { create(:project, user: user) }
+  let(:lookup_table)   { create(:lookup_table, category: 'project_type', code: 1) }
+  let(:project)        { create(:project, user: user, project_type: lookup_table.code) }
   let(:project_spec)   { create(:project_spec_specification, project: project) }
   let(:spec_block)     { create(:spec_block, project_spec: project_spec) }
   let(:product1)       { create(:product, spec_item: item, items: [item]) }
