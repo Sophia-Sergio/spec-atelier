@@ -6,7 +6,13 @@ RSpec.shared_examples 'an unauthorized api request' do
 end
 
 RSpec.shared_examples 'a successfull api request' do
-  it 'matches the error response' do
+  it 'matches the success response' do
     expect(response).to have_http_status(:success)
+  end
+end
+
+RSpec.shared_examples 'a forbidden api request' do
+  it 'matches the error response' do
+    expect(response).to have_http_status(:forbidden)
   end
 end
