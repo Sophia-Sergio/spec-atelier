@@ -18,6 +18,16 @@ module Api
       render json: { user: UserDecorator.decorate(@user) }, status: :ok
     end
 
+    def stats
+      stats = Users::UserStats.new(
+        current_user,
+        params: stat_params,
+        project: stat_params[:project],
+        product: stat_params[:product]
+      ).send(stat_params[:stat])
+      render json: stats, status: :ok
+    end
+
     private
 
     def set_user
@@ -28,6 +38,10 @@ module Api
 
     def user_params
       params.require(:user).permit(:first_name, :last_name, :birthday, :company, :city)
+    end
+
+    def stat_params
+      params.permit(:limit, :sort_by, :sort_order, :stat, :project, :product)
     end
   end
 end

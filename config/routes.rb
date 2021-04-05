@@ -13,7 +13,10 @@ Rails.application.routes.draw do
     get :password_reset, to: 'passwords#reset'
 
     resources :users, only: %i[update show] do
-      patch 'profile_image_upload'
+      member do
+        get :stats
+        patch :profile_image_upload
+      end
       resources :projects
       resources :project_specs, only: %i[show] do
         post 'create_text'
