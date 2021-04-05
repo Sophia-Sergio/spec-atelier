@@ -18,7 +18,7 @@ module Api
 
     def products
       @custom_list = section.products
-      @decorator = ProductDecorator
+      @decorator = Products::ProductDecorator
       @class_name = { name: 'product', class: Product }
       render json: { products: paginated_response }, status: :ok
     end

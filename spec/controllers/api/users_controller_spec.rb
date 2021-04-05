@@ -5,6 +5,61 @@ describe Api::UsersController, type: :controller do
 
   USER_EXPECTED_KEYS = %w[id email jwt first_name last_name profile_image projects_count city company client?]
 
+
+  describe '#stats' do
+    context 'when user is not logged in' do
+      before { get :stats, params: { id: current_user } }
+      it_behaves_like 'an unauthorized api request'
+    end
+
+    context 'when user is logged in' do
+      before { request.headers['Authorization'] = "Bearer #{session.token}" }
+      context 'when is not a client' do
+        before { get :stats, params: { id: current_user } }
+        it_behaves_like 'a forbidden api request'
+      end
+
+      context 'when is a client' do
+        let(:project1) { create(:project, user: current_user, city: 'City B') }
+        let(:project2) { create(:project, user: create(:user, first_name: 'User A', email: 'userA@gmail.com'), city: 'City A') }
+        let(:product1) { create(:product, user: current_user, name: 'Product A', updated_at: DateTime.now) }
+        let(:product2) { create(:product, user: current_user, name: 'Product B', updated_at: DateTime.now - 1.day) }
+        let(:product3) { create(:product, user: current_user, name: 'Product C', updated_at: DateTime.now + 1.day) }
+
+        before do
+          product_spec1 = create(:product, created_reason: :added_to_spec, original_product_id: product1.id)
+          product_spec2 = create(:product, created_reason: :added_to_spec, original_product_id: product2.id)
+          product_spec3 = create(:product, created_reason: :added_to_spec, original_product_id: product3.id)
+          product_spec4 = create(:product, created_reason: :added_to_spec, original_product_id: product2.id)
+          project1.specification.blocks << create(:spec_block, spec_item: product_spec1)
+          project1.specification.blocks << create(:spec_block, spec_item: product_spec2)
+          project2.specification.blocks << create(:spec_block, spec_item: product_spec3)
+          project2.specification.blocks << create(:spec_block, spec_item: product_spec4)
+          create(:product, user: current_user, name: 'Product D')
+          current_user.add_role(:client)
+        end
+
+        context 'when stat param is project_stat' do
+          before { get :stats, params: { id: current_user, stat: 'project_stats' } }
+
+          it_behaves_like 'a successfull api request'
+          it 'should return the proper data' do
+            expect(json['projects']['list'].count).to be 2
+          end
+        end
+
+        context 'when stat param is project_stat' do
+          before { get :stats, params: { id: current_user, stat: 'product_stats' } }
+
+          it_behaves_like 'a successfull api request'
+          it 'should return the proper data' do
+            expect(json['products']['list'].count).to be 4
+          end
+        end
+      end
+    end
+  end
+
   describe '#update' do
     describe 'when  user logged in' do
       describe 'when user exists and has superadmin role' do
@@ -69,7 +124,7 @@ describe Api::UsersController, type: :controller do
   describe '#profile_image_upload' do
 
     context 'without session' do
-      before { patch :profile_image_upload, params: { user_id: user2.id } }
+      before { patch :profile_image_upload, params: { id: user2.id } }
       it_behaves_like 'an unauthorized api request'
     end
 
@@ -82,7 +137,7 @@ describe Api::UsersController, type: :controller do
 
       it 'updates successfully' do
         image = fixture_file_upload('spec/fixtures/images/logo1.png')
-        patch :profile_image_upload, params: { user_id: current_user.id, image: image }
+        patch :profile_image_upload, params: { id: current_user.id, image: image }
         expect(response).to have_http_status(:ok)
         expect(json['user']['profile_image']['name']).to eq(image.original_filename)
       end
