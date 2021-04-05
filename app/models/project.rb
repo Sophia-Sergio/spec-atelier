@@ -12,9 +12,17 @@ class Project < ApplicationRecord
     against: %i[name description city country],
     using: { tsearch: { prefix: true, any_word: true } }
 
+  delegate :name, to: :user, prefix: true
+  delegate :email, to: :user, prefix: true
+
   scope :by_project_type, ->(types)    { where(project_type: types) }
   scope :by_work_type,    ->(types)    { where(work_type: types) }
-
+  scope :by_product, lambda {|products|
+    product_ids = Product.where(original_product_id: products).pluck(:id)
+    joins(specification: :blocks)
+      .where(project_spec_blocks: { spec_item_id: product_ids, spec_item_type: 'Product' })
+      .distinct
+  }
   before_create :work_type_default
   after_create :create_specification
 
@@ -24,5 +32,9 @@ class Project < ApplicationRecord
 
   def work_type_default
     self.work_type = 1
+  end
+
+  def products
+    specification.products
   end
 end
