@@ -37,7 +37,7 @@ module Search
     end
 
     def specification(products)
-      ProjectSpec::Specification.by_user(current_user).by_products(products)
+      ProjectSpec::Specification.by_user(current_user).by_product(products)
     end
 
     def lookup_table_data(products, category)
