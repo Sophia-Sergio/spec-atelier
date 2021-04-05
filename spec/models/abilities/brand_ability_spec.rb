@@ -1,10 +1,8 @@
 describe Abilities::BrandAbility, type: :model do
   describe 'brand' do
-
     let(:user) { create(:user) }
 
     context '#index' do
-
       before do
         create_list(:brand, 2, :with_client)
         create_list(:brand, 2)
