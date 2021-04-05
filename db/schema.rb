@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_29_002710) do
+ActiveRecord::Schema.define(version: 2021_04_02_214846) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "hstore"
@@ -124,6 +124,18 @@ ActiveRecord::Schema.define(version: 2021_03_29_002710) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["item_id"], name: "index_product_items_on_item_id"
     t.index ["product_id"], name: "index_product_items_on_product_id"
+  end
+
+  create_table "product_stats", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.bigint "product_id", null: false
+    t.integer "dwg_downloads", default: 0
+    t.integer "bim_downloads", default: 0
+    t.integer "pdf_downloads", default: 0
+    t.integer "visualizations", default: 0
+    t.integer "used_on_spec", default: 0
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["product_id"], name: "index_product_stats_on_product_id"
   end
 
   create_table "product_subitems", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -282,6 +294,7 @@ ActiveRecord::Schema.define(version: 2021_03_29_002710) do
   add_foreign_key "items", "sections", on_delete: :cascade
   add_foreign_key "product_items", "items"
   add_foreign_key "product_items", "products"
+  add_foreign_key "product_stats", "products"
   add_foreign_key "product_subitems", "products"
   add_foreign_key "product_subitems", "subitems"
   add_foreign_key "project_spec_blocks", "items"
