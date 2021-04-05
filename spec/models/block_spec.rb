@@ -12,7 +12,7 @@ describe ProjectSpec::Block, type: :model do
   let(:product2) { create(:product, spec_item: item2) }
 
   describe 'Orders the blocks by the sections show_order' do
-    it 'atteches a file' do
+    it 'attaches a file' do
       create(:spec_block, section: section2, item: item2, project_spec: project_spec, spec_item: product2 )
       create(:spec_block, section: section1, item: item1, project_spec: project_spec, spec_item: product1 )
 
