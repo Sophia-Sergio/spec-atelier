@@ -1,9 +1,13 @@
 class UserDecorator < ApplicationDecorator
   delegate :id, :email, :first_name, :last_name, :company, :city
-  new_keys :jwt, :projects_count, :profile_image, :client?
+  new_keys :jwt, :projects_count, :profile_image, :client_role
 
   def jwt
     model.session.token rescue 'not logged in'
+  end
+
+  def client_role
+    model.client?
   end
 
   def projects_count
