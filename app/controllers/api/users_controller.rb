@@ -22,8 +22,8 @@ module Api
       stats = Users::UserStats.new(
         current_user,
         params: stat_params,
-        project: Project.find(stat_params[:project]),
-        product: Product.find(stat_params[:product])
+        project: Project.find_by(id: stat_params[:project].presence),
+        product: Product.find_by(id: stat_params[:product].presence)
       ).send(stat_params[:stat])
       render json: stats, status: :ok
     end
