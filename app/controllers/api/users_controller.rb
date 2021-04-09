@@ -22,8 +22,8 @@ module Api
       stats = Users::UserStats.new(
         current_user,
         params: stat_params,
-        project: stat_params[:project],
-        product: stat_params[:product]
+        project: Project.find(stat_params[:project]),
+        product: Product.find(stat_params[:product])
       ).send(stat_params[:stat])
       render json: stats, status: :ok
     end
@@ -36,7 +36,7 @@ module Api
       render json: { error: e }, status: :not_found
     end
 
-    def user_params
+    deraf user_params
       params.require(:user).permit(:first_name, :last_name, :birthday, :company, :city)
     end
 
