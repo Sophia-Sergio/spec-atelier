@@ -36,7 +36,7 @@ module Api
       render json: { error: e }, status: :not_found
     end
 
-    deraf user_params
+    def user_params
       params.require(:user).permit(:first_name, :last_name, :birthday, :company, :city)
     end
 
