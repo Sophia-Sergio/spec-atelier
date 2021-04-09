@@ -109,7 +109,7 @@ describe Api::ProductsController, type: :controller do
           product2 = product.dup
           product2.save!
           product2.update(original_product_id: product.id)
-          create(:spec_block, section: product.sections.first, item: product2.spec_item, project_spec: project_spec, spec_item: product2)
+          create(:spec_block, section: product.sections.first, item: product.items.first, project_spec: project_spec, spec_item: product2)
 
           get :index, params: { limit: 10, page: 0, specification: [project_spec.id], filters: ['specification']}
           expect(json['products']['list'].count).to eq(1)

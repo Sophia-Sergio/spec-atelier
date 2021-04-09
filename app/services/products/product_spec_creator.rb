@@ -1,5 +1,12 @@
 module Products
   class ProductSpecCreator < Products::ProductCommon
+    extend CallableCommand
+    attr_reader :project_spec
+
+    def initialize(params, user, product, project_spec:)
+      super(params, user, product)
+      @project_spec = project_spec
+    end
 
     def call
       Product.transaction do
@@ -8,7 +15,7 @@ module Products
         product.files.each {|file| file.dup.update(owner: new_product) }
         product.product_items.each {|item| item.dup.update(product: new_product) }
         product.product_subitems.each {|subitem| subitem.dup.update(product: new_product) }
-        new_product
+        create_spec_item_product(new_product)
       end
     end
 
@@ -17,9 +24,19 @@ module Products
     def creation_params
       product_params.merge(
         original_product_id: product.id,
-        created_reason: :added_to_spec,
-        spec_item_id: params[:item].to_i
+        created_reason: :added_to_spec
       )
+    end
+
+    def create_spec_item_product(new_product)
+      params[:item].each do |item_id|
+        item = Item.find(item_id)
+        project_spec.blocks.create(
+          spec_item: new_product,
+          section_id: item.section_id,
+          item_id: item.id
+        )
+      end
     end
   end
 end

@@ -19,7 +19,7 @@ describe Project, type: :model do
       context 'when same product belongs to some projects' do
         before do
           product_used_in_other_project = project.specification.blocks.first.spec_item
-          project2.specification.blocks << create(:spec_block, spec_item: product_used_in_other_project)
+          project2.specification.blocks << create(:spec_block, spec_item: product_used_in_other_project, item: product_used_in_other_project.items.first)
         end
 
         it 'should return those projects' do

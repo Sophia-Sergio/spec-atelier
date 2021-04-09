@@ -6,6 +6,7 @@ FactoryBot.define do
 
     trait :product do
       spec_item { create(:product, :used_on_spec) }
+      item { spec_item.items.first }
     end
   end
 end

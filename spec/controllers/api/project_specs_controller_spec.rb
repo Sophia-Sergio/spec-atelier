@@ -11,14 +11,21 @@ describe Api::ProjectSpecsController, type: :controller do
   let(:project)        { create(:project, user: user, project_type: lookup_table.code) }
   let(:project_spec)   { create(:project_spec_specification, project: project) }
   let(:spec_block)     { create(:spec_block, project_spec: project_spec) }
-  let(:product1)       { create(:product, spec_item: item, items: [item]) }
-  let(:product2)       { create(:product, spec_item: item2, items: [item2]) }
-  let(:product3)       { create(:product, spec_item: item, items: [item]) }
-  let(:product4)       { create(:product, spec_item: item2, items: [item2]) }
-  let(:product5)       { create(:product, spec_item: item3, items: [item3]) }
+  let(:product1)       { create(:product, items: [item]) }
+  let(:product2)       { create(:product, items: [item2]) }
+  let(:product3)       { create(:product, items: [item]) }
+  let(:product4)       { create(:product, items: [item2]) }
+  let(:product5)       { create(:product, items: [item3]) }
 
   def create_product_block(product, project_spec)
-    create(:spec_block, section: product.sections.first, item: product.spec_item, project_spec: project_spec, spec_item: product )
+    create(
+      :spec_block,
+      section: product.sections.first,
+      item: product.spec_item,
+      project_spec: project_spec,
+      spec_item: product,
+      item: product.items.first
+    )
   end
 
   def products_ids(blocks)
@@ -58,7 +65,7 @@ describe Api::ProjectSpecsController, type: :controller do
         request.headers['Authorization'] = "Bearer #{session.token}"
         @block_product1 = create_product_block(product1, project_spec)
         @block_product2 = create_product_block(product2, project_spec)
-        @text = create(:spec_text, block_item: @block_product1 )
+        @text = create(:spec_text, block_item: @block_product1)
         create(:spec_block, spec_item: @text, project_spec: project_spec)
       end
 
@@ -134,7 +141,7 @@ describe Api::ProjectSpecsController, type: :controller do
           product: product1,
           user_id: user,
           section: section,
-          item: item
+          item: [item.id]
         }
       end
 
