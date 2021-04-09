@@ -7,7 +7,6 @@ FactoryBot.define do
     price { 1000 }
     user { create(:user, :superadmin) }
     items { [create(:item)]}
-    spec_item { create(:item)}
 
     trait :used_on_spec do
       original_product_id { create(:product).id }

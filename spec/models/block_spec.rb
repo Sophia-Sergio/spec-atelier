@@ -8,8 +8,8 @@ describe ProjectSpec::Block, type: :model do
   let(:item1) { create(:item, section: section1) }
   let(:item2) { create(:item, section: section2) }
 
-  let(:product1) { create(:product, spec_item: item1) }
-  let(:product2) { create(:product, spec_item: item2) }
+  let(:product1) { create(:product) }
+  let(:product2) { create(:product) }
 
   describe 'Orders the blocks by the sections show_order' do
     it 'attaches a file' do

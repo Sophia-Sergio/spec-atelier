@@ -82,8 +82,7 @@ module BlocksOrder
   end
 
   def set_item
-    product = spec_item
-    item = product.spec_item
+    item = Item.find(item_id)
     return if item_names.include?(item.name)
 
     spec_blocks.create!(spec_item: item, section: item.section, item: item)

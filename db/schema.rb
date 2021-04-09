@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_02_214846) do
+ActiveRecord::Schema.define(version: 2021_04_09_044548) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "hstore"
@@ -164,7 +164,6 @@ ActiveRecord::Schema.define(version: 2021_04_02_214846) do
     t.integer "created_reason"
     t.integer "original_product_id"
     t.integer "user_id"
-    t.integer "spec_item_id"
   end
 
   create_table "project_spec_blocks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

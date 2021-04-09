@@ -35,12 +35,9 @@ module Api
 
     def create_product
       product = Product.find(params[:product])
-      new_product = ::Products::ProductSpecCreator.new(project_spec_block_params, current_user, product).call
-      if new_product.present?
-        project_specification.blocks.create(
-          spec_item: new_product, section_id: params[:section], item_id: params[:item]
-        )
-      end
+      ::Products::ProductSpecCreator.call(
+        project_spec_block_params, nil, product, project_spec: project_specification
+      )
       render json: { blocks: blocks }
     end
 
@@ -106,7 +103,7 @@ module Api
     end
 
     def project_spec_block_params
-      params.permit(:text, :product, :block, :section, :item)
+      params.permit(:text, :product, :block, :section, item: [])
     end
   end
 end

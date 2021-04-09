@@ -12,10 +12,10 @@ describe Users::UserStats, type: :model do
     product_spec2 = create(:product, created_reason: :added_to_spec, original_product_id: product2.id)
     product_spec3 = create(:product, created_reason: :added_to_spec, original_product_id: product3.id)
     product_spec4 = create(:product, created_reason: :added_to_spec, original_product_id: product2.id)
-    project1.specification.blocks << create(:spec_block, spec_item: product_spec1)
-    project1.specification.blocks << create(:spec_block, spec_item: product_spec2)
-    project2.specification.blocks << create(:spec_block, spec_item: product_spec3)
-    project2.specification.blocks << create(:spec_block, spec_item: product_spec4)
+    project1.specification.blocks << create(:spec_block, spec_item: product_spec1, item: product_spec1.items.first)
+    project1.specification.blocks << create(:spec_block, spec_item: product_spec2, item: product_spec2.items.first)
+    project2.specification.blocks << create(:spec_block, spec_item: product_spec3, item: product_spec3.items.first)
+    project2.specification.blocks << create(:spec_block, spec_item: product_spec4, item: product_spec4.items.first)
   end
 
   describe '#project_stats' do

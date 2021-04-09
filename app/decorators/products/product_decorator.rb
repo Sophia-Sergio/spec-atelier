@@ -57,7 +57,9 @@ module Products
     end
 
     def items
-      model.items.map {|item| { id: item&.id, name: item&.name } }
+      model.items.map do |item|
+        { id: item&.id, name: item&.name, section_id: item&.section_id }
+      end
     end
 
     def dwg
