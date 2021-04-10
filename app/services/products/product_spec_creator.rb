@@ -29,7 +29,8 @@ module Products
     end
 
     def create_spec_item_product(new_product)
-      params[:item].each do |item_id|
+      items = params[:item].is_a?(Array) ? params[:item] : [params[:item]]
+      items.each do |item_id|
         item = Item.find(item_id)
         project_spec.blocks.create(
           spec_item: new_product,
