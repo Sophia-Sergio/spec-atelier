@@ -1,11 +1,26 @@
 describe Product, type: :model do
   let(:product) { create(:product) }
+  let(:product_used_on_spec) { create(:product, :used_on_spec) }
 
   describe 'factory built record' do
     it 'attaches a file' do
       image = create(:image)
       create(:resource_file, owner: product, attached: image)
       expect(product.images.length).to be(1)
+    end
+  end
+
+  describe '#create_stats' do
+    context 'when is original' do
+      it 'creates a stats when product is created' do
+        expect(product.stats.present?).to be true
+      end
+    end
+
+    context 'when is used_on_spec' do
+      it 'creates a stats when product is created' do
+        expect(product_used_on_spec.stats.present?).to be false
+      end
     end
   end
 
