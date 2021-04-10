@@ -41,7 +41,7 @@ module Api
     end
 
     def stat_params
-      params.permit(:limit, :sort_by, :sort_order, :stat, :project, :product)
+      params.permit(:page, :limit, :sort_by, :sort_order, :stat, :project, :product)
     end
   end
 end
