@@ -103,7 +103,7 @@ module Api
     end
 
     def project_spec_block_params
-      params.permit(:text, :product, :block, :section, :item, item: [])
+      params.permit(:text, :product, :block, :section, :page, :limit, :sort_by, :sort_order, :item, item: [])
     end
   end
 end
