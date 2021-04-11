@@ -6,7 +6,8 @@ module Abilities
     attr_reader :current_user
 
     def initialize(current_user)
-      no_logged_user && return unless current_user.present?
+      no_logged_user unless current_user.present?
+      return unless current_user.present?
 
       @current_user = current_user
 

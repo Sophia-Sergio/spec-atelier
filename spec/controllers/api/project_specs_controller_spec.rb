@@ -129,16 +129,18 @@ describe Api::ProjectSpecsController, type: :controller do
     end
 
     context 'with valid session' do
+      let(:product) { create(:product, items:[item]) }
+
       before do
         request.headers['Authorization'] = "Bearer #{session.token}"
         image1 = create(:image)
         image2 = create(:image)
-        create(:resource_file, owner: product1, attached: image1)
-        create(:resource_file, owner: product1, attached: image2)
+        create(:resource_file, owner: product, attached: image1)
+        create(:resource_file, owner: product, attached: image2)
 
         post :create_product, params: {
           project_spec_id: project_spec,
-          product: product1,
+          product: product,
           user_id: user,
           section: section,
           item: [item.id]
@@ -146,8 +148,8 @@ describe Api::ProjectSpecsController, type: :controller do
       end
 
       it 'creates a specification product' do
-        expect(json['blocks'].third['element']['id']).to eq(product1.spec_products.first.id)
-        expect(json['blocks'].third['element']['original_product_id']).to eq(product1.id)
+        expect(json['blocks'].third['element']['id']).to eq(product.spec_products.first.id)
+        expect(json['blocks'].third['element']['original_product_id']).to eq(product.id)
         expect(json['blocks'].third['product_order']).to eq(1)
       end
 
@@ -156,11 +158,11 @@ describe Api::ProjectSpecsController, type: :controller do
       end
 
       it 'creates a item by default with right order 1' do
-        expect(project_spec.blocks.find_by(order: 1).spec_item).to eq(Item.find_by(name: product1.items.first.name))
+        expect(project_spec.blocks.find_by(order: 1).spec_item).to eq(Item.find_by(name: product.items.first.name))
       end
 
       it 'creates increments used_on_spec stat' do
-        expect(product1.reload.used_on_spec).to eq(1)
+        expect(product.reload.used_on_spec).to eq(1)
       end
     end
   end

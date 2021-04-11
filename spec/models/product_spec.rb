@@ -28,7 +28,7 @@ describe Product, type: :model do
     context 'if product_stat does not exists' do
       it 'created a record on stats' do
         create(:product, :used_on_spec, original_product_id: product.id)
-        expect(product.reload.stats_used_on_spec).to be 1
+        expect(product.reload.used_on_spec).to be 1
       end
     end
 
@@ -36,7 +36,7 @@ describe Product, type: :model do
       it 'created a record on stats' do
         create(:product, :used_on_spec, original_product_id: product.id)
         create(:product, :used_on_spec, original_product_id: product.id)
-        expect(product.reload.stats_used_on_spec).to be 2
+        expect(product.reload.used_on_spec).to be 2
       end
     end
   end
@@ -44,9 +44,9 @@ describe Product, type: :model do
   describe '#used_on_spec_stat_update' do
     it 'updated the counter -1' do
       product_spec = create(:product, :used_on_spec, original_product_id: product.id)
-      expect(product.reload.stats_used_on_spec).to be 1
+      expect(product.reload.used_on_spec).to be 1
       product_spec.destroy
-      expect(product.reload.stats_used_on_spec).to be 0
+      expect(product.reload.used_on_spec).to be 0
     end
   end
 
