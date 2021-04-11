@@ -8,6 +8,7 @@ module Api
     load_and_authorize_resource except: :create
 
     def show
+      @product.stats.increment!(:visualizations)
       render json: { product: decorator.decorate(@product) }, status: :ok
     end
 

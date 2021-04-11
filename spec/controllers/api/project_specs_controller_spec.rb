@@ -11,11 +11,11 @@ describe Api::ProjectSpecsController, type: :controller do
   let(:project)        { create(:project, user: user, project_type: lookup_table.code) }
   let(:project_spec)   { create(:project_spec_specification, project: project) }
   let(:spec_block)     { create(:spec_block, project_spec: project_spec) }
-  let(:product1)       { create(:product, items: [item]) }
-  let(:product2)       { create(:product, items: [item2]) }
-  let(:product3)       { create(:product, items: [item]) }
-  let(:product4)       { create(:product, items: [item2]) }
-  let(:product5)       { create(:product, items: [item3]) }
+  let(:product1)       { create(:product, :used_on_spec, items: [item]) }
+  let(:product2)       { create(:product, :used_on_spec, items: [item2]) }
+  let(:product3)       { create(:product, :used_on_spec, items: [item]) }
+  let(:product4)       { create(:product, :used_on_spec, items: [item2]) }
+  let(:product5)       { create(:product, :used_on_spec, items: [item3]) }
 
   def create_product_block(product, project_spec)
     create(
@@ -24,7 +24,7 @@ describe Api::ProjectSpecsController, type: :controller do
       item: product.spec_item,
       project_spec: project_spec,
       spec_item: product,
-      item: product.items.first
+      item: product.items.first,
     )
   end
 
@@ -158,6 +158,10 @@ describe Api::ProjectSpecsController, type: :controller do
       it 'creates a item by default with right order 1' do
         expect(project_spec.blocks.find_by(order: 1).spec_item).to eq(Item.find_by(name: product1.items.first.name))
       end
+
+      it 'creates increments used_on_spec stat' do
+        expect(product1.reload.used_on_spec).to eq(1)
+      end
     end
   end
 
@@ -204,6 +208,9 @@ describe Api::ProjectSpecsController, type: :controller do
           expect(project_spec.blocks.find_by(spec_item: product3).order).to be(2)
         end
 
+        it 'destroys the product associated to block' do
+          expect(product1.original_product.used_on_spec).to be(0)
+        end
       end
 
       describe 'remove product and item when item has only one product' do

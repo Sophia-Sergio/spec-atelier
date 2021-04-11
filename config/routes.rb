@@ -46,11 +46,16 @@ Rails.application.routes.draw do
     get 'items/:item_id/systems', to: 'items#subitems', as: :systems
 
     resources :products, only: %i[show create index update] do
-      post 'associate_images'
-      delete 'remove_images'
-      post 'associate_documents'
-      delete 'remove_documents'
-      post 'contact_form'
+      member do
+        post :associate_images
+        delete :remove_images
+        post :associate_documents
+        delete :remove_documents
+        post :contact_form
+      end
+      scope :product_stats, controller: :product_stats do
+        patch :update_downloads
+      end
     end
 
 

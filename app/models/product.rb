@@ -21,11 +21,11 @@ class Product < ApplicationRecord
 
   delegate :name, to: :brand, prefix: true, allow_nil: true
   delegate :name, to: :client, prefix: true, allow_nil: true
-  delegate :used_on_spec, to: :stats, prefix: true, allow_nil: true
-  delegate :dwg_downloads, to: :stats, prefix: true, allow_nil: true
-  delegate :pdf_downloads, to: :stats, prefix: true, allow_nil: true
-  delegate :bim_downloads, to: :stats, prefix: true, allow_nil: true
-  delegate :visualizations, to: :stats, prefix: true, allow_nil: true
+  delegate :used_on_spec, to: :stats, allow_nil: true
+  delegate :dwg_downloads, to: :stats, allow_nil: true
+  delegate :pdf_downloads, to: :stats, allow_nil: true
+  delegate :bim_downloads, to: :stats, allow_nil: true
+  delegate :visualizations, to: :stats, allow_nil: true
 
   pg_search_scope :by_keyword,
     against: %i[name short_desc long_desc reference],
@@ -105,10 +105,10 @@ class Product < ApplicationRecord
   private
 
   def used_on_spec_stat_update
-    original_product.stats.update(used_on_spec: original_product.stats_used_on_spec + 1)
+    original_product.stats.increment!(:used_on_spec)
   end
 
   def used_on_spec_stat_destroy
-    original_product.stats.update(used_on_spec: original_product.stats_used_on_spec - 1)
+    original_product.stats.decrement!(:used_on_spec)
   end
 end

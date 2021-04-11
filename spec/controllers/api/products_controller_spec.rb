@@ -5,7 +5,7 @@ describe Api::ProductsController, type: :controller do
   let(:no_logged_user) { create(:user) }
   let(:session)        { create(:session, user: user, token: session_token(user)) }
   let(:products)       { create_list(:product, 10) }
-  let(:product)        { create(:product) }
+  let(:product)        { create(:product, user: user) }
   let(:brand_a)        { create(:brand) }
   let(:brand_b)        { create(:brand) }
   let(:section_a)      { create(:section, name: 'Section A') }
@@ -38,6 +38,18 @@ describe Api::ProductsController, type: :controller do
   end
 
   describe '#index' do
+    context 'with no session' do
+      before do
+        no_logged_user.add_role(:superadmin)
+        create(:product, user: no_logged_user)
+      end
+
+      it 'returns only original products owned by system (superadmin products)' do
+        get :index, params: { limit: 10 }
+        expect(json['products']['list'].count).to eq(1)
+      end
+    end
+
     context 'with valid session' do
       before do
         request.headers['Authorization'] = "Bearer #{session.token}"
@@ -207,7 +219,7 @@ describe Api::ProductsController, type: :controller do
         create(:resource_file, owner: product, attached: image2)
 
         get :show, params: { id: product.id }
-
+        expect(product.reload.visualizations).to eq 1
         expect(json['product']['name']).to eq(product.name)
         expect(json['product']['images'].first['order']).to eq(0)
         expect(json['product']['images'].second['order']).to eq(1)
@@ -352,7 +364,7 @@ describe Api::ProductsController, type: :controller do
 
   describe '#associate_images' do
     context 'without session' do
-      before { patch :associate_images, params: { user_id: no_logged_user.id, product_id: product.id } }
+      before { patch :associate_images, params: { user_id: no_logged_user.id, id: product.id } }
       it_behaves_like 'an unauthorized api request'
     end
 
@@ -369,7 +381,7 @@ describe Api::ProductsController, type: :controller do
         it 'creates a resource' do
           image1 = fixture_file_upload('spec/fixtures/images/logo1.png')
           image2 = fixture_file_upload('spec/fixtures/images/logo2.png')
-          patch :associate_images, params: { product_id: product.id, images: [image1, image2] }
+          patch :associate_images, params: { id: product.id, images: [image1, image2] }
           expect(response).to have_http_status(:created)
           expect(product.images.length).to be 2
         end
@@ -379,13 +391,11 @@ describe Api::ProductsController, type: :controller do
 
   describe '#remove_images' do
     context 'without session' do
-      before { delete :remove_images, params: { user_id: no_logged_user.id, product_id: product.id } }
+      before { delete :remove_images, params: { user_id: no_logged_user.id, id: product.id } }
       it_behaves_like 'an unauthorized api request'
     end
 
     context 'with valid session' do
-
-
       before { request.headers['Authorization'] = "Bearer #{session.token}" }
 
       context 'with all params' do
@@ -397,7 +407,7 @@ describe Api::ProductsController, type: :controller do
 
           expect(product.images.length).to be 2
 
-          delete :remove_images, params: { product_id: product.id, images: [image1.id, image2.id] }
+          delete :remove_images, params: { id: product.id, images: [image1.id, image2.id] }
           expect(response).to have_http_status(:created)
           expect(product.images.length).to be 0
         end
@@ -407,7 +417,7 @@ describe Api::ProductsController, type: :controller do
 
   describe '#associate_documents' do
     context 'without session' do
-      before { patch :associate_documents, params: { user_id: no_logged_user.id, product_id: product.id } }
+      before { patch :associate_documents, params: { user_id: no_logged_user.id, id: product.id } }
       it_behaves_like 'an unauthorized api request'
     end
 
@@ -422,7 +432,7 @@ describe Api::ProductsController, type: :controller do
       context 'with all params' do
         it 'attach documents to product' do
           pdf = fixture_file_upload('spec/fixtures/documents/example.pdf')
-          patch :associate_documents, params: { product_id: product.id, documents: [pdf] }
+          patch :associate_documents, params: { id: product.id, documents: [pdf] }
           # expect(StorageWorker.perform_async(product, [image1, image2])).to change(StorageWorker.jobs.size).by(1)
           expect(response).to have_http_status(:created)
           expect(product.documents.length).to be 1
@@ -433,35 +443,45 @@ describe Api::ProductsController, type: :controller do
 
   describe '#remove_documents' do
     context 'without session' do
-      before { delete :remove_documents, params: { user_id: no_logged_user.id, product_id: product.id } }
+      before { delete :remove_documents, params: { user_id: no_logged_user.id, id: product.id } }
       it_behaves_like 'an unauthorized api request'
     end
 
     context 'with valid session' do
-
-
       before { request.headers['Authorization'] = "Bearer #{session.token}" }
 
-      context 'with all params' do
-        it 'creates a resource' do
-          document1 = create(:document)
-          document2 = create(:document)
-          create(:resource_file, :document, owner: product, attached: document1)
-          create(:resource_file, :document, owner: product, attached: document2)
+      context 'when the user owns the product' do
+        context 'with all params' do
+          it 'removes the document' do
+            document1 = create(:document)
+            document2 = create(:document)
+            create(:resource_file, :document, owner: product, attached: document1)
+            create(:resource_file, :document, owner: product, attached: document2)
 
-          expect(product.documents.length).to be 2
+            expect(product.documents.length).to be 2
 
-          delete :remove_documents, params: { product_id: product.id, documents: [document1.id, document2.id] }
-          expect(response).to have_http_status(:created)
-          expect(product.documents.length).to be 0
+            delete :remove_documents, params: { id: product.id, documents: [document1.id, document2.id] }
+            expect(response).to have_http_status(:created)
+            expect(product.documents.length).to be 0
+          end
+        end
+      end
+
+      context 'when the user does not owns the product' do
+        context 'with all params' do
+          it 'raises a can can excpet' do
+            product_not_owned = create(:product)
+            delete :remove_documents, params: { id: product_not_owned.id }
+            expect(response).to have_http_status(:forbidden)
+          end
         end
       end
     end
   end
 
-  describe '#form_contact' do
+  describe '#contact_form' do
     context 'without session' do
-      before { post :contact_form, params:  { product_id: product } }
+      before { post :contact_form, params:  { id: product } }
       it_behaves_like 'an unauthorized api request'
     end
 
@@ -469,7 +489,7 @@ describe Api::ProductsController, type: :controller do
       before { request.headers['Authorization'] = "Bearer #{session.token}" }
 
       it 'returns brand' do
-        post :contact_form, params: { product_id: product, product_contact_form: { message: 'message brand', user_phone: '+56 9 99944656' }}
+        post :contact_form, params: { id: product, product_contact_form: { message: 'message brand', user_phone: '+56 9 99944656' }}
 
         expect(response).to have_http_status(:created)
         expect(json['message']).to eq('Mensaje enviado')
