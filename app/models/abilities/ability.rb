@@ -6,7 +6,7 @@ module Abilities
     attr_reader :current_user
 
     def initialize(current_user)
-      return unless current_user.present?
+      no_logged_user && return unless current_user.present?
 
       @current_user = current_user
 
@@ -22,6 +22,7 @@ module Abilities
     # rubocop:disable Layout/EmptyLineBetweenDefs
     def user; end
     def client; end
+    def no_logged_user; end
     # rubocop:enable Layout/EmptyLineBetweenDefs
   end
 end
