@@ -75,11 +75,12 @@ module ProjectSpec
     def remove_product(block)
       self.class.transaction do
         text = ProjectSpec::Text.find_by(block_item: block)
-        blocks.unscoped.find_by(spec_item: text)&.delete
-        text&.delete
-        blocks.find_by(spec_item: block.item)&.delete if blocks.products.where(item: block.item).count == 1
-        blocks.find_by(spec_item: block.section)&.delete if blocks.products.where(section: block.section).count == 1
-        blocks.find(block.id).delete
+        blocks.unscoped.find_by(spec_item: text)&.destroy
+        text&.destroy
+        blocks.find_by(spec_item: block.item)&.destroy if blocks.products.where(item: block.item).count == 1
+        blocks.find_by(spec_item: block.section)&.destroy if blocks.products.where(section: block.section).count == 1
+        block.spec_item.destroy
+        blocks.find(block.id).destroy
       end
     end
 
