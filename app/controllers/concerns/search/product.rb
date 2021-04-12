@@ -3,6 +3,7 @@ module Search
     def product_sort
       case true
       when params[:sort].eql?('created_at') then product_list.order(created_at: :desc)
+      when params[:sort].eql?('most_used') then product_list.most_used
       when params[:most_used] == 'true' then product_list.most_used
       else product_list.joins(:sections).order('sections.name, products.name')
       end
