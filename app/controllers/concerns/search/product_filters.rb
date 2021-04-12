@@ -1,6 +1,8 @@
 module Search
   module ProductFilters
-    def filters(products, filters)
+    def filters(products, params)
+      @params = params
+      filters = params[:filters]
       { filters: accepted_filters(filters).each_with_object({}) {|f, h| h[f.pluralize] = send(f, products) } }
     end
 
@@ -41,10 +43,21 @@ module Search
     end
 
     def lookup_table_data(products, category)
-      types = products.pluck(category.to_sym).flatten.uniq
-      LookupTable.by_category(category).where(code: types.map(&:to_i)).map do |lookup_table|
-        { id: lookup_table.code, name: lookup_table.translation_spa }
-      end
+      types = products.pluck(category.to_sym).flatten.uniq.map(&:to_i)
+      list = LookupTable.by_category(category).where(code: types).order(:translation_spa)
+      list = list.select {|e| @params[:project_type].include? e.code.to_s } if project_type_select?(category)
+      list = list.select {|e| @params[:room_type].include? e.code.to_s } if room_type_select?(category)
+      list = list.select {|e| (e.related_category_codes & @params[:project_type]).any? } if category == 'room_type'
+      list.map {|lookup_table| { id: lookup_table.code, name: lookup_table.translation_spa } }
+          .sort_by {|lookup_table| I18n.transliterate(lookup_table[:name]) }
+    end
+
+    def project_type_select?(category)
+      @params[category.to_sym].present? && category == 'project_type'
+    end
+
+    def room_type_select?(category)
+      @params[category.to_sym].present? && category == 'room_type'
     end
 
     def relations(products, relation)

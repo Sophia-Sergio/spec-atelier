@@ -15,7 +15,7 @@ module Api
     def index
       @custom_list = @products
       list = paginated_response
-      filters = params[:filters].present? ? filters(@list, params[:filters]) : {}
+      filters = params[:filters].present? ? filters(@list, params) : {}
       render json: { products: list.merge(filters) }, status: :ok
     end
 
