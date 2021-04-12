@@ -48,7 +48,7 @@ module Search
       list = list.select {|e| @params[:project_type].include? e.code.to_s } if project_type_select?(category)
       list = list.select {|e| @params[:room_type].include? e.code.to_s } if room_type_select?(category)
       list = list.select {|e| (e.related_category_codes & @params[:project_type]).any? } if category == 'room_type'
-      list.map {|lookup_table| { id: lookup_table.code, name: lookup_table.translation_spa } }
+      list.map {|lookup_table| { id: lookup_table.code, name: lookup_table.translation_spa.capitalize } }
           .sort_by {|lookup_table| I18n.transliterate(lookup_table[:name]) }
     end
 
