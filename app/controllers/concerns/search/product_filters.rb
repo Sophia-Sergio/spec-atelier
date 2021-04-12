@@ -12,7 +12,7 @@ module Search
     end
 
     def project_type(products)
-      lookup_table_data(products, 'room_type')
+      lookup_table_data(products, 'project_type')
     end
 
     def room_type(products)
