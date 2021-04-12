@@ -27,19 +27,25 @@ module Search
     end
 
     def item(products)
-      relations(products, :items)
+      items = relations(products, :items)
+      @params[:item].present? ? items.select {|e| @params[:item].include? e[:id].to_s } : items
     end
 
     def subitem(products)
-      relations(products, :subitems)
+      subitems = relations(products, :subitems)
+      @params[:subitem].present? ? subitems.select {|e| @params[:subitem].include? e[:id].to_s } : subitems
     end
 
     def section(products)
-      relations(products, :sections)
+      sections = relations(products, :sections)
+      @params[:section].present? ? sections.select {|e| @params[:section].include? e[:id].to_s } : sections
     end
 
     def specification(products)
-      ProjectSpec::Specification.by_user(current_user).by_product(products)
+      current_user = User.find(3)
+      specs = ProjectSpec::Specification.by_user(current_user).by_product(products)
+      specs = @params[:specification].present? ? specs.where(id: @params[:specification]) : specs
+      specs.joins(:project).map {|spec| { id: spec.id, name: spec.name } }
     end
 
     def lookup_table_data(products, category)
@@ -47,7 +53,7 @@ module Search
       list = LookupTable.by_category(category).where(code: types).order(:translation_spa)
       list = list.select {|e| @params[:project_type].include? e.code.to_s } if project_type_select?(category)
       list = list.select {|e| @params[:room_type].include? e.code.to_s } if room_type_select?(category)
-      list = list.select {|e| (e.related_category_codes & @params[:project_type]).any? } if category == 'room_type'
+      list = list.select {|e| (e.related_category_codes & @params[:project_type]).any? } if room_and_project?(category)
       list.map {|lookup_table| { id: lookup_table.code, name: lookup_table.translation_spa.capitalize } }
           .sort_by {|lookup_table| I18n.transliterate(lookup_table[:name]) }
     end
@@ -58,6 +64,10 @@ module Search
 
     def room_type_select?(category)
       @params[category.to_sym].present? && category == 'room_type'
+    end
+
+    def room_and_project?(category)
+      @params[:project_type].present? && category == 'room_type'
     end
 
     def relations(products, relation)
