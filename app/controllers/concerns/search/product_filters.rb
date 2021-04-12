@@ -42,7 +42,6 @@ module Search
     end
 
     def specification(products)
-      current_user = User.find(3)
       specs = ProjectSpec::Specification.by_user(current_user).by_product(products)
       specs = @params[:specification].present? ? specs.where(id: @params[:specification]) : specs
       specs.joins(:project).map {|spec| { id: spec.id, name: spec.name } }
