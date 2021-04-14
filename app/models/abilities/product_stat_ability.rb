@@ -6,7 +6,7 @@ module Abilities
 
     def products_available
       ability = Abilities::ProductAbility.new(current_user)
-      Product.accessible_by(ability).pluck(:id)
+      Product.accessible_by(ability).by_client(current_user.clients).pluck(:id)
     end
   end
 end

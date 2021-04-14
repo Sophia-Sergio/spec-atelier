@@ -12,6 +12,10 @@ module Abilities
       common_abilities
     end
 
+    def client
+      can :client_products, Product, id: client_products
+    end
+
     def no_logged_user
       common_abilities
     end
@@ -21,6 +25,10 @@ module Abilities
     end
 
     private
+
+    def client_products
+      Product.original.by_user(current_user).pluck(:id) + Product.by_client(current_user.clients).pluck(:id)
+    end
 
     def available_products
       products = current_user.present? ? Product.readable_by(current_user) : Product.readable

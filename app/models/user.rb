@@ -8,6 +8,8 @@ class User < ApplicationRecord
   has_many :projects, dependent: :destroy
   has_many :specifications, through: :projects
   has_many :products
+  has_many :user_clients
+  has_many :clients, through: :user_clients, dependent: :destroy
   has_one :file, as: :owner, class_name: 'Attached::ResourceFile', dependent: :destroy
 
   def generate_password_token!

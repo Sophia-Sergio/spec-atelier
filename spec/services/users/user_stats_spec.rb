@@ -1,13 +1,16 @@
 describe Users::UserStats, type: :model do
   let(:user) { create(:user, first_name: 'User B', email: 'userB@gmail.com') }
+  let(:client) { create(:client) }
   let(:project1) { create(:project, user: user, city: 'City B') }
   let(:project2) { create(:project, user: create(:user, first_name: 'User A', email: 'userA@gmail.com'), city: 'City A') }
-  let(:product1) { create(:product, user: user, name: 'Product A', updated_at: DateTime.now) }
-  let(:product2) { create(:product, user: user, name: 'Product B', updated_at: DateTime.now - 1.day) }
-  let(:product3) { create(:product, user: user, name: 'Product C', updated_at: DateTime.now + 1.day) }
+  let(:product1) { create(:product, user: user, name: 'Product A', updated_at: DateTime.now, client: client) }
+  let(:product2) { create(:product, user: user, name: 'Product B', updated_at: DateTime.now - 1.day, client: client) }
+  let(:product3) { create(:product, user: user, name: 'Product C', updated_at: DateTime.now + 1.day, client: client) }
   let(:service)  { Users::UserStats.new(user, params: params) }
 
   before do
+    user.add_role(:client)
+    user.clients << client
     product_spec1 = create(:product, created_reason: :added_to_spec, original_product_id: product1.id)
     product_spec2 = create(:product, created_reason: :added_to_spec, original_product_id: product2.id)
     product_spec3 = create(:product, created_reason: :added_to_spec, original_product_id: product3.id)

@@ -30,7 +30,7 @@ module Users
         user.products.by_specification(project.specification)
       else
         product_ability = ::Abilities::ProductAbility.new(user)
-        Product.accessible_by(product_ability)
+        Product.accessible_by(product_ability, :client_products)
       end
       sorted_products(products)
     end
@@ -42,7 +42,7 @@ module Users
       when :brand then products.joins(:brand).order("brands.name #{sort_order || 'asc'}, products.name")
       when :name, :updated_at then products.order("#{sort_by} #{sort_order || 'asc'}, name")
       when :spec then products.joins(:stats).order("product_stats.used_on_spec #{sort_order || 'asc'}, name")
-      when :pdf then products.joins(:stats).order("product_stats.#{sort_by}_downloads #{sort_order || 'asc'}, name")
+      when :pdf, :dwg, :bim then products.joins(:stats).order("product_stats.#{sort_by}_downloads #{sort_order || 'asc'}, name")
       else products.order(:name)
       end
     end
