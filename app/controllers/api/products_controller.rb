@@ -5,7 +5,7 @@ module Api
     include AssociateFiles
 
     before_action :valid_session, except: %i[index show]
-    load_and_authorize_resource except: :create
+    load_and_authorize_resource except: %i[create index]
 
     def show
       @product.stats.increment!(:visualizations)
@@ -13,7 +13,7 @@ module Api
     end
 
     def index
-      @custom_list = @products
+      @custom_list = products
       list = paginated_response
       filters = params[:filters].present? ? filters(@list, params) : {}
       render json: { products: list.merge(filters) }, status: :ok
@@ -60,6 +60,14 @@ module Api
 
     def decorator
       @decorator ||= Products::ProductDecorator
+    end
+
+    def products
+      @products ||= if params[:client_products].present?
+        Product.accessible_by(current_ability, :client_products)
+      else
+        Product.accessible_by(current_ability)
+      end
     end
 
     def images_params
