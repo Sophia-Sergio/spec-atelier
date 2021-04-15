@@ -58,12 +58,12 @@ module Api
     end
 
     def reorder_blocks
-      project_specification.reorder_blocks(params[:blocks])
+      ProjectSpec::BlocksUserReorder.call(@project_specification, params[:blocks])
       render json: { blocks: blocks, message: 'Orden Actualizado' }
     end
 
     def show
-      render json: { blocks: blocks, project: { id: project_specification.project.id, name: project_specification.project.name } }
+      render json: { blocks: blocks, project: { id: @project_spec.project.id, name: @project_spec.project.name } }
     end
 
     def download_word
@@ -89,12 +89,10 @@ module Api
       project_specification.touch
     end
 
-    def project_specification
-      ProjectSpec::Specification.find(params[:id] || params[:project_spec_id])
-    end
-
     def blocks
-      blocks = project_specification.blocks.includes(:section, :item, :spec_item).order(:order)
+      blocks = @project_spec.blocks.preload(
+        :section, :item, :product, :spec_item, :text, product: %i[sections subitems brand client files]
+      ).order(:order)
       ProjectSpecDecorator.decorate_collection(blocks)
     end
 
