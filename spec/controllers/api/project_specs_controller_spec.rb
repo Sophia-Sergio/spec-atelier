@@ -351,7 +351,7 @@ describe Api::ProjectSpecsController, type: :controller do
 
   describe '#reorder_blocks' do
     context 'without session' do
-      before { patch :reorder_blocks, params: { user_id: no_logged_user.id, project_spec_id: project_spec } }
+      before { patch :reorder_blocks, params: { user_id: no_logged_user.id, id: project_spec } }
       it_behaves_like 'an unauthorized api request'
     end
 
@@ -398,7 +398,7 @@ describe Api::ProjectSpecsController, type: :controller do
 
         request.headers['Authorization'] = "Bearer #{session.token}"
 
-        patch :reorder_blocks, params: { project_spec_id: project_spec, user_id: user, blocks: @blocks }
+        patch :reorder_blocks, params: { id: project_spec, user_id: user, blocks: @blocks }
       end
 
       it 'creates a specification product' do

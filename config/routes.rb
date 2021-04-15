@@ -29,7 +29,9 @@ Rails.application.routes.draw do
         patch 'edit_text'
         patch 'add_product_image'
         patch 'remove_product_image'
-        patch 'reorder_blocks'
+        member do
+          patch 'reorder_blocks'
+        end
         resources :project_specs_blocks, only: %i[create show]
       end
     end
@@ -57,8 +59,6 @@ Rails.application.routes.draw do
         patch :update_downloads
       end
     end
-
-
 
     resources :sections, only: %i[index] do
       get 'items'

@@ -6,7 +6,7 @@ module Api
     before_action :touch_project, only: %i[
       create_text remove_text edit_text create_product remove_block add_product_image remove_product_image
     ]
-    load_and_authorize_resource class: ProjectSpec::Specification, only: :show
+    load_and_authorize_resource class: ProjectSpec::Specification, only: [:show, :reorder_blocks]
 
     def create
       ProjectSpec.create(project_spec_param)
@@ -58,7 +58,7 @@ module Api
     end
 
     def reorder_blocks
-      ProjectSpec::BlocksUserReorder.call(@project_specification, params[:blocks])
+      ProjectSpec::BlocksUserReorder.call(@project_spec, params[:blocks])
       render json: { blocks: blocks, message: 'Orden Actualizado' }
     end
 
@@ -89,8 +89,13 @@ module Api
       project_specification.touch
     end
 
+    def project_specification
+      ProjectSpec::Specification.find(params[:id] || params[:project_spec_id])
+    end
+
     def blocks
-      blocks = @project_spec.blocks.preload(
+      project_spec = @project_spec || project_specification
+      blocks = project_spec.blocks.preload(
         :section, :item, :product, :spec_item, :text, product: %i[sections subitems brand client files]
       ).order(:order)
       ProjectSpecDecorator.decorate_collection(blocks)
