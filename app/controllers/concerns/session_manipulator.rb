@@ -14,6 +14,7 @@ module SessionManipulator
         user_id = JsonWebToken.decode(auth_token)[:user_id]
         user    = User.find(user_id)
         put_cookie(auth_token) if cookies.signed[:jwt].blank? && header_token.present?
+        update_session(user, auth_token) unless auth_token == session(user).token
         user
       end
     end
@@ -29,7 +30,7 @@ module SessionManipulator
   def start_session(user)
     token = token(user)
     put_cookie(token)
-    Session.find_or_create_by(user: user).update(token: token, expires: expires, active: true)
+    update_session(user, token)
     Sentry.set_user(email: user.email)
   end
 
@@ -45,6 +46,14 @@ module SessionManipulator
 
   def header_token
     request.headers["Authorization"]&.remove('Bearer')&.remove(' ')
+  end
+
+  def update_session(user, token)
+    session(user).update(token: token, expires: expires, active: true)
+  end
+
+  def session(user)
+    @session ||= Session.find_or_create_by(user: user)
   end
 
   def token(user)
