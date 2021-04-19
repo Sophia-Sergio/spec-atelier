@@ -8,7 +8,7 @@ module Api
     load_and_authorize_resource except: :create
 
     def index
-      @custom_list = current_user.projects
+      @custom_list = current_user.projects.includes(:specification)
       render json: { projects: paginated_response }, status: :ok
     end
 
