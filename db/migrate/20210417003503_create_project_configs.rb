@@ -28,7 +28,7 @@ class CreateProjectConfigs < ActiveRecord::Migration[6.0]
   def visible_attrs
     {
       "product" => {
-        "all" => true,
+        "all" => false,
         "short_desc" => false,
         "long_desc" => true,
         "reference" => true,
