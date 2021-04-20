@@ -63,7 +63,8 @@ module Api
     end
 
     def show
-      render json: { blocks: blocks, project: { id: @project_spec.project.id, name: @project_spec.project.name } }
+      project_spec = ProjectSpec::ProjectSpecDecorator.decorate(@project_spec)
+      render json: project_spec
     end
 
     def download_word
@@ -98,7 +99,7 @@ module Api
       blocks = project_spec.blocks.preload(
         :section, :item, :product, :spec_item, :text, product: %i[sections subitems brand client files]
       ).order(:order)
-      ProjectSpecDecorator.decorate_collection(blocks)
+      ProjectSpec::BlockDecorator.decorate_collection(blocks)
     end
 
     def project_spec_param

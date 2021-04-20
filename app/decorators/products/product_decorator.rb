@@ -19,8 +19,8 @@ module Products
              :work_type
 
     def name
-      if block?
-        "#{model.block.section_order}.#{model.block.item_order}.#{model.block.product_order}. #{model.name}"
+      if block.present?
+        "#{block.section_order}.#{block.item_order}.#{block.product_order}. #{model.name}"
       else
         model.name
       end
@@ -96,8 +96,8 @@ module Products
 
     private
 
-    def block?
-      @block ||= model.block.present?
+    def block
+      @block ||= context[:block].presence
     end
 
     def documents
