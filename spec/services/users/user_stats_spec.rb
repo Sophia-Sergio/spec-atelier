@@ -180,7 +180,7 @@ describe Users::UserStats, type: :model do
       end
 
       context 'order by brand desc' do
-        let(:params) { { sort_by: 'brand', sort_order: 'desc' } }
+        let(:params) { { sort_by: 'brand_name', sort_order: 'desc' } }
 
         context 'sort_order desc' do
           it 'returns proper data' do
@@ -197,7 +197,7 @@ describe Users::UserStats, type: :model do
       end
 
       context 'order by spec (times used on speciication)' do
-        let(:params) { { sort_by: 'spec', sort_order: 'desc' } }
+        let(:params) { { sort_by: 'projects_count', sort_order: 'desc' } }
 
         context 'sort_order desc' do
           it 'returns proper data' do
@@ -208,7 +208,7 @@ describe Users::UserStats, type: :model do
         end
 
         context 'sort_order asc' do
-          let(:params) { { sort_by: 'spec', sort_order: 'asc' } }
+          let(:params) { { sort_by: 'projects_count', sort_order: 'asc' } }
           it 'returns proper data' do
             expect(json_response['list'].first['id']).to be product1.id
             expect(json_response['list'].second['id']).to be product3.id
