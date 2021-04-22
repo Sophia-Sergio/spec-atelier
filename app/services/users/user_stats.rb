@@ -39,10 +39,10 @@ module Users
       sort_by = params[:sort_by]
       sort_order = params[:sort_order]
       case sort_by&.to_sym
-      when :brand then products.joins(:brand).order("brands.name #{sort_order || 'asc'}, products.name")
+      when :brand_name then products.joins(:brand).order("brands.name #{sort_order || 'asc'}, products.name")
       when :name, :updated_at then products.order("#{sort_by} #{sort_order || 'asc'}, name")
-      when :spec then products.joins(:stats).order("product_stats.used_on_spec #{sort_order || 'asc'}, name")
-      when :pdf, :dwg, :bim then products.joins(:stats).order("product_stats.#{sort_by}_downloads #{sort_order || 'asc'}, name")
+      when :projects_count then products.joins(:stats).order("product_stats.used_on_spec #{sort_order || 'asc'}, name")
+      when :pdf_downloads, :dwg_downloads, :bim_downloads then products.joins(:stats).order("product_stats.#{sort_by}_downloads #{sort_order || 'asc'}, name")
       else products.order(:name)
       end
     end
