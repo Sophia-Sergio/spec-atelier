@@ -34,8 +34,8 @@ class Product < ApplicationRecord
 
   scope :by_section,      ->(sections) { joins(:sections).where(sections: { id: sections }) }
   scope :by_item,         ->(items)    { joins(:items).where(items: { id: items }) }
-  scope :by_project_type, ->(types)    { where("project_type && ?", "{#{ types.is_a?(Array) ? types.join(',') : types }}") }
-  scope :by_room_type,    ->(types)    { where("room_type && ?", "{#{ types.is_a?(Array) ? types.join(',') : types }}") }
+  scope :by_project_type, ->(types)    { where("project_type && ?", "{#{types.is_a?(Array) ? types.join(',') : types}}") }
+  scope :by_room_type,    ->(types)    { where("room_type && ?", "{#{types.is_a?(Array) ? types.join(',') : types}}") }
   scope :by_subitem,      ->(subitems) { joins(:subitems).where(subitems: { id: subitems }) }
   scope :by_brand,        ->(brands)   { joins(:brand).where(brands: { id: brands }) }
   scope :by_client,       ->(clients)  { joins(:client).where(clients: { id: clients }) }
