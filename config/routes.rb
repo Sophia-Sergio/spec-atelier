@@ -17,7 +17,9 @@ Rails.application.routes.draw do
         get :stats
         patch :profile_image_upload
       end
-      resources :projects
+      resources :projects do
+        resource :project_configs, only: :create
+      end
       resources :project_specs, only: %i[show] do
         post 'create_text'
         delete 'remove_text'
