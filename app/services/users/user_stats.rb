@@ -54,7 +54,7 @@ module Users
       when :project_type
         project_types = sort_order == 'desc' ? projects.sort_by(&:project_type_spa) : projects.sort_by {|p| -p.project_type_spa }
         project_type_ids = project_types.map(&:id)
-        Project.where(id: project_types_ids).find_ordered(project_types_ids)
+        Project.where(id: project_types).find_ordered(project_types)
       when :created_at, :updated_at, :city then projects.order("#{sort_by} #{sort_order || 'asc'}, name")
       when :user_name then projects.joins(:user).order("users.first_name #{sort_order || 'asc'}, projects.name")
       when :user_email then projects.joins(:user).order("users.email #{sort_order || 'asc'}, projects.name")
