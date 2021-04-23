@@ -4,6 +4,7 @@ class Project < ApplicationRecord
 
   belongs_to :user
   has_one :specification, class_name: 'ProjectSpec::Specification'
+  has_one :config, class_name: 'ProjectConfig'
   default_scope { where(soft_deleted: false) }
   enum status: { active: 1, closed: 0 }
   enum visibility: { public_available: 0, creator_only: 1 }
@@ -24,7 +25,7 @@ class Project < ApplicationRecord
       .distinct
   }
   before_create :work_type_default
-  after_create :create_specification
+  after_create :create_specification, :create_project_config
 
   def create_specification
     ProjectSpec::Specification.create(project: self)
@@ -36,5 +37,21 @@ class Project < ApplicationRecord
 
   def products
     specification.products
+  end
+
+  private
+
+  def create_project_config
+    create_config(
+      visible_attrs: {
+        product: {
+          all: false,
+          short_desc: false,
+          long_desc: true,
+          reference: true,
+          brand: true
+        }
+      }
+    )
   end
 end

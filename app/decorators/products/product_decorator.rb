@@ -105,7 +105,7 @@ module Products
     end
 
     def section_object
-      @section_object ||= if block?
+      @section_object ||= if block.present?
         model.spec_item&.section
       else
         model.sections.first
@@ -113,7 +113,7 @@ module Products
     end
 
     def item_object
-      @item_object ||= if block?
+      @item_object ||= if block.present?
         model.spec_item
       else
         model.items.find_by(id: context["item"] || subitem_object&.item_id)
