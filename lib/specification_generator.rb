@@ -1,7 +1,10 @@
 class SpecificationGenerator
+  attr_reader :config
+
   def initialize(specification)
     @specification = specification
     @blocks = @specification.blocks.order(:order)
+    @config = specification.project.config
   end
 
   def generate
@@ -81,8 +84,10 @@ class SpecificationGenerator
 
       c2 = Caracal::Core::Models::TableCellModel.new do
         p product_name, style: 'header_product'
-        p block.spec_item.long_desc&.to_s
-        p "Referencia #{block.spec_item.reference&.to_s}"
+        p block.spec_item.short_desc&.to_s if config.product_visibility['short_desc']
+        p block.spec_item.long_desc&.to_s if config.product_visibility['long_desc']
+        p block.spec_item.brand_name if config.product_visibility['brand']
+        p "Referencia #{block.spec_item.reference&.to_s}" if config.product_visibility['reference']
         p block.text.text.strip_tags if block.text.present?
         p
       end
@@ -101,8 +106,10 @@ class SpecificationGenerator
 
   def product_format(docx, block)
     docx.p product_name(block), style: 'header_product'
-    docx.p block.spec_item.long_desc&.to_s
-    docx.p "Referencia #{block.spec_item.reference&.to_s}"
+    docx.p block.spec_item.short_desc&.to_s if config.product_visibility['short_desc']
+    docx.p block.spec_item.long_desc&.to_s if config.product_visibility['long_desc']
+    docx.p block.spec_item.brand_name if config.product_visibility['brand']
+    docx.p "Referencia #{block.spec_item.reference&.to_s}" if config.product_visibility['reference']
     docx.p block.text.text.strip_tags if block.text.present?
     docx.p
   end
