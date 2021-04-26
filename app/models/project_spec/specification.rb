@@ -32,7 +32,6 @@ module ProjectSpec
       block.send(:reorder_blocks)
     end
 
-
     def remove_product(block)
       self.class.transaction do
         text = ProjectSpec::Text.find_by(block_item: block)
