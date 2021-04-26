@@ -36,7 +36,7 @@ module Api
     def create_product
       product = Product.find(params[:product])
       ::Products::ProductSpecCreator.call(
-        project_spec_block_params, nil, product, project_spec: project_specification
+        project_spec_block_params, current_user, product, project_spec: project_specification
       )
       render json: { blocks: blocks }
     end
