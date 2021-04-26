@@ -149,7 +149,6 @@ describe Api::ProjectSpecsController, type: :controller do
 
       it 'creates a specification product' do
         expect(json['blocks'].third['element']['id']).to eq(product.spec_products.first.id)
-        expect(json['blocks'].third['element']['original_product_id']).to eq(product.id)
         expect(json['blocks'].third['product_order']).to eq(1)
       end
 
@@ -196,6 +195,7 @@ describe Api::ProjectSpecsController, type: :controller do
         before do
           @block_product1 = create_product_block(product1, project_spec)
           @block_product2 = create_product_block(product3, project_spec)
+          @product_original_1 = product1.original_product
 
           delete :remove_block, params: { project_spec_id: project_spec, user_id: user, block: @block_product1.id }
         end
@@ -211,7 +211,7 @@ describe Api::ProjectSpecsController, type: :controller do
         end
 
         it 'destroys the product associated to block' do
-          expect(product1.original_product.used_on_spec).to be(0)
+          expect(@product_original_1.reload.used_on_spec).to be(0)
         end
       end
 

@@ -154,7 +154,6 @@ describe Api::ProductsController, type: :controller do
           get :index, params: { limit: 10, page: 0, sort: 'created_at'}
           expect(json['products']['list'].count).to eq(5)
           expect(json['products']['list'].first['name']).to eq('ccca aab')
-          expect(json['products']['list'].first['section']['name']).to eq(section_b.name)
         end
 
         it 'returns products by project_type and room_type' do
