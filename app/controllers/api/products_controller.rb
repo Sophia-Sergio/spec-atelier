@@ -24,6 +24,11 @@ module Api
       render json: { product: decorator.decorate(product) }, status: :created if product.present?
     end
 
+    def destroy
+      @product.destroy!
+      render json: { product: decorator.decorate(@product) }, status: :ok
+    end
+
     def update
       updated_product = ::Products::ProductUpdater.new(product_params, nil, @product).call
       render json: { product: decorator.decorate(updated_product) }, status: :ok

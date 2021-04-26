@@ -2,6 +2,7 @@ module Abilities
   class ProductAbility < Ability
     def user
       can %i[
+        destroy
         update
         associate_documents
         associate_images

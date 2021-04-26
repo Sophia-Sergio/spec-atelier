@@ -49,7 +49,7 @@ Rails.application.routes.draw do
 
     get 'items/:item_id/systems', to: 'items#subitems', as: :systems
 
-    resources :products, only: %i[show create index update] do
+    resources :products, except: %i[edit] do
       member do
         post :associate_images
         delete :remove_images
