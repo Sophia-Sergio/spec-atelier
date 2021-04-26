@@ -37,6 +37,35 @@ describe Api::ProductsController, type: :controller do
     create(:lookup_table, category: 'work_type', code: 2, translation_spa: 'b')
   end
 
+  describe '#destroy' do
+    context 'without session' do
+      before { delete :destroy, params: { id: product.id }}
+      it_behaves_like 'an unauthorized api request'
+    end
+
+    context 'with valid session' do
+      let(:not_owned_product) { create(:product) }
+
+      before do
+        request.headers['Authorization'] = "Bearer #{session.token}"
+      end
+
+      context 'when user is not the owner of the project' do
+        it 'should return status forbidden' do
+          delete :destroy, params: { id: not_owned_product.id }
+          expect(response).to have_http_status(:forbidden)
+        end
+      end
+
+      context 'when user the owner of the project' do
+        it 'should return status forbidden' do
+          delete :destroy, params: { id: product.id }
+          expect(response).to have_http_status(:ok)
+        end
+      end
+    end
+  end
+
   describe '#index' do
     context 'with no session' do
       before do
