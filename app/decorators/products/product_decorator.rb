@@ -16,7 +16,8 @@ module Products
              :images,
              :project_type,
              :room_type,
-             :work_type
+             :work_type,
+             :user_owned
 
     def name
       if block.present?
@@ -88,6 +89,10 @@ module Products
       return [item_image] unless product_images.present?
 
       product_images.map {|a| { id: a.id, urls: a.all_formats, order: a.resource_file.order } }
+    end
+
+    def user_owned
+      model.original_product.user == model.user
     end
 
     %w[project work room].each do |column|

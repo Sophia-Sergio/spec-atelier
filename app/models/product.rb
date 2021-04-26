@@ -11,6 +11,7 @@ class Product < ApplicationRecord
   has_many :sections, through: :items
   belongs_to :spec_item, class_name: 'Item', optional: true
   belongs_to :user
+  belongs_to :original_product, class_name: 'Product', foreign_key: :original_product_id, optional: true
   has_many :files, as: :owner, class_name: 'Attached::ResourceFile', dependent: :destroy
   has_many :contact_forms, as: :owner, class_name: 'Form::ContactForm', dependent: :destroy
   has_one :stats, class_name: 'ProductStat', dependent: :destroy
@@ -92,10 +93,6 @@ class Product < ApplicationRecord
                       .includes(:resource_file)
                       .select('attached_files.*, attached_resource_files.order')
                       .order(:order)
-  end
-
-  def original_product
-    self.class.find(original_product_id) if self.added_to_spec?
   end
 
   def spec_products

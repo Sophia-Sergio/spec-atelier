@@ -27,7 +27,7 @@ module ProjectSpec
 
     def element
       case type
-      when 'Product' then Products::ProductDecorator.decorate(spec_item, context: { block: model } )
+      when 'Product' then Products::ProductSpecDecorator.decorate(spec_item, context: { block: model } )
       else "ProjectSpec::#{spec_item.class}Decorator".constantize.decorate(spec_item)
       end
     end

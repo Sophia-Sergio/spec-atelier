@@ -17,7 +17,7 @@ module ProjectSpec
         :product,
         :spec_item,
         :text,
-        product: %i[sections subitems brand client files]
+        product: %i[sections subitems brand client files original_product]
       ).order(:order)
       ProjectSpec::BlockDecorator.decorate_collection(blocks)
     end

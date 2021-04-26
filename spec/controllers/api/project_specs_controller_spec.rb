@@ -196,6 +196,7 @@ describe Api::ProjectSpecsController, type: :controller do
         before do
           @block_product1 = create_product_block(product1, project_spec)
           @block_product2 = create_product_block(product3, project_spec)
+          @product_original_1 = product1.original_product
 
           delete :remove_block, params: { project_spec_id: project_spec, user_id: user, block: @block_product1.id }
         end
@@ -211,7 +212,7 @@ describe Api::ProjectSpecsController, type: :controller do
         end
 
         it 'destroys the product associated to block' do
-          expect(product1.original_product.used_on_spec).to be(0)
+          expect(@product_original_1.reload.used_on_spec).to be(0)
         end
       end
 
