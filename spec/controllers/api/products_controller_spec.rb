@@ -82,23 +82,6 @@ describe Api::ProductsController, type: :controller do
           expect(json['products']['list'].count).to eq(1)
           expect(json['products']['next_page']).to eq(nil)
         end
-
-        it 'returns different products by page ordered by section name and product name' do
-
-          get :index, params: { limit: 3, page: 0}
-          ids_page_0 = json['products']['list'].map {|p| p['id'] }
-          get :index, params: { limit: 3, page: 1}
-          ids_page_1 = json['products']['list'].map {|p| p['id'] }
-          get :index, params: { limit: 3, page: 2}
-          ids_page_2 = json['products']['list'].map {|p| p['id'] }
-          get :index, params: { limit: 3, page: 3}
-          ids_page_3 = json['products']['list'].map {|p| p['id'] }
-
-          expect(ids_page_0).to eq([11, 12, 13])
-          expect(ids_page_1).to eq([14, 15, 16])
-          expect(ids_page_2).to eq([17, 18, 19])
-          expect(ids_page_3).to eq([20, 21, 1])
-        end
       end
 
       context 'filtered paginated response' do
@@ -136,8 +119,6 @@ describe Api::ProductsController, type: :controller do
         it 'returns products by room_type default order by section.name' do
           get :index, params: { limit: 10, page: 0, room_type: [1]}
           expect(json['products']['list'].count).to eq(2)
-          expect(json['products']['list'].first['name']).to eq('bbba')
-          expect(json['products']['list'].first['section']['name']).to eq(section_a.name)
         end
 
         it 'returns products by room_type ordered by new products (created_at desc)' do
