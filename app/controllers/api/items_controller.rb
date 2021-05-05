@@ -12,7 +12,7 @@ module Api
       list = Item.all.order(:show_order)
       list = list.where(section: params[:section]) if params[:section].present?
       list = list.with_products if params[:with_products]
-      render json: { items: ItemDecorator.decorate_collection(list) }
+      render json: { items: ItemDecorator.decorate_collection(list, context: { user: user }) }
     end
 
     private

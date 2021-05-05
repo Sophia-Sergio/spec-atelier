@@ -3,6 +3,7 @@ class ItemDecorator < ApplicationDecorator
   new_keys :subitems
 
   def subitems
-    model.subitems.with_products.map {|subitem| { id: subitem.id, name: subitem.name } }
+    user = context[:user]
+    model.subitems.with_accessible_products(user).map {|subitem| { id: subitem.id, name: subitem.name } }
   end
 end
