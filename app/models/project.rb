@@ -45,7 +45,7 @@ class Project < ApplicationRecord
     create_config(
       visible_attrs: {
         product: {
-          default: false,
+          default: true,
           short_desc: false,
           long_desc: true,
           reference: true,
