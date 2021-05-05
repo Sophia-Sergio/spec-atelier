@@ -12,7 +12,7 @@ module Api
 
     def project_config_params
       params.require(:project_config).permit(
-        visible_attrs: { product: %i[all brand long_desc short_desc reference] }
+        visible_attrs: { product: %i[default brand long_desc short_desc reference] }
       )
     end
   end
