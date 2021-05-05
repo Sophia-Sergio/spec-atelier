@@ -10,6 +10,8 @@ module Abilities
         remove_documents
       ], Product, user_id: current_user.id
       can :contact_form, Product, id: available_products
+      can :show, id: available_products
+      can :show, user_id: available_products
       common_abilities
     end
 
@@ -22,7 +24,7 @@ module Abilities
     end
 
     def common_abilities
-      can %i[index show], Product, id: available_products
+      can :index, Product, id: available_products
     end
 
     private
