@@ -6,7 +6,7 @@ describe ProjectConfig, type: :model do
     context 'visible_attrs_consistency' do
       let(:params) { {
         'product' => {
-          'all' => false,
+          'default' => false,
           'short_desc' => false,
           'long_desc' => true,
           'reference' => true,
@@ -14,9 +14,9 @@ describe ProjectConfig, type: :model do
         }
       }}
 
-      context 'product all = true and another with false' do
+      context 'product default = true and another with false (except short_desc)' do
         it 'should raise ActiveRecord::RecordInvalid' do
-          visible_attrs = params.deep_merge('product' => { 'all' => true })
+          visible_attrs = params.deep_merge('product' => { 'default' => true, 'brand' => false })
           error_message =  'Validation failed: Project config No puede tener seleccionar todos y además otro atributo en falso'
           expect { config.update!(visible_attrs: visible_attrs) }.to raise_error(ActiveRecord::RecordInvalid, error_message)
         end

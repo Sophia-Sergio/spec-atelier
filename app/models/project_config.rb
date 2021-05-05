@@ -14,8 +14,8 @@ class ProjectConfig < ApplicationRecord
   end
 
   def all_true_and_other_false
-    if product_visibility['all'] == true && (
-        product_visibility['short_desc'] == false ||
+    if product_visibility['default'] == true && (
+        product_visibility['short_desc'] == true ||
         product_visibility['long_desc'] == false ||
         product_visibility['reference'] == false ||
         product_visibility['brand'] == false
