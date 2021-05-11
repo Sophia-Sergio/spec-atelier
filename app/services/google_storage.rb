@@ -7,8 +7,12 @@ class GoogleStorage
     @kind = kind
   end
 
-  def perform(name = nil)
+  def upload(name = nil)
     upload_file(@file, name)
+  end
+
+  def remove(name = nil)
+    remove_file(name)
   end
 
   private
@@ -20,7 +24,18 @@ class GoogleStorage
   def upload_file(file, name)
     file = file.respond_to?(:tempfile) ? file.tempfile : file
     name ||= file_name
-    storage_bucket.upload_file(file, "#{@kind.pluralize}/#{name}")
+    storage_bucket.upload_file(file, storage_path(name))
+  end
+
+  def storage_path(name)
+    "#{@kind.pluralize}/#{name}"
+  end
+
+  def remove_file(name)
+    storage_bucket.file(storage_path(name))&.delete
+    storage_bucket.file(storage_path("resized-medium-#{name}"))&.delete
+    storage_bucket.file(storage_path("resized-small-#{name}"))&.delete
+    storage_bucket.file(storage_path("resized-thumb-#{name}"))&.delete
   end
 
   def storage_bucket
