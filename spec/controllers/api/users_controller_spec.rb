@@ -132,7 +132,7 @@ describe Api::UsersController, type: :controller do
       let(:uploaded_file_1) { double('uploaded_file', public_url: 'https:://some_url/', content_type: 'image/png', name: 'images/test_file_1.jpg') }
       before do
         request.headers['Authorization'] = "Bearer #{session.token}"
-        allow_any_instance_of(GoogleStorage).to receive(:perform).and_return(uploaded_file_1)
+        allow_any_instance_of(GoogleStorage).to receive(:upload).and_return(uploaded_file_1)
       end
 
       it 'updates successfully' do

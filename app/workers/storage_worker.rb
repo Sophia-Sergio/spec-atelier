@@ -3,6 +3,6 @@ class StorageWorker
   sidekiq_options retry: false
 
   def perform(product, images)
-    GoogleStorage.new(product, images).perform
+    GoogleStorage.new(product, images).upload
   end
 end
