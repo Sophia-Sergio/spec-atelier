@@ -8,7 +8,7 @@ describe Api::ProjectConfigsController, type: :controller do
     context 'wirh session' do
       let(:visible_attrs) {{
         product: {
-          all: "true",
+          default: "true",
           brand: "true",
           long_desc: "true",
           short_desc: "false",
