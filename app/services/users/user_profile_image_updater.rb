@@ -14,7 +14,8 @@ module Users
         google_storage = GoogleStorage.new(user, image, 'image')
         google_storage.remove(image.original_filename)
         stored_file = google_storage.upload(image.original_filename)
-        attached_image = Attached::Image.create(name: image.original_filename, url: stored_file.public_url)
+        url = "#{stored_file.public_url}?generation=#{stored_file.id.split('/').last}"
+        attached_image = Attached::Image.create(name: image.original_filename, url: url)
         Attached::ResourceFile.create(attached: attached_image, owner: user, kind: 'profile_image')
       end
       user.reload
