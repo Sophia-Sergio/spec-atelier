@@ -129,7 +129,7 @@ describe Api::UsersController, type: :controller do
     end
 
     context 'with valid session' do
-      let(:uploaded_file_1) { double('uploaded_file', public_url: 'https:://some_url/', content_type: 'image/png', name: 'images/test_file_1.jpg') }
+      let(:uploaded_file_1) { double('uploaded_file', public_url: 'https:://some_url/', content_type: 'image/png', name: 'images/test_file_1.jpg', id: 'id/1') }
       before do
         request.headers['Authorization'] = "Bearer #{session.token}"
         allow_any_instance_of(GoogleStorage).to receive(:upload).and_return(uploaded_file_1)

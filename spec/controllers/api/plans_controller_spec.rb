@@ -15,8 +15,6 @@ describe Api::PlansController, type: :controller do
       }
     end
 
-    teardown { ActionMailer::Base.deliveries.clear }
-
     context 'con todos los parámetros correctos' do
       it 'should send an email and an a success response' do
         post :contact_form, params: @params
