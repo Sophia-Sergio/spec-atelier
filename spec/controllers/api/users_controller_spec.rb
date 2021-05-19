@@ -133,6 +133,7 @@ describe Api::UsersController, type: :controller do
       before do
         request.headers['Authorization'] = "Bearer #{session.token}"
         allow_any_instance_of(GoogleStorage).to receive(:upload).and_return(uploaded_file_1)
+        allow_any_instance_of(GoogleStorage).to receive(:remove).and_return(true)
       end
 
       it 'updates successfully' do
