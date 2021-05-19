@@ -62,6 +62,9 @@ Rails.application.routes.draw do
       end
     end
 
+
+    post 'plans/contact_form', to: 'plans#contact_form'
+
     resources :sections, only: %i[index] do
       get 'items'
       get 'products'
