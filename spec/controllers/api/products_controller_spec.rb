@@ -37,6 +37,35 @@ describe Api::ProductsController, type: :controller do
     create(:lookup_table, category: 'work_type', code: 2, translation_spa: 'b')
   end
 
+  describe '#destroy' do
+    context 'without session' do
+      before { delete :destroy, params: { id: product.id }}
+      it_behaves_like 'an unauthorized api request'
+    end
+
+    context 'with valid session' do
+      let(:not_owned_product) { create(:product) }
+
+      before do
+        request.headers['Authorization'] = "Bearer #{session.token}"
+      end
+
+      context 'when user is not the owner of the project' do
+        it 'should return status forbidden' do
+          delete :destroy, params: { id: not_owned_product.id }
+          expect(response).to have_http_status(:forbidden)
+        end
+      end
+
+      context 'when user the owner of the project' do
+        it 'should return status forbidden' do
+          delete :destroy, params: { id: product.id }
+          expect(response).to have_http_status(:ok)
+        end
+      end
+    end
+  end
+
   describe '#index' do
     context 'with no session' do
       before do
@@ -82,23 +111,6 @@ describe Api::ProductsController, type: :controller do
           expect(json['products']['list'].count).to eq(1)
           expect(json['products']['next_page']).to eq(nil)
         end
-
-        it 'returns different products by page ordered by section name and product name' do
-
-          get :index, params: { limit: 3, page: 0}
-          ids_page_0 = json['products']['list'].map {|p| p['id'] }
-          get :index, params: { limit: 3, page: 1}
-          ids_page_1 = json['products']['list'].map {|p| p['id'] }
-          get :index, params: { limit: 3, page: 2}
-          ids_page_2 = json['products']['list'].map {|p| p['id'] }
-          get :index, params: { limit: 3, page: 3}
-          ids_page_3 = json['products']['list'].map {|p| p['id'] }
-
-          expect(ids_page_0).to eq([11, 12, 13])
-          expect(ids_page_1).to eq([14, 15, 16])
-          expect(ids_page_2).to eq([17, 18, 19])
-          expect(ids_page_3).to eq([20, 21, 1])
-        end
       end
 
       context 'filtered paginated response' do
@@ -136,15 +148,12 @@ describe Api::ProductsController, type: :controller do
         it 'returns products by room_type default order by section.name' do
           get :index, params: { limit: 10, page: 0, room_type: [1]}
           expect(json['products']['list'].count).to eq(2)
-          expect(json['products']['list'].first['name']).to eq('bbba')
-          expect(json['products']['list'].first['section']['name']).to eq(section_a.name)
         end
 
         it 'returns products by room_type ordered by new products (created_at desc)' do
           get :index, params: { limit: 10, page: 0, sort: 'created_at'}
           expect(json['products']['list'].count).to eq(5)
           expect(json['products']['list'].first['name']).to eq('ccca aab')
-          expect(json['products']['list'].first['section']['name']).to eq(section_b.name)
         end
 
         it 'returns products by project_type and room_type' do

@@ -97,8 +97,10 @@ namespace :db do
       return if params[:files].blank?
 
       documents = params[:files].split(',').map {|a| a.gsub('/', '_').strip }
-      product = Product.find_by(find_except_product_params(params))
-      documents.each {|document| attach_document(document, product) }
+      products = Product.where(find_except_product_params(params))
+      products.each do |product|
+        documents.each {|document| attach_document(document, product) }
+      end
     rescue StandardError => e
       puts e
     end
@@ -130,8 +132,10 @@ namespace :db do
       return if params[:images].blank?
 
       images = params[:images].split(',').map {|a| a.gsub('/', '_').strip }
-      product = Product.find_by(find_except_product_params(params))
-      images.each_with_index {|image, index| attach_image(image, product, 'product_image', index) }
+      products = Product.where(find_except_product_params(params))
+      products.each do |product|
+        images.each_with_index {|image, index| attach_image(image, product, 'product_image', index) }
+      end
     rescue StandardError => e
       puts e
     end

@@ -23,6 +23,7 @@ module Products
 
     def creation_params
       product_params.merge(
+        user_id: user.id,
         original_product_id: product.id,
         created_reason: :added_to_spec
       )

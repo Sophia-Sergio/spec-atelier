@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_16_204528) do
+ActiveRecord::Schema.define(version: 2021_04_17_003503) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "hstore"
@@ -166,6 +166,14 @@ ActiveRecord::Schema.define(version: 2021_04_16_204528) do
     t.integer "user_id"
   end
 
+  create_table "project_configs", force: :cascade do |t|
+    t.json "visible_attrs", null: false
+    t.bigint "project_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["project_id"], name: "index_project_configs_on_project_id"
+  end
+
   create_table "project_spec_blocks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "spec_item_type"
     t.bigint "spec_item_id"
@@ -296,6 +304,7 @@ ActiveRecord::Schema.define(version: 2021_04_16_204528) do
   add_foreign_key "product_stats", "products"
   add_foreign_key "product_subitems", "products"
   add_foreign_key "product_subitems", "subitems"
+  add_foreign_key "project_configs", "projects"
   add_foreign_key "project_spec_blocks", "items"
   add_foreign_key "project_spec_blocks", "project_specs"
   add_foreign_key "project_spec_blocks", "sections"

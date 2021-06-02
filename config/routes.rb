@@ -17,7 +17,9 @@ Rails.application.routes.draw do
         get :stats
         patch :profile_image_upload
       end
-      resources :projects
+      resources :projects do
+        resource :project_configs, only: :create
+      end
       resources :project_specs, only: %i[show] do
         post 'create_text'
         delete 'remove_text'
@@ -47,7 +49,7 @@ Rails.application.routes.draw do
 
     get 'items/:item_id/systems', to: 'items#subitems', as: :systems
 
-    resources :products, only: %i[show create index update] do
+    resources :products, except: %i[edit] do
       member do
         post :associate_images
         delete :remove_images

@@ -36,7 +36,7 @@ module Api
     def create_product
       product = Product.find(params[:product])
       ::Products::ProductSpecCreator.call(
-        project_spec_block_params, nil, product, project_spec: project_specification
+        project_spec_block_params, current_user, product, project_spec: project_specification
       )
       render json: { blocks: blocks }
     end
@@ -63,7 +63,8 @@ module Api
     end
 
     def show
-      render json: { blocks: blocks, project: { id: @project_spec.project.id, name: @project_spec.project.name } }
+      project_spec = ProjectSpec::ProjectSpecDecorator.decorate(@project_spec)
+      render json: project_spec
     end
 
     def download_word
@@ -98,7 +99,7 @@ module Api
       blocks = project_spec.blocks.preload(
         :section, :item, :product, :spec_item, :text, product: %i[sections subitems brand client files]
       ).order(:order)
-      ProjectSpecDecorator.decorate_collection(blocks)
+      ProjectSpec::BlockDecorator.decorate_collection(blocks)
     end
 
     def project_spec_param

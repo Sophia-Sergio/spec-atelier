@@ -1,6 +1,6 @@
 module Products
   class ProductDecorator < ApplicationDecorator
-    delegate :id, :short_desc, :long_desc, :reference, :price, :original_product_id
+    delegate :id, :short_desc, :long_desc, :reference, :price, :original_product_id; :name
     new_keys :name,
              :system,
              :systems,
@@ -16,15 +16,8 @@ module Products
              :images,
              :project_type,
              :room_type,
-             :work_type
-
-    def name
-      if block?
-        "#{model.block.section_order}.#{model.block.item_order}.#{model.block.product_order}. #{model.name}"
-      else
-        model.name
-      end
-    end
+             :work_type,
+             :user_owned
 
     def brand
       resource = model.brand
@@ -36,16 +29,8 @@ module Products
       { id: resource&.id, name: resource&.name }
     end
 
-    def system
-      { id: subitem_object.id, name: subitem_object.name } if subitem_object.present?
-    end
-
     def systems
       model.subitems.map {|subitem| { id: subitem&.id, name: subitem&.name } }
-    end
-
-    def section
-      { id: section_object.id, name: section_object.name } if section_object.present?
     end
 
     def sections
@@ -90,42 +75,26 @@ module Products
       product_images.map {|a| { id: a.id, urls: a.all_formats, order: a.resource_file.order } }
     end
 
+    def user_owned
+      user == model.user
+    end
+
     %w[project work room].each do |column|
       define_method("#{column}_type") { model.respond_to?("#{column}_type_key_value") ? model.send("#{column}_type_key_value") : []}
     end
 
     private
 
-    def block?
-      @block ||= model.block.present?
+    def user
+      @user ||= context[:user].presence
     end
 
     def documents
       @documents ||= model.documents
     end
 
-    def section_object
-      @section_object ||= if block?
-        model.spec_item&.section
-      else
-        model.sections.first
-      end
-    end
-
-    def item_object
-      @item_object ||= if block?
-        model.spec_item
-      else
-        model.items.find_by(id: context["item"] || subitem_object&.item_id)
-      end
-    end
-
-    def subitem_object
-      @subitem_object ||= model.subitems.find_by(id: context["subitem"])
-    end
-
     def item_image
-      item = item_object.present? ? item_object : model.items.first
+      item = model.items.first
       { id: 1, hide_delete: true, urls: { small: item.image_url || '', medium: item.image_url || '' }, order: 0 }
     end
   end

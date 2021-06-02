@@ -29,6 +29,8 @@ describe Api::ItemsController, type: :controller do
   end
 
   describe '#index' do
+    ITEM_EXPECTED_KEYS = %w[id name show_order code subitems].freeze
+
     before do
       request.headers['Authorization'] = "Bearer #{session.token}"
     end
@@ -55,6 +57,7 @@ describe Api::ItemsController, type: :controller do
 
       expect(response).to have_http_status(:ok)
       expect(json['items'].map {|item| item['id'] }).to match_array([item1.id, item3.id])
+      expect(json['items'].first.keys).to match_array(ITEM_EXPECTED_KEYS)
     end
   end
 end
