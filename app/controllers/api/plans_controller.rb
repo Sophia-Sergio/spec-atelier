@@ -13,7 +13,7 @@ module Api
     end
 
     def contact_form_params
-      params.require(:plan_contact_form).permit(:plan_type, :user_name, :items_total, :phone, :email, :message)
+      params.require(:plan_contact_form).permit(:plan_type, :user_name, :user_company_name, :items_total, :phone, :email, :message)
     end
   end
 end
