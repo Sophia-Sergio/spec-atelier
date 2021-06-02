@@ -1,0 +1,79 @@
+
+- logo = "https://firebasestorage.googleapis.com/v0/b/spec-atelier/o/spec_images%2Fspec-logo.jpg?alt=media"
+- message_icon = 'https://firebasestorage.googleapis.com/v0/b/spec-atelier/o/images%2Fmessage.png?alt=media&token=9544b760-37a1-480d-bd34-029fa9d80ff4'
+
+%body{:style => "margin:0; padding:0; font-family: Lato, Arial, Helvetica, sans-serif; background-color: #ffffff !important; color: #212121 !important;"}>
+  / LOGO
+  %table{:align => "center", :border => "0", :cellpadding => "0", :height => "80", :width => "80%", :bgcolor => "#ffffff", :style => "background-color: #ffffff;"}
+    %tr
+      %td{:align => "left", :valign => "bottom", :bgcolor => "#ffffff"}
+        %img{:border => "0", :height => "32", :src => logo, :style => "margin:0; padding:0; border:none; display:block;", :width => "160"}/
+  / ICON MESSAGE
+  %table{:align => "center", :border => "0", :cellpadding => "0", :style => "padding: 0 10% 0 10%;", :width => "100%"}
+    %tr
+      %td{:height => "60"}
+         
+  / CONTENT
+  %table{:align => "center", :border => "0", :cellpadding => "0", :width => "100%"}
+    %tr
+      %td{:align => "center"}
+        %img{:border => "0", :height => "54", :src => message_icon, :style => "margin:0; padding:0; border:none; display:block;", :width => "62"}/
+    %tr
+      %td{:align => "center", :valign => "top"}
+        %p{:style => "font-size: 20px; font-weight: bold; letter-spacing: 1.25px;"}
+          = "Tienes un mensaje de un cliente"
+        %p{:style => "font-size: 14px; letter-spacing: 1px; margin: 2px;"}
+          Responde lo más pronto posible, estos son los
+        %p{:style => "font-size: 14px; letter-spacing: 1px; margin: 2px;"}
+          datos del cliente:
+
+  / SPACE
+  %table{:border => "0", :cellpadding => "0", :width => "100%"}
+    %tr
+      %td{:height => "60"}
+
+  / MESSAGE
+  %table{:align => "center", :border => "0", :cellpadding => "10%", :cellspacing => "0", :width => "80%"}
+    %tr{:style => "background-color: #f6f6f6;"}
+      %td{:align => "center", :valign => "top", :colspan => "2"}
+        %p{:style => "font-size: 14px; letter-spacing: 1px;"}
+          Esta es la información que recibimos:
+    %tr{:style => "background-color: #f6f6f6;"}
+      %td{:style => "padding-left: 30px;"}
+        %div{:style => "font-size: 14px; letter-spacing: 1px; height: 36px; background-color: #ffffff; color: #d6d6d6; border-radius: 25px; border: solid 1px #d6d6d6; margin: 0; display: flex; align-items: center; padding-left: 28px"}
+          = "#{@form.user_name}"
+      %td{:rowspan => "4", :style => "height: 0; padding-bottom: 30px; padding-right: 30px;"}
+        %div{:style => "font-size: 14px; letter-spacing: 1px; height: 90%; background-color: #ffffff; color: #d6d6d6; border-radius: 25px; border: solid 1px #d6d6d6; margin: 0; padding-left: 28px; padding-top: 23px;"}
+          = "#{@form.message}"
+    %tr{:style => "background-color: #f6f6f6;"}
+      %td{:style => "padding-left: 30px;"}
+        %div{:style => "font-size: 14px; letter-spacing: 1px; height: 36px; background-color: #ffffff; color: #d6d6d6; border-radius: 25px; border: solid 1px #d6d6d6; margin: 0; display: flex; align-items: center; padding-left: 28px"}
+          = "#{@form.email}"
+    %tr{:style => "background-color: #f6f6f6;"}
+      %td{:style => "padding-left: 30px;"}
+        %div{:style => "font-size: 14px; letter-spacing: 1px; height: 36px; background-color: #ffffff; color: #d6d6d6; border-radius: 25px; border: solid 1px #d6d6d6; margin: 0; display: flex; align-items: center; padding-left: 28px"}
+          = "#{@form.phone}"
+    %tr{:style => "background-color: #f6f6f6;"}
+      %td{:style => "padding-bottom: 30px; padding-left: 30px;"}
+        %div{:style => "font-size: 14px; letter-spacing: 1px; height: 36px; background-color: #ffffff; color: #d6d6d6; border-radius: 25px; border: solid 1px #d6d6d6; margin: 0; display: flex; align-items: center; padding-left: 28px"}
+          = "#{@form.user_company_name}"
+
+  / SPACE
+  %table{:border => "0", :cellpadding => "0", :width => "100%"}
+    %tr
+      %td{:height => "80"}
+
+  / FOOTER
+  %table{:align => "center", :bgcolor => "#08262c", :border => "0", :cellpadding => "20", :height => "72", :width => "100%", :style => "opacity: 1;"}
+    %tr
+      %td{:align => "left"}
+        %img{:border => "0", :height => "18", :src => "https://firebasestorage.googleapis.com/v0/b/spec-atelier/o/spec_images%2Femail.jpg?alt=media", :style => "margin: 0 4px 0 0; padding:0; border:none; display: inline-block;", :width => "18"}
+        %a{:href => "mailito:contacto@specatelier.com", :style => "color:#19bea8; text-decoration: none; font-size: 12px; letter-spacing: 1px;", :target => "_blank"} contacto@specatelier.com
+      %td{:align => "left"}
+        %img{:border => "0", :height => "18", :src => "https://firebasestorage.googleapis.com/v0/b/spec-atelier/o/spec_images%2Fwhatsapp.jpg?alt=media", :style => "margin:0 4px 0 0; padding:0; border:none; display: inline-block;", :width => "20"}
+        %a{:href => "tel:+56987654321", :style => "color:#19bea8; text-decoration: none; font-size: 12px; letter-spacing: 1px;", :target => "_blank"} +56 9 8765 4321
+      %td{:align => "right"}
+        %a{:href => "#{ENV["FRONT_DOMAIN"]}", :style => "color:#19bea8; text-decoration: none; font-size: 12px; letter-spacing: 1px;", :target => "_blank"}
+          Síguenos en:
+          %img{:border => "0", :height => "18", :src => "https://firebasestorage.googleapis.com/v0/b/spec-atelier/o/spec_images%2Finstagram.jpg?alt=media", :style => "margin:0 4px 0 0; padding:0; border:none; display: inline-block;", :width => "20"}
+
