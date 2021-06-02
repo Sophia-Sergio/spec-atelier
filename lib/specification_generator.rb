@@ -18,7 +18,7 @@ class SpecificationGenerator
 
   def upload_file
     file = File.new(file_name_path)
-    file_stored = GoogleStorage.new(project, file, 'specification').perform(file_name)
+    file_stored = GoogleStorage.new(project, file, 'specification').upload(file_name)
     attach_to_specification(file_stored)
   end
 
