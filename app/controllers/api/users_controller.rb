@@ -1,8 +1,22 @@
 module Api
   class UsersController < ApplicationController
+    include Search::Handler
+
     before_action :valid_session
-    before_action :set_user
-    load_and_authorize_resource
+    before_action :set_user, except: %i[index impersonate]
+    load_and_authorize_resource except: %i[index impersonate]
+    authorize_resource only: %i[index impersonate]
+
+    def index
+      @custom_list = User.all.where.not(id: current_user&.id)
+      render json: { users: paginated_response }
+    end
+
+    def impersonate
+      user_impersonate = User.find_by(id: params[:user_id])
+      Users::UserImpersonate.call(user_impersonate)
+      render json: { user: UserDecorator.decorate(user_impersonate) }
+    end
 
     def update
       user = Users::UserUpdater.new(@user, user_params).call
@@ -34,6 +48,10 @@ module Api
       @user = User.find(params[:id] || params[:user_id])
     rescue ActiveRecord::RecordNotFound => e
       render json: { error: e }, status: :not_found
+    end
+
+    def decorator
+      UserDecorator
     end
 
     def user_params

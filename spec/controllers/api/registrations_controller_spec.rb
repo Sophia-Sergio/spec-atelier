@@ -1,5 +1,5 @@
 describe Api::RegistrationsController, type: :controller do
-  USER_EXPECTED_KEYS ||= %w[id email jwt first_name last_name profile_image projects_count city company client_role]
+  USER_EXPECTED_KEYS ||= %w[id email jwt first_name last_name profile_image projects_count city company client_role superadmin_role impersonated]
   describe '#create' do
     before { ActionMailer::Base.deliveries.clear }
     it 'creates a user' do

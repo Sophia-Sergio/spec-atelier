@@ -1,6 +1,6 @@
 class UserDecorator < ApplicationDecorator
   delegate :id, :email, :first_name, :last_name, :company, :city
-  new_keys :jwt, :projects_count, :profile_image, :client_role
+  new_keys :jwt, :projects_count, :profile_image, :client_role, :superadmin_role, :impersonated
 
   def jwt
     model.session.token rescue 'not logged in'
@@ -8,6 +8,14 @@ class UserDecorator < ApplicationDecorator
 
   def client_role
     model.client?
+  end
+
+  def superadmin_role
+    model.superadmin?
+  end
+
+  def impersonated
+    model.session&.impersonated
   end
 
   def projects_count

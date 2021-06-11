@@ -5,6 +5,31 @@ describe Api::UsersController, type: :controller do
 
   USER_EXPECTED_KEYS = %w[id email jwt first_name last_name profile_image projects_count city company client?]
 
+  describe '#impersonate' do
+    context 'when user is not logged in' do
+      before { post :impersonate }
+      it_behaves_like 'an unauthorized api request'
+    end
+
+    context 'when user is logged in' do
+      before { request.headers['Authorization'] = "Bearer #{session.token}" }
+
+      context 'when is not superadmin' do
+        before { post :impersonate }
+        it_behaves_like 'a forbidden api request'
+      end
+
+      context 'when user is superadmin' do
+        before { current_user.add_role :superadmin }
+        it 'loads a new current_user' do
+
+          post :impersonate, params: { user_id: user2.id }
+          expect(json['user']['id']).to be(user2.id)
+          expect(json['user']['impersonated']).to be(true)
+        end
+      end
+    end
+  end
 
   describe '#stats' do
     context 'when user is not logged in' do
