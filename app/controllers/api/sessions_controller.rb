@@ -5,7 +5,7 @@ module Api
     def create
       user = User.find_by(email: params['user']['email'])
       if user.try(:authenticate, params['user']['password']).present?
-        start_session(user)
+        start_session(user, false)
         render json: { logged_in: user.active?, user: user_decorator }, status: :created
       elsif user&.google_token.present? && user&.google_token != 'fake_token'
         render json: { error: { alert: 'you signed up with google' } }, status: :not_found
@@ -48,7 +48,7 @@ module Api
       else
         user.save
       end
-      start_session(user)
+      start_session(user, false)
     end
 
     def user_decorator
