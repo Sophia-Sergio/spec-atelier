@@ -12,10 +12,13 @@ Rails.application.routes.draw do
     get :password_forgot, to: 'passwords#forgot'
     get :password_reset, to: 'passwords#reset'
 
-    resources :users, only: %i[update show] do
+    resources :users, only: %i[update show index] do
       member do
         get :stats
         patch :profile_image_upload
+      end
+      collection do
+        post :impersonate
       end
       resources :projects do
         resource :project_configs, only: :create

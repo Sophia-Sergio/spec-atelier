@@ -1,5 +1,7 @@
 class User < ApplicationRecord
   include RolifyAdmin
+  include PgSearch::Model
+
   rolify
   has_secure_password
   after_create :assign_default_role
@@ -11,6 +13,10 @@ class User < ApplicationRecord
   has_many :user_clients
   has_many :clients, through: :user_clients, dependent: :destroy
   has_one :file, as: :owner, class_name: 'Attached::ResourceFile', dependent: :destroy
+
+  pg_search_scope :by_keyword,
+    against: %i[first_name last_name email],
+    using: { tsearch: { prefix: true, any_word: true } }
 
   def generate_password_token!
     update(reset_password_token: SecureRandom.hex(10), reset_password_sent_at: Time.zone.now)

@@ -5,7 +5,7 @@ module Api
                       password:              params['user']['password'],
                       password_confirmation: params['user']['password'])
       if user.save
-        start_session(user)
+        start_session(user, false)
         UserMailer.send_signup_email(user).deliver_later
         render json: { logged_in: true, user: UserDecorator.decorate(user) }, status: :created
       else

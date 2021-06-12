@@ -6,6 +6,7 @@ module Search
     include Search::Client
     include Search::Brand
     include Search::Client
+    include Search::User
 
     def filtered_list
       @list = try("#{class_name[:name]}_custom_list".to_sym) || list
