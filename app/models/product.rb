@@ -99,6 +99,10 @@ class Product < ApplicationRecord
     self.class.where(original_product_id: self.id)
   end
 
+  def original?
+    original_product_id.nil?
+  end
+
   private
 
   def used_on_spec_stat_update
