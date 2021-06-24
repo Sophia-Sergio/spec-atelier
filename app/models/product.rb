@@ -8,7 +8,7 @@ class Product < ApplicationRecord
   has_many :product_subitems, dependent: :destroy
   has_many :subitems, through: :product_subitems
   has_many :items, through: :product_items
-  has_many :sections, through: :items
+  has_many :sections, -> { distinct }, through: :items
   belongs_to :spec_item, class_name: 'Item', optional: true
   belongs_to :user
   belongs_to :original_product, class_name: 'Product', foreign_key: :original_product_id, optional: true
