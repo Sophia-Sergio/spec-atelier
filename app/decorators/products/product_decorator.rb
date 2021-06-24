@@ -1,8 +1,7 @@
 module Products
   class ProductDecorator < ApplicationDecorator
     delegate :id, :short_desc, :long_desc, :reference, :price, :original_product_id, :name, :unit
-    new_keys :name,
-             :system,
+    new_keys :system,
              :systems,
              :section,
              :sections,
