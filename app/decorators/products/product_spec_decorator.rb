@@ -1,6 +1,6 @@
 module Products
   class ProductSpecDecorator < ApplicationDecorator
-    delegate :id, :short_desc, :long_desc, :reference
+    delegate :id, :short_desc, :long_desc, :reference, :original_product_id
     new_keys :name,
              :brand,
              :images,
