@@ -12,7 +12,7 @@ module Search
     end
 
     def product_list
-      list.includes(:client, :brand, :subitems, :sections, :items, :product_items, :product_subitems)
+      list.includes(:client, :brand, :subitems, :sections, :items, :product_items, :product_subitems, :user)
     end
 
     def product_search_params
