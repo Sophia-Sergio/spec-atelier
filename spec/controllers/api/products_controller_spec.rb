@@ -114,13 +114,17 @@ describe Api::ProductsController, type: :controller do
       end
 
       context 'filtered paginated response' do
-
         before do
           create(:product, name: 'aaab', brand: brand_a, user: create(:user, :superadmin))
           create(:product, name: 'baca aaa', project_type: ['1'], brand: brand_b, user: create(:user, :superadmin))
           create(:product, name: 'abbb', project_type: ['1'], room_type: ['1'], items: [item_b], user: create(:user, :superadmin))
           create(:product, name: 'bbba', project_type: ['2'], room_type: ['1'], items: [item_a], user: create(:user, :superadmin))
           create(:product, name: 'ccca aab', items: [item_b], user: create(:user, :superadmin))
+        end
+
+        it 'returns products without array of products' do
+          get :index, params: { limit: 10, page: 0, showed_products: [product.id] }
+          expect(json['products']['list'].count).to eq(5)
         end
 
         it 'returns products by keyword' do
