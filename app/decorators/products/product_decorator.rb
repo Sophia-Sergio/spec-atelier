@@ -1,22 +1,8 @@
 module Products
   class ProductDecorator < ApplicationDecorator
     delegate :id, :short_desc, :long_desc, :reference, :price, :original_product_id, :name, :unit
-    new_keys :system,
-             :systems,
-             :section,
-             :sections,
-             :item,
-             :items,
-             :brand,
-             :client,
-             :dwg,
-             :bim,
-             :pdfs,
-             :images,
-             :project_type,
-             :room_type,
-             :work_type,
-             :user_owned
+    new_keys :system, :systems, :section, :sections, :item, :items, :brand, :work_type, :project_spec_info,
+             :client, :dwg, :bim, :pdfs, :images, :project_type, :room_type, :user_owned
 
     def brand
       resource = model.brand
@@ -41,7 +27,7 @@ module Products
     end
 
     def items
-      model.items.map do |item|
+      @items ||= model.items.map do |item|
         { id: item&.id, name: item&.name, section_id: item&.section_id }
       end
     end
@@ -50,21 +36,21 @@ module Products
       dwg_document = documents.with_dwg.first
       return {} unless dwg_document.present?
 
-      { id: dwg_document.id, name: dwg_document.name, url: dwg_document.url }
+      document_format(dwg_document)
     end
 
     def bim
       bim_document = documents.with_bim.first
-      return {} unless documents.with_bim.present?
+      return {} unless bim_document.present?
 
-      { id: bim_document.id, name: bim_document.name, url: bim_document.url }
+      document_format(bim_document)
     end
 
     def pdfs
       pdf_documents = documents.with_pdf
       return [] unless pdf_documents.present?
 
-      pdf_documents.map {|a| { id: a.id, name: a.name, url: a.url } }
+      pdf_documents.map {|pdf_document| document_format(pdf_document) }
     end
 
     def images
@@ -76,6 +62,23 @@ module Products
 
     def user_owned
       user == model.user
+    end
+
+    def project_spec_info
+      if context[:project_spec].present?
+        spec_products = ProjectSpec::Specification.find(context[:project_spec])
+                          .blocks.products.by_original_product(model).includes(:item)
+        {
+          items_used: spec_products.map do |block_product|
+            {
+              id: block_product.item.id,
+              name: block_product.item.name,
+              section_id: block_product.section_id
+            }
+          end,
+          items_full_used: items.count == spec_products.count
+        }
+      end
     end
 
     %w[project work room].each do |column|
@@ -95,6 +98,10 @@ module Products
     def item_image
       item = model.items.first
       { id: 1, hide_delete: true, urls: { small: item.image_url || '', medium: item.image_url || '' }, order: 0 }
+    end
+
+    def document_format(document)
+      { id: document.id, name: document.name, url: document.url }
     end
   end
 end

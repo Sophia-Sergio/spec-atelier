@@ -15,18 +15,18 @@ module Search
       sorted_list
     end
 
-    def paginated_response
+    def paginated_response(context = {})
       @list = filtered_list
-      paginated_format
+      paginated_format(context: { user: current_user }.merge(context) )
     end
 
-    def paginated_list
+    def paginated_list(context)
       @page = params[:page].presence&.to_i || 0
       @offset = params[:offset].presence&.to_i || params[:limit].presence&.to_i || 10
       @limit = params[:limit].presence&.to_i || 10
       decorator.decorate_collection(
         @list.offset(@limit * @page).limit(@limit).find_ordered(@ordered),
-        context: { user: current_user }
+        context
       )
     end
 
@@ -34,10 +34,10 @@ module Search
       @decorator
     end
 
-    def paginated_format
+    def paginated_format(context)
       {
         total: @list.count,
-        list: paginated_list,
+        list: paginated_list(context),
         next_page: (@page + 1) * @limit < @list.count ? @page + 1 : nil
       }
     end
