@@ -16,6 +16,10 @@ module ProjectSpec
     belongs_to :item, optional: true
     has_one :text, class_name: 'ProjectSpec::Text', foreign_key: 'project_spec_block_id'
     scope :products, -> { where(spec_item_type: 'Product') }
+    scope :by_original_product, ->(original_product_id) {
+      products.joins('INNER JOIN products ON project_spec_blocks.spec_item_id = products.id').
+        where(products: { original_product_id: original_product_id })
+    }
 
     validates :section_id, presence: true, if: -> { spec_item.instance_of?(Item) || spec_item.instance_of?(Product)}
 
