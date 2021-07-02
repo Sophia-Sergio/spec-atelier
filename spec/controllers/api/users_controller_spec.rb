@@ -3,7 +3,7 @@ describe Api::UsersController, type: :controller do
   let(:user2) { create(:user) }
   let!(:session) { create(:session, user: current_user, token: session_token(current_user)) }
 
-  USER_EXPECTED_KEYS = %w[id email jwt first_name last_name profile_image projects_count city company client?]
+  USER_EXPECTED_KEYS = %w[id email jwt first_name last_name profile_image projects_count city company client_role impersonated superadmin_role]
 
   describe '#impersonate' do
     context 'when user is not logged in' do
