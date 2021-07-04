@@ -17,17 +17,23 @@ module Search
 
     def paginated_response(context = {})
       @list = filtered_list
-      paginated_format(context: { user: current_user }.merge(context) )
+      paginated_format({ user: current_user }.merge(context) )
     end
 
     def paginated_list(context)
-      @page = params[:page].presence&.to_i || 0
-      @offset = params[:offset].presence&.to_i || params[:limit].presence&.to_i || 10
-      @limit = params[:limit].presence&.to_i || 10
-      decorator.decorate_collection(
-        @list.offset(@limit * @page).limit(@limit).find_ordered(@ordered),
-        context
-      )
+      redis.del(redis_key) if @page == 0 && params[:view].present?
+      @list = @list.where.not(id: without) if without.present?
+      @list = @list.offset(@limit * @page).limit(@limit).find_ordered(@ordered)
+      redis.lpush(redis_key, @list.pluck(:id).uniq) if params[:view].present?
+      decorator.decorate_collection(@list, context: context)
+    end
+
+    def redis_key
+      "products_user#{request.remote_ip}_#{params[:view]}"
+    end
+
+    def without
+      redis.lrange(redis_key, 0, redis.llen(redis_key))
     end
 
     def decorator
@@ -35,10 +41,13 @@ module Search
     end
 
     def paginated_format(context)
+      @page = params[:page].presence&.to_i || 0
+      @offset = params[:offset].presence&.to_i || params[:limit].presence&.to_i || 10
+      @limit = params[:limit].presence&.to_i || 10
       {
         total: @list.count,
-        list: paginated_list(context),
-        next_page: (@page + 1) * @limit < @list.count ? @page + 1 : nil
+        next_page: (@page + 1) * @limit < @list.count ? @page + 1 : nil,
+        list: paginated_list(context)
       }
     end
 

@@ -123,7 +123,7 @@ describe Api::ProductsController, type: :controller do
         end
 
         it 'returns products without array of products' do
-          get :index, params: { limit: 10, page: 0, showed_products: [product.id] }
+          get :index, params: { limit: 10, page: 0, view: "profile" }
           expect(json['products']['list'].count).to eq(5)
         end
 

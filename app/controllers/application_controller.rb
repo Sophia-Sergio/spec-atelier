@@ -11,4 +11,8 @@ class ApplicationController < ActionController::API
     model_name = controller_name.classify
     @current_ability ||= "Abilities::#{model_name}Ability".constantize.new(current_user)
   end
+
+  def redis
+    @redis ||= Redis.new
+  end
 end

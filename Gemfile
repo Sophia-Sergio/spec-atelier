@@ -26,6 +26,7 @@ gem 'rubocop'
 gem 'sentry-ruby'
 gem 'sentry-rails'
 gem 'spreadsheet'
+gem 'redis'
 
 group :development, :test do
   gem 'pry'
