@@ -23,7 +23,8 @@ module Search
     def paginated_list(context)
       redis.del(redis_key) if @page == 0 && params[:view].present?
       @list = @list.where.not(id: without) if without.present?
-      @list = @list.offset(@limit * @page).limit(@limit).find_ordered(@ordered)
+      offset = without.present? ? (@limit * @page) - without.count : (@limit * @page)
+      @list = @list.offset(offset).limit(@limit).find_ordered(@ordered)
       redis.lpush(redis_key, @list.pluck(:id).uniq) if params[:view].present?
       decorator.decorate_collection(@list, context: context)
     end
