@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_17_032624) do
+ActiveRecord::Schema.define(version: 2021_07_07_040220) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "hstore"
@@ -27,6 +27,7 @@ ActiveRecord::Schema.define(version: 2021_06_17_032624) do
     t.integer "order", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.datetime "deleted_at"
     t.index ["owner_type", "owner_id"], name: "index_addresses_on_owner_type_and_owner_id"
   end
 
@@ -36,6 +37,7 @@ ActiveRecord::Schema.define(version: 2021_06_17_032624) do
     t.string "type", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.datetime "deleted_at"
   end
 
   create_table "attached_resource_files", force: :cascade do |t|
@@ -46,6 +48,7 @@ ActiveRecord::Schema.define(version: 2021_06_17_032624) do
     t.integer "order", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.datetime "deleted_at"
     t.index ["attached_file_id"], name: "index_attached_resource_files_on_attached_file_id"
     t.index ["owner_type", "owner_id"], name: "index_attached_resource_files_on_owner_type_and_owner_id"
   end
@@ -55,6 +58,7 @@ ActiveRecord::Schema.define(version: 2021_06_17_032624) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "client_id"
+    t.datetime "deleted_at"
   end
 
   create_table "clients", force: :cascade do |t|
@@ -67,6 +71,7 @@ ActiveRecord::Schema.define(version: 2021_06_17_032624) do
     t.hstore "social_media"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.datetime "deleted_at"
   end
 
   create_table "companies", force: :cascade do |t|
@@ -134,6 +139,7 @@ ActiveRecord::Schema.define(version: 2021_06_17_032624) do
     t.bigint "product_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.datetime "deleted_at"
     t.index ["item_id"], name: "index_product_items_on_item_id"
     t.index ["product_id"], name: "index_product_items_on_product_id"
   end
@@ -147,6 +153,7 @@ ActiveRecord::Schema.define(version: 2021_06_17_032624) do
     t.integer "used_on_spec", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.datetime "deleted_at"
     t.index ["product_id"], name: "index_product_stats_on_product_id"
   end
 
@@ -155,6 +162,7 @@ ActiveRecord::Schema.define(version: 2021_06_17_032624) do
     t.bigint "product_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.datetime "deleted_at"
     t.index ["product_id"], name: "index_product_subitems_on_product_id"
     t.index ["subitem_id"], name: "index_product_subitems_on_subitem_id"
   end
@@ -177,6 +185,7 @@ ActiveRecord::Schema.define(version: 2021_06_17_032624) do
     t.integer "original_product_id"
     t.integer "user_id"
     t.string "unit"
+    t.datetime "deleted_at"
   end
 
   create_table "project_configs", force: :cascade do |t|

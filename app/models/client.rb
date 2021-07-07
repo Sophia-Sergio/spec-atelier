@@ -1,7 +1,8 @@
 class Client < ApplicationRecord
+  acts_as_paranoid
   include PgSearch::Model
 
-  has_many :products
+  has_many :products, -> { original }, inverse_of: :client, dependent: :destroy
   has_many :brands
   validates :name, :url, :contact_info, :description, :email, :phone, presence: true
   has_many :contact_forms, as: :owner, class_name: 'Form::ContactForm'

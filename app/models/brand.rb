@@ -1,4 +1,5 @@
 class Brand < ApplicationRecord
+  acts_as_paranoid
   include PgSearch::Model
 
   belongs_to :client, optional: true

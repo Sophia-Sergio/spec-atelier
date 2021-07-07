@@ -2,6 +2,8 @@ class Product < ApplicationRecord
   include MetaLookupTable
   include PgSearch::Model
 
+  acts_as_paranoid
+
   belongs_to :client, optional: true
   belongs_to :brand, optional: true
   has_many :product_items, dependent: :destroy
@@ -101,6 +103,10 @@ class Product < ApplicationRecord
 
   def original?
     original_product_id.nil?
+  end
+
+  def soft_delete!
+    update!(deleted: true)
   end
 
   private

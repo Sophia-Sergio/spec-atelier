@@ -27,6 +27,7 @@ gem 'sentry-ruby'
 gem 'sentry-rails'
 gem 'spreadsheet'
 gem 'redis'
+gem 'acts_as_paranoid', '~> 0.7.0'
 
 group :development, :test do
   gem 'pry'

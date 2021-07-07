@@ -1,5 +1,7 @@
 module Attached
   class ResourceFile < ApplicationRecord
+    acts_as_paranoid
+
     def self.table_name_prefix
       'attached_'
     end
