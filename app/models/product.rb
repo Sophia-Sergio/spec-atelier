@@ -105,10 +105,6 @@ class Product < ApplicationRecord
     original_product_id.nil?
   end
 
-  def soft_delete!
-    update!(deleted: true)
-  end
-
   private
 
   def used_on_spec_stat_update
