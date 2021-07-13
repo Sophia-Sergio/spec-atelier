@@ -4,7 +4,7 @@ class FileUploadWorker
 
   def perform(product_id)
     product = Product.find(product_id)
-    product.images.each do |image|
+    Image.where(owner: product).each do |image|
       image.thumb
       image.small
       image.medium
