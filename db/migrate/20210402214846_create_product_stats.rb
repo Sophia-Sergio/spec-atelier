@@ -7,6 +7,7 @@ class CreateProductStats < ActiveRecord::Migration[6.0]
       t.integer :pdf_downloads, default: 0
       t.integer :visualizations, default: 0
       t.integer :used_on_spec, default: 0
+      t.timestamp :deleted_at
       t.timestamps
     end
   end

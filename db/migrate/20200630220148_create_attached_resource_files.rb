@@ -5,6 +5,7 @@ class CreateAttachedResourceFiles < ActiveRecord::Migration[6.0]
       t.references :owner, polymorphic: true,  null: true
       t.string :kind
       t.integer :order, default: 0
+      t.timestamp :deleted_at
       t.timestamps
     end
   end

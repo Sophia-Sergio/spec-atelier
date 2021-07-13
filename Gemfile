@@ -3,7 +3,7 @@ git_source(:github) {|repo| "https://github.com/#{repo}.git" }
 
 ruby '2.6.5'
 
-gem 'rails', '~> 6.0.0'
+gem 'rails', '~> 6.1.0'
 gem 'pg', '>= 0.18', '< 2.0'
 gem 'puma', '~> 3.11'
 gem 'bootsnap', '>= 1.4.2', require: false
@@ -19,7 +19,6 @@ gem 'rubyXL'
 gem 'google_drive'
 gem 'google-cloud-storage'
 gem 'pg_search'
-gem 'bullet'
 gem 'draper'
 gem 'caracal-rails'
 gem 'rubocop'
@@ -28,6 +27,9 @@ gem 'sentry-rails'
 gem 'spreadsheet'
 gem 'redis'
 gem 'acts_as_paranoid', '~> 0.7.0'
+gem 'image_processing', '~> 1.2'
+gem 'active_storage_validations'
+gem 'mini_magick', '>= 4.9.5'
 
 group :development, :test do
   gem 'pry'
