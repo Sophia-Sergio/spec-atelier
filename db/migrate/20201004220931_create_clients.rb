@@ -8,6 +8,7 @@ class CreateClients < ActiveRecord::Migration[6.0]
       t.hstore :email
       t.string :contact_info
       t.hstore :social_media
+      t.timestamp :deleted_at
 
       t.timestamps
     end
