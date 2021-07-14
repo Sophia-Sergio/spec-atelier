@@ -43,7 +43,7 @@ google_dev:
 google_staging:
   service: GCS
   project: spec-atelier
-  bucket: spec-atelier-develop
+  bucket: spec-atelier-staging
   credentials: <%= ENV['GOOGLE_CREDENTIALS'].as_json %>
 
 google:
