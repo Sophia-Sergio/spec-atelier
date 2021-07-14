@@ -4,7 +4,7 @@ class Product < ApplicationRecord
 
   acts_as_paranoid
   # has_many :images, as: :owner, dependent: :destroy #TODO descomentar cuando ya lea de la nueva tabla images
-  has_many_attached :documents, dependent: :purge_now
+  has_many_attached :docs, dependent: :purge_now
 
   belongs_to :client, optional: true
   belongs_to :brand, optional: true
