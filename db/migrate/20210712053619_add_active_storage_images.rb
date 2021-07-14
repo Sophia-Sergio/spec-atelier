@@ -47,6 +47,7 @@ class AddActiveStorageImages < ActiveRecord::Migration[6.1]
   end
 
   def attach_image(resource_file, owner, index)
+    return if resource_file.attached.url.include? " "
     file = open(resource_file.attached.url)
     image_name = resource_file.attached.name
     image_model = Image.create(order: index, owner: owner)
