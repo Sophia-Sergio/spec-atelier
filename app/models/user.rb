@@ -12,7 +12,11 @@ class User < ApplicationRecord
   has_many :products
   has_many :user_clients
   has_many :clients, through: :user_clients, dependent: :destroy
-  has_one :file, as: :owner, class_name: 'Attached::ResourceFile', dependent: :destroy
+
+  has_one :file, as: :owner, class_name: 'Attached::ResourceFile', dependent: :destroy #TODO borrar cuando ya lea de la nueva tabla images
+
+  has_one_attached :profile_photo
+  validates :profile_photo, content_type: %w[image/jpg image/png image/jpeg]
 
   pg_search_scope :by_keyword,
     against: %i[first_name last_name email],
@@ -38,7 +42,7 @@ class User < ApplicationRecord
     "#{first_name.capitalize} #{last_name.capitalize}" if first_name.present? && last_name.present?
   end
 
-  def profile_image
+  def profile_image #TODO borrar cuando ya lea de la nueva tabla images
     file&.image
   end
 

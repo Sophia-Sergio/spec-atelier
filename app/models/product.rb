@@ -3,6 +3,8 @@ class Product < ApplicationRecord
   include PgSearch::Model
 
   acts_as_paranoid
+  # has_many :images, as: :owner, dependent: :destroy #TODO descomentar cuando ya lea de la nueva tabla images
+  has_many_attached :documents, dependent: :purge_now
 
   belongs_to :client, optional: true
   belongs_to :brand, optional: true
@@ -14,7 +16,7 @@ class Product < ApplicationRecord
   belongs_to :spec_item, class_name: 'Item', optional: true
   belongs_to :user
   belongs_to :original_product, class_name: 'Product', foreign_key: :original_product_id, optional: true
-  has_many :files, as: :owner, class_name: 'Attached::ResourceFile', dependent: :destroy
+  has_many :files, as: :owner, class_name: 'Attached::ResourceFile', dependent: :destroy #TODO borrar cuando ya lea de la nueva tabla images
   has_many :contact_forms, as: :owner, class_name: 'Form::ContactForm', dependent: :destroy
   has_one :stats, class_name: 'ProductStat', dependent: :destroy
 
