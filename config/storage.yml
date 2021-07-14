@@ -40,6 +40,12 @@ google_dev:
   credentials: <%= ENV['GOOGLE_CREDENTIALS'].as_json %>
 
 
+google_staging:
+  service: GCS
+  project: spec-atelier
+  bucket: spec-atelier-develop
+  credentials: <%= ENV['GOOGLE_CREDENTIALS'].as_json %>
+
 google:
   service: GCS
   project: spec-atelier
