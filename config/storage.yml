@@ -33,18 +33,15 @@ local:
 #   primary: local
 #   mirrors: [ amazon, google, microsoft ]
 
+google_dev:
+  service: GCS
+  project: spec-atelier
+  bucket: spec-atelier-develop
+  credentials: <%= ENV['GOOGLE_CREDENTIALS'].as_json %>
+
+
 google:
   service: GCS
   project: spec-atelier
   bucket: spec-atelier
-  credentials:
-    type: "service_account"
-    project_id: "spec-atelier"
-    private_key_id: "3284831934cf9a22a4da6db0ed376e241da66a19"
-    private_key: "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCUJQdaoaTL5b1k\n6fOpyyxeAo0D6zc+I+rRYNDjJZ9S1HqLFUHyJw46W1zD9p+hjqnp8964QGwq0rev\nzv9/yJL4ckkyqTf8oJmkRjo+jnxtyaIW6yKYJnCLdCgXAHtmORYOnPI3Ti6zTEQn\neddBxDZv+JsbKPAqryoRiVI9b2P2s+hAaD1XcOmOcRlLH/DLKOYSOQsHOmuI/s82\nVMTUNJ5nRUZVOGi+FiAGupVQbOH/ee69m5D8QrE3Har4E7Ife/DAm7KBUKzX4vDT\nUQDJ9qYDzcmdR2PEXBbLZfb/mA3I+uFd9JP7KsiQbLJjjfYyOxDuG5T2N+NXJpB4\n9O8AqyyhAgMBAAECggEADwz0rSUB9e3DwEEHznFunahwWicR8uAO8bGpLIKR0rD1\nODRzLDOtPYmIUv0MemCLllH+h8U9GAarab2ZIIrTP6bLaqMIJe7NB9moqNqsp9zA\neR1EuPoix1Ay6HoAj2yaTJFuXDxhqzlC1/3dZs2VOD/6G21yekEB1aFCt9dywPPz\nlOXGxE88LGvicwRjBrEtu3a7IyQtv5DFQbe6gpoR5LUnvD5r+BHuribfKupHL1RO\njvNl28pzmLP+YCu7k9V4m0Zw8Yz5II/S6IgooH/1DbBtV0HAz/MtlKdi7olxrgjS\nF57m0HuDj6ZTU3GcYHXTGR/8fxMsV7HgryXT3km6VwKBgQDGKUi/QaUq4Y61XJB9\n2MZdguvyDRQwVvLKlAXSCD9fU4/gtlbfP6tYTmcFL6mtWb8FTegpyLzeraSqb+SP\naoQb01eZNUGalWkqftHjmZl5LROLsGCW7Ew43N2sjINlJFxCCRXIi4CYR+PW2UNy\nBM5t5xhyt96eRgYqtE2mDb10SwKBgQC/YnnKRmU2+e8XBLT19XWYIEs49XWP7YEi\nXk4yQcaJlJ0MUFfEHBMgQIezTeDNF/gJjPMJhPVrKtINqzai60ThJOZgmD+yMyl7\nQ46iiW8uGHaYmbAXSUty6/oO5Rsl9+0CN9+hVsaRl24Q4l+yILCjWYiNubZYYToE\nARAVZAkXQwKBgAXRSHV08+hiXtIsOYG4T3qHUW31vFX+93nDBri3zUR7K4opUDuV\nnu4kvxmD4LNaIyWAuAQiBIl1B5SJXGhpdB9tAPFaguaK5F9/AaJw6/SGwkAjmXJU\n1ZgFw+xA48qgWqUFp0IP9mKCGcpA7p32Tikj06/qffqfi6bNTEpHtPwpAoGAEyvl\nMVsN5ozw42hoTD8zcXLCtkj4ZtuO1QeHY8dtAPkvJj2iHRYG4HM2ZMLHYyQkh6hj\n7C8yenLGqfHdvkI9GyScI079CnfPjvZ8glGsHnz63FyA5ERGV5PF79oJdys3xcId\nF8deitUVhIF4vppBt4tPf4r79ix/KEmG9+2Wb4sCgYBu3C+9dc9WZAj9XYYNnZk5\nFBpKSZhFfk/UVZqpx5fcmRodaaWN/mT2hG7Yol9cIjTqWCDXhn1BsvH3ynQjVx8p\njHYOQ1jNIvs7xUYdxdU6f8mFaLO9K0dLjTuvxiKyAS18KvhXxxX492+ld6nVNMSj\n57Xw0UXiW5A6gHx6beByIA==\n-----END PRIVATE KEY-----\n"
-    client_email: "speacatelierimages@spec-atelier.iam.gserviceaccount.com"
-    client_id: "106177515166381897967"
-    auth_uri: "https://accounts.google.com/o/oauth2/auth"
-    token_uri: "https://accounts.google.com/o/oauth2/token"
-    auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs"
-    client_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs"
+  credentials: <%= ENV['GOOGLE_CREDENTIALS'].as_json %>

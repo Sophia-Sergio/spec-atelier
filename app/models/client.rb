@@ -1,13 +1,17 @@
 class Client < ApplicationRecord
   acts_as_paranoid
   include PgSearch::Model
+  has_one_attached :logo
 
+  has_many :images, as: :owner, dependent: :destroy
   has_many :products, -> { original }, inverse_of: :client, dependent: :destroy
   has_many :brands
-  validates :name, :url, :contact_info, :description, :email, :phone, presence: true
   has_many :contact_forms, as: :owner, class_name: 'Form::ContactForm'
   has_many :addresses, as: :owner, dependent: :destroy
   has_many :files, as: :owner, class_name: 'Attached::ResourceFile'
+
+  validates :name, :url, :contact_info, :description, :email, :phone, presence: true
+  validates :logo, content_type: %w[image/jpg image/png image/jpeg]
 
   pg_search_scope :by_keyword,
                   against: %i[name],
